@@ -1,0 +1,98 @@
+package com.anma.nc.conf.confrest;
+
+import com.fasterxml.jackson.core.JsonFactoryBuilder;
+import com.google.gson.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.springframework.boot.json.GsonJsonParser;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+
+@Controller
+public class HomeController {
+
+    @GetMapping("/")
+    public String homePage(Model model) throws IOException, InterruptedException {
+
+//        RestTemplate restTemplate = new RestTemplate();
+//        restTemplate.getForObject("https://bassdevqa.netcracker.com/rest/api/content/230366342/label",
+//                )
+        long pageId = 1065015088;    // set page ID
+        HttpRequest request = HttpRequest.newBuilder(
+//                URI.create("https://bassdevqa.netcracker.com/rest/api/content/230366342?expand=body.view"))
+                URI.create("https://bass.netcracker.com/rest/api/content/" + pageId + "?expand=body.view,version"))
+                .headers("Authorization", "Basic TOKEN")
+                .GET().build();
+//        HttpHeaders httpHeaders = HttpHeaders();
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+//        JsonObject object1 = new JsonObject();
+//        JsonFactoryBuilder factoryBuilder = new JsonFactoryBuilder();
+//        factoryBuilder.build().createGenerator(new FileWriter("")).writeObject();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject jsonObject = gson.fromJson(response.body(), JsonObject.class);
+        JsonElement id = jsonObject.get("id");
+        String title = jsonObject.get("title").getAsString();
+        System.out.println("ID is == " + id);
+        JsonObject body = jsonObject.get("body").getAsJsonObject();
+        JsonObject bodyView = body.get("view").getAsJsonObject();
+        JsonElement bodyValue = bodyView.get("value");
+        long pageVersion = jsonObject.get("version").getAsJsonObject().get("number").getAsLong();
+//        System.out.println(bodyValue);
+//        System.out.println(JsonParser.parseString(response.body()));
+        model.addAttribute("id", id);
+        model.addAttribute("pageVersion", pageVersion);
+
+        Document document = Jsoup.parse(bodyValue.getAsString());
+//        System.out.println(bodyValue);
+
+        Elements links = document.select("a");
+        links.forEach(link -> System.out.println(link.attr("href")));
+        model.addAttribute("links", links);
+
+        // ========== Update
+
+        String newBody = bodyValue.getAsString().replace("222", "333");
+        String updatedPageBody = "{\n" +
+                "    \"version\": {\n" +
+                "        \"number\": " + (pageVersion + 1) + "\n" +
+                "    },\n" +
+                "    \"title\": \"" + title + "\",\n" +
+                "    \"type\": \"page\",\n" +
+                "    \"body\": {\n" +
+                "        \"storage\": {\n" +
+                "            \"value\": \"" + newBody + "\",\n" +
+                "            \"representation\": \"storage\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody);
+        HttpRequest postReq = HttpRequest.newBuilder()
+                .uri(URI.create("https://bass.netcracker.com/rest/api/content/" + pageId))
+                .PUT(publisher)
+                .headers("Authorization", "Basic TOKEN")
+                .headers("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println(postResponse);
+
+        return "home";
+    }
+}
