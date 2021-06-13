@@ -2,7 +2,7 @@ package com.anma.models
 
 class Version {
     def when
-    def number
+    int number
     def message
 
 }

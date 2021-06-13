@@ -11,7 +11,13 @@ class Main {
 
     static void main(String[] args) {
 
+        // GET
+//        println(GetPage.getPage(6324225).body())
+//        println(GsonService.httpToGson(GetPage.getPage(6324225)).id)
 
+        // PUT
+
+        println(UpdatePage.updatePage(6324225))
 
     }
 

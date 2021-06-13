@@ -8,4 +8,8 @@ class Content {
     Version version
     Body body
 
+    @Override
+    String toString() {
+        return "id: ${id} | title: ${title} | type: ${type} | Version: ${version} | Body: ${body} "
+    }
 }

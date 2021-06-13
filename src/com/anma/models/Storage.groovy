@@ -1,6 +1,6 @@
 package com.anma.models
 
-class View {
+class Storage {
     def value
     def representation
 }
