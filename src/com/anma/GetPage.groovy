@@ -34,8 +34,8 @@ class GetPage {
     }
 
     static void main(String[] args) {
-        println(getPage(6324225).body())
 
+        println(getPage(6324225).body())
         println(GsonService.httpToGson(getPage(6324225)).id)
 
 //        Document document = Jsoup.parse(bodyValue.getAsString());

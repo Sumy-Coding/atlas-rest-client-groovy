@@ -7,12 +7,17 @@ class UpdatePage {
 
     def updatePage(id) {
 
-        def pageVersion = GetPage.getPage(id).version()
-        def title = GetPage.getPage(id).title
+//        final String CONF_URL = "https://bass.netcracker.com"
+        final String CONF_URL = "http://localhost:8712"
+//        def id = 6324225
+        def pageVersion = GsonService.httpToGson(GetPage.getPage(id)).version
+        def title = GsonService.httpToGson(GetPage.getPage(id)).title
+        def body = GsonService.httpToGson(GetPage.getPage(id)).body.view.value
+
         def toFind = "dolor sit amet"
         def toReplace = "REPLACED"
 
-        String newBody = bodyValue.getAsString().replace(toFind, toReplace);
+        String newBody = body.replace(toFind, toReplace);
         String updatedPageBody = "{\n" +
                 "    \"version\": {\n" +
                 "        \"number\": " + (pageVersion + 1) + "\n" +
@@ -28,7 +33,7 @@ class UpdatePage {
                 "}";
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody);
         HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("https://bass.netcracker.com/rest/api/content/" + pageId))
+                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
                 .PUT(publisher)
                 .headers("Authorization", "Basic TOKEN")
                 .headers("Content-Type", "application/json")
