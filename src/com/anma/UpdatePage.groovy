@@ -8,8 +8,11 @@ class UpdatePage {
     def updatePage(id) {
 
         def pageVersion = GetPage.getPage(id).version()
+        def title = GetPage.getPage(id).title
+        def toFind = "dolor sit amet"
+        def toReplace = "REPLACED"
 
-        String newBody = bodyValue.getAsString().replace("222", "333");
+        String newBody = bodyValue.getAsString().replace(toFind, toReplace);
         String updatedPageBody = "{\n" +
                 "    \"version\": {\n" +
                 "        \"number\": " + (pageVersion + 1) + "\n" +

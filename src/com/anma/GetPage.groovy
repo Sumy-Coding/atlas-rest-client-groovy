@@ -36,20 +36,11 @@ class GetPage {
     static void main(String[] args) {
         println(getPage(6324225).body())
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        println(GsonService.httpToGson(getPage(6324225)).id)
 
-        JsonObject jsonObject = gson.fromJson(getPage().body(), JsonObject.class);
-        JsonElement id = jsonObject.get("id");
-        String title = jsonObject.get("title").getAsString();
-
-        JsonObject body = jsonObject.get("body").getAsJsonObject();
-        JsonObject bodyView = body.get("view").getAsJsonObject();
-        JsonElement bodyValue = bodyView.get("value");
-        long pageVersion = jsonObject.get("version").getAsJsonObject().get("number").getAsLong();
-
-        Document document = Jsoup.parse(bodyValue.getAsString());
-        Elements links = document.select("a");
-        links.forEach(link -> System.out.println(link.attr("href")));
+//        Document document = Jsoup.parse(bodyValue.getAsString());
+//        Elements links = document.select("a");
+//        links.forEach(link -> System.out.println(link.attr("href")));
     }
 
 }
