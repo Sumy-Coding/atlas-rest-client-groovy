@@ -24,10 +24,10 @@ class UpdatePage {
         def title = GsonService.httpToGson(GetPage.getPage(id)).title
         String body = GsonService.httpToGson(GetPage.getPage(id)).body.storage.value
 
-        println("+++ in update")
-        println(pageVersion)
-        println(title)
-        println(body)
+//        println("+++ in update")
+//        println(pageVersion)
+//        println(title)
+//        println(body)
 
         String newBody = body.replace(toFind, toReplace);
 
@@ -43,8 +43,7 @@ class UpdatePage {
         storage.representation = "storage"
         updBody.storage = storage
         updatedPage.body = updBody
-
-        println(updatedPage)
+//        println(updatedPage)
 
         Gson gson = new Gson();
         String pageJSON = gson.toJson(updatedPage)
