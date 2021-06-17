@@ -32,5 +32,20 @@ class GetPage {
         return response
     }
 
+    static def getDescendants(id) {
+
+        final String CONF_URL = "http://localhost:8712"
+        def TOKEN = new Base64Encoder().encode("admin:admin".bytes)
+        HttpRequest request = HttpRequest.newBuilder(
+                URI.create("${CONF_URL}/rest/api/content/${id}/child/page"))
+                .headers("Authorization", "Basic ${TOKEN}")
+                .GET()
+                .build();
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response
+
+    }
 
 }

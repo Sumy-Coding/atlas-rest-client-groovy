@@ -15,8 +15,8 @@ class UpdatePage {
 
     static def updatePage(id) {
 
-        def toFind = "dolor sit amet"
-        def toReplace = "REPLACED"
+        def toFind = "ac:name=\"colour\">Blue"
+        def toReplace = "ac:name=\"colour\">Yellow"
 
 //        final String CONF_URL = "https://bass.netcracker.com"
         final String CONF_URL = "http://localhost:8712"
@@ -31,9 +31,11 @@ class UpdatePage {
 
         String newBody = body.replace(toFind, toReplace);
 
+        // create entity for converting to JSON
         Content updatedPage = new Content()
         Version version = new Version()
         version.number = pageVersion + 1
+        version.message = "changed with REST"
         updatedPage.version = version
         updatedPage.title = title
         updatedPage.type = "page"
@@ -46,7 +48,7 @@ class UpdatePage {
 //        println(updatedPage)
 
         Gson gson = new Gson();
-        String pageJSON = gson.toJson(updatedPage)
+        String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 
 //        String updatedPageBody = "{\n" +
@@ -65,6 +67,7 @@ class UpdatePage {
         def TOKEN = new Base64Encoder().encode("admin:admin".bytes)
         println("**** token is ${TOKEN}")
 
+        /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
 //        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
