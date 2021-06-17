@@ -16,8 +16,10 @@ class Main {
 //        println(GsonService.httpToGson(GetPage.getPage(6324225)).id)
 
         // PUT
+//        println(UpdatePage.updatePage(6324225))
 
-        println(UpdatePage.updatePage(6324225))
+
+        println(GetPageData.getChildrenIds(6324225))
 
     }
 

@@ -13,7 +13,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class GetPage {
+class GetPageHttp {
 
     static def getPage(id) {
 //        final String CONF_URL = "https://bass.netcracker.com"

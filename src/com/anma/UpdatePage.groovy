@@ -20,9 +20,9 @@ class UpdatePage {
 
 //        final String CONF_URL = "https://bass.netcracker.com"
         final String CONF_URL = "http://localhost:8712"
-        def pageVersion = GsonService.httpToGson(GetPage.getPage(id)).version.number
-        def title = GsonService.httpToGson(GetPage.getPage(id)).title
-        String body = GsonService.httpToGson(GetPage.getPage(id)).body.storage.value
+        def pageVersion = GsonService.httpToGson(GetPageHttp.getPage(id)).version.number
+        def title = GsonService.httpToGson(GetPageHttp.getPage(id)).title
+        String body = GsonService.httpToGson(GetPageHttp.getPage(id)).body.storage.value
 
 //        println("+++ in update")
 //        println(pageVersion)

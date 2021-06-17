@@ -23,9 +23,7 @@ class GsonService {
 //        JsonElement bodyValue = bodyView.get("value");
 //        long pageVersion = jsonObject.get("version").getAsJsonObject().get("number").getAsLong();
 
-        Content content = gson.fromJson(response.body(), Content.class)
-
-        return content
+        return gson.fromJson(response.body(), Content.class)
 
     }
 }
