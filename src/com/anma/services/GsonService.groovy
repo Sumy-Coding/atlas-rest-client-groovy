@@ -1,4 +1,4 @@
-package com.anma
+package com.anma.services
 
 import com.anma.models.Content
 import com.google.gson.Gson
