@@ -9,6 +9,8 @@ class Main {
 
     static void main(String[] args) {
 
+        //http://localhost:8712/rest/api/content/search?cql=space=TEST%20AND%20label=test
+
 //        final String CONF_URL = "https://bass.netcracker.com"
         def CONF_URL = "http://localhost:8712"
 
@@ -23,11 +25,15 @@ class Main {
         // GET children
 //        println(PageService.getChildren(id).results)
 
+        // GET descendants
+        println(PageService.getDescendants(CONF_URL, "admin", "admin", id))
+
         // PUT
 //        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
 
         // PUT children
-        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
+//        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
+
 
 
     }

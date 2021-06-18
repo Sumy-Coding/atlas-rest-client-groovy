@@ -57,31 +57,30 @@ class PageService {
 
     }
 
+    /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
     static def getDescendants(CONF_URL, username, password, id) {
 
+        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}/child/page"))
+                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+\"6324225\""))
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        def allPages = []
+//        def allPages = []
 
         Contents contents = gson.fromJson(response.body(), Contents.class)
-        def children = contents.results
-        if (children.size() > 0) {
-            children.each {page ->
-                allPages.add(page)
-                while ()
-            }
-        }
-
-
-
-        return response
+//        def children = contents.results
+//        if (children.size() > 0) {
+//            children.each {page ->
+//                allPages.add(page)
+//                while ()
+//            }
+//        }
+        return contents.results
 
     }
 
