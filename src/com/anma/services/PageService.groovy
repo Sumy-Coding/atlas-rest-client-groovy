@@ -2,6 +2,7 @@ package com.anma.services
 
 import com.anma.models.Body
 import com.anma.models.Content
+import com.anma.models.Contents
 import com.anma.models.Storage
 import com.anma.models.Version
 import com.google.gson.Gson
@@ -19,6 +20,8 @@ import java.net.http.HttpResponse
 
 class PageService {
 
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     static def getPage(id) {
 //        final String CONF_URL = "https://bass.netcracker.com"
         final String CONF_URL = "http://localhost:8712"
@@ -33,7 +36,9 @@ class PageService {
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response
+        return gson.fromJson(response.body(), Content.class)
+
+
     }
 
     static def getChildren(id) {
@@ -48,7 +53,7 @@ class PageService {
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response
+        return gson.fromJson(response.body(), Contents.class)
 
     }
 
@@ -68,20 +73,16 @@ class PageService {
 
     }
 
-    static def updatePage(id, toFind, toReplace) {
+    static def updatePage(confURL, id, toFind, toReplace) {
 
         def username = "admin"
         def password = "admin"
 
-        toFind = "ac:name=\"colour\">Blue"
-        toReplace = "ac:name=\"colour\">Yellow"
+        final String CONF_URL = confURL
 
-//        final String CONF_URL = "https://bass.netcracker.com"
-        final String CONF_URL = "http://localhost:8712"
-
-        def pageVersion = GsonService.httpToGson(PageService.getPage(id)).version.number
-        def title = GsonService.httpToGson(PageService.getPage(id)).title
-        String body = GsonService.httpToGson(PageService.getPage(id)).body.storage.value
+        def pageVersion = getPage(id).version.number
+        def title = getPage(id).title
+        String body = getPage(id).body.storage.value
 
 //        println("+++ in update")
 //        println(pageVersion)
@@ -106,7 +107,6 @@ class PageService {
         updatedPage.body = updBody
 //        println(updatedPage)
 
-        Gson gson = new Gson();
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 

@@ -9,18 +9,21 @@ class Main {
 
     static void main(String[] args) {
 
-        // GET
-//        println(GetPage.getPage(6324225).body())
-//        println(GsonService.httpToGson(GetPage.getPage(6324225)).id)
+//        final String CONF_URL = "https://bass.netcracker.com"
+        def CONF_URL = "http://localhost:8712"
+
+        def toFind = "ac:name=\"colour\">Yellow"
+        def toReplace = "ac:name=\"colour\">Blue"
+
+        // GET page
+//        println(PageService.getPage(6324225))
+
+        // GET children
+//        println(PageService.getChildren(6324225).results)
 
         // PUT
-//        println(UpdatePage.updatePage(6324225))
+        println(PageService.updatePage(CONF_URL,6324225, toFind, toReplace))
 
-
-        def pagesString = PageService.getChildren(6324225).body()
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        def pages = gson.fromJson(pagesString, Contents.class)
-        pages.results.each {page -> println(page.title)}
 
     }
 
