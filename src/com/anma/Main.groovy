@@ -12,17 +12,22 @@ class Main {
 //        final String CONF_URL = "https://bass.netcracker.com"
         def CONF_URL = "http://localhost:8712"
 
-        def toFind = "ac:name=\"colour\">Yellow"
-        def toReplace = "ac:name=\"colour\">Blue"
+        def toFind = "lorem dolor"
+        def toReplace = "REPLACED"
+
+        def id = 6324225
 
         // GET page
-//        println(PageService.getPage(6324225))
+//        println(PageService.getPage(id))
 
         // GET children
-//        println(PageService.getChildren(6324225).results)
+//        println(PageService.getChildren(id).results)
 
         // PUT
-        println(PageService.updatePage(CONF_URL,6324225, toFind, toReplace))
+//        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
+
+        // PUT children
+        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
 
     }

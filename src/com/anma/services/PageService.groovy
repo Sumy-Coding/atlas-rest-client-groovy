@@ -73,10 +73,7 @@ class PageService {
 
     }
 
-    static def updatePage(confURL, id, toFind, toReplace) {
-
-        def username = "admin"
-        def password = "admin"
+    static def updatePage(confURL, username, password, id, toFind, toReplace) {
 
         final String CONF_URL = confURL
 
