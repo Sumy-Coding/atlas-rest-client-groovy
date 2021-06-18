@@ -57,10 +57,9 @@ class PageService {
 
     }
 
-    static def getDescendants(id) {
+    static def getDescendants(CONF_URL, username, password, id) {
 
-        final String CONF_URL = "http://localhost:8712"
-        def TOKEN = new Base64Encoder().encode("admin:admin".bytes)
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}/child/page"))
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -68,6 +67,19 @@ class PageService {
                 .build();
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        def allPages = []
+
+        Contents contents = gson.fromJson(response.body(), Contents.class)
+        def children = contents.results
+        if (children.size() > 0) {
+            children.each {page ->
+                allPages.add(page)
+                while ()
+            }
+        }
+
+
 
         return response
 
