@@ -15,11 +15,15 @@ class UpdatePage {
 
     static def updatePage(id) {
 
+        def username = "admin"
+        def password = "admin"
+
         def toFind = "ac:name=\"colour\">Blue"
         def toReplace = "ac:name=\"colour\">Yellow"
 
 //        final String CONF_URL = "https://bass.netcracker.com"
         final String CONF_URL = "http://localhost:8712"
+
         def pageVersion = GsonService.httpToGson(GetPageHttp.getPage(id)).version.number
         def title = GsonService.httpToGson(GetPageHttp.getPage(id)).title
         String body = GsonService.httpToGson(GetPageHttp.getPage(id)).body.storage.value
@@ -64,7 +68,7 @@ class UpdatePage {
 //                "        }\n" +
 //                "    }\n" +
 //                "}";
-        def TOKEN = new Base64Encoder().encode("admin:admin".bytes)
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */
