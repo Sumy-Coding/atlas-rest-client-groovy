@@ -10,7 +10,7 @@ import java.net.http.HttpResponse
 
 class GsonService {
 
-    static def httpToGson(HttpResponse<String> response) {
+    static def httpToGson(HttpResponse<String> response, Class aClass) {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -23,7 +23,7 @@ class GsonService {
 //        JsonElement bodyValue = bodyView.get("value");
 //        long pageVersion = jsonObject.get("version").getAsJsonObject().get("number").getAsLong();
 
-        return gson.fromJson(response.body(), Content.class)
+        return gson.fromJson(response.body(), aClass.class)
 
     }
 }
