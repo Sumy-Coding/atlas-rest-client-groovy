@@ -60,10 +60,10 @@ class PageService {
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
     static def getDescendants(CONF_URL, username, password, id) {
 
-        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
+//        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+\"6324225\""))
+                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}"))
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
