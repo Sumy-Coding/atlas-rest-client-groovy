@@ -1,20 +1,9 @@
 package com.anma.services
 
-import com.anma.models.Body
-import com.anma.models.Content
-import com.anma.models.Contents
-import com.anma.models.Label
-import com.anma.models.Storage
-import com.anma.models.Version
+import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.thoughtworks.xstream.core.util.Base64Encoder
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -24,11 +13,9 @@ class PageService {
 
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    static def getPage(id) {
-//        final String CONF_URL = "https://bass.netcracker.com"
-        final String CONF_URL = "http://localhost:8712"
+    static def getPage(CONF_URL, username, password, id) {
 //        id = 6324225
-        def TOKEN = Base64Encoder.newInstance().encode("admin:admin".bytes)
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -40,13 +27,11 @@ class PageService {
 
         return gson.fromJson(response.body(), Content.class)
 
-
     }
 
-    static def getChildren(id) {
+    static def getChildren(CONF_URL, username, password, id) {
 
-        final String CONF_URL = "http://localhost:8712"
-        def TOKEN = new Base64Encoder().encode("admin:admin".bytes)
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}/child/page"))
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -60,6 +45,7 @@ class PageService {
     }
 
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
+
     static def getDescendants(CONF_URL, username, password, id) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
@@ -90,9 +76,9 @@ class PageService {
 
         final String CONF_URL = confURL
 
-        def pageVersion = getPage(id).version.number
-        def title = getPage(id).title
-        String body = getPage(id).body.storage.value
+        def pageVersion = getPage(confURL, username, password, id).version.number
+        def title = getPage(confURL, username, password, id).title
+        String body = getPage(confURL, username, password, id).body.storage.value
 
 //        println("+++ in update")
 //        println(pageVersion)
@@ -189,12 +175,15 @@ class PageService {
 
     }
 
-    // POST /rest/api/content/{id}/label
+    /*
+        POST /rest/api/content/{id}/label
+        https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/label-deleteLabel
+     */
     static def addLabelsToPage(CONF_URL, username, password, id, List<String> labels) {
 
         def labelsArray = []
 
-        labels.each {label ->
+        labels.each { label ->
             Label label1 = new Label()
             label1.setPrefix("global")
             label1.setName(label)
@@ -221,6 +210,5 @@ class PageService {
 
         return response
     }
-
 
 }
