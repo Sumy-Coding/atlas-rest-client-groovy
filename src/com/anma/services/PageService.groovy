@@ -151,13 +151,30 @@ class PageService {
 
     }
 
-    /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
     static def getSpacePagesByLabel(CONF_URL, username, password, spaceKey, label) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}"))
+                .headers("Authorization", "Basic ${TOKEN}")
+                .GET()
+                .build();
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Contents contents = gson.fromJson(response.body(), Contents.class)
+
+        return contents.results
+
+    }
+
+    static def getDescendantsWithLabel(CONF_URL, username, password, id, label) {
+
+//        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        HttpRequest request = HttpRequest.newBuilder(
+                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}"))
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
