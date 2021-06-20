@@ -34,14 +34,20 @@ class Main {
         // GET descendants by label
 //        println(PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {println(it.title)})
 
-        // PUT
+        // PUT -> update page
 //        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
+
+        // PUT -> update pages with label
+        PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {
+            println(PageService.updatePage(CONF_URL, "admin", "admin", it.id, toFind, toReplace))
+        }
 
         // PUT children
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
         // Add labels to page
-        PageService.addLabelsToPage(CONF_URL, "admin", "admin", id, ["added_1", "added_2"])
+//        PageService.addLabelsToPage(CONF_URL, "admin", "admin", id, ["added_1", "added_2"])
+
 
 
     }
