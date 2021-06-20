@@ -3,10 +3,12 @@ package com.anma.services
 import com.anma.models.Body
 import com.anma.models.Content
 import com.anma.models.Contents
+import com.anma.models.Label
 import com.anma.models.Storage
 import com.anma.models.Version
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.thoughtworks.xstream.core.util.Base64Encoder
@@ -177,7 +179,7 @@ class PageService {
                 URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}"))
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
-                .build();
+                .build()
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -186,5 +188,39 @@ class PageService {
         return contents.results
 
     }
+
+    // POST /rest/api/content/{id}/label
+    static def addLabelsToPage(CONF_URL, username, password, id, List<String> labels) {
+
+        def labelsArray = []
+
+        labels.each {label ->
+            Label label1 = new Label()
+            label1.setPrefix("global")
+            label1.setName(label)
+//            String labelJson = gson.toJson(label1, Label.class)
+            labelsArray.add(label1)
+        }
+
+//        JsonArray jsonArray = new JsonArray()
+//        jsonArray.add()
+        def labelsArrayJSON = gson.toJson(labelsArray, ArrayList.class)
+//        println(labelsArrayJSON)
+
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(labelsArrayJSON)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
+        HttpRequest request = HttpRequest.newBuilder(
+                URI.create("${CONF_URL}/rest/api/content/${id}/label"))
+                .headers("Authorization", "Basic ${TOKEN}")
+                .headers("Content-Type", "application/json")
+                .POST(body)
+                .build();
+        HttpClient client = HttpClient.newBuilder().build()
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        return response
+    }
+
 
 }

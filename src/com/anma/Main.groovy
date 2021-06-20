@@ -32,7 +32,7 @@ class Main {
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
 
         // GET descendants by label
-        println(PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {println(it.title)})
+//        println(PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {println(it.title)})
 
         // PUT
 //        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
@@ -40,6 +40,8 @@ class Main {
         // PUT children
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
+        // Add labels to page
+        PageService.addLabelsToPage(CONF_URL, "admin", "admin", id, ["added_1", "added_2"])
 
 
     }
