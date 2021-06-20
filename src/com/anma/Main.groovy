@@ -9,14 +9,11 @@ class Main {
 
     static void main(String[] args) {
 
-        //http://localhost:8712/rest/api/content/search?cql=space=TEST%20AND%20label=test
-
-//        final String CONF_URL = "https://bass.netcracker.com"
-        def CONF_URL = "http://localhost:8712"
+        final String CONF_URL = "https://bass.netcracker.com"
+//        final def CONF_URL = "http://localhost:8712"
 
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
-
 //        def id = 6324225
 
         // ************* Start ************
@@ -30,6 +27,8 @@ class Main {
         String password = reader.readLine()
         println(">> Enter page ID")
         long id = reader.readLine().toInteger()
+
+        // ******** Operations **********
 
         // GET page
         println(PageService.getPage(CONF_URL, username, password, id))

@@ -25,7 +25,7 @@ class PageService {
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return gson.fromJson(response.body(), Content.class)
+        return gson.fromJson(response.body(), Content.class).toString()
 
     }
 
