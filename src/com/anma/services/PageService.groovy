@@ -106,19 +106,20 @@ class PageService {
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 
-//        String updatedPageBody = "{\n" +
-//                "    \"version\": {\n" +
-//                "        \"number\": " + (pageVersion + 1) + "\n" +
-//                "    },\n" +
-//                "    \"title\": \"" + title + "\",\n" +
-//                "    \"type\": \"page\",\n" +
-//                "    \"body\": {\n" +
-//                "        \"storage\": {\n" +
-//                "            \"value\": \"" + newBody + "\",\n" +
-//                "            \"representation\": \"storage\"\n" +
-//                "        }\n" +
-//                "    }\n" +
-//                "}";
+/*        String updatedPageBody = "{\n" +
+                "    \"version\": {\n" +
+                "        \"number\": " + (pageVersion + 1) + "\n" +
+                "    },\n" +
+                "    \"title\": \"" + title + "\",\n" +
+                "    \"type\": \"page\",\n" +
+                "    \"body\": {\n" +
+                "        \"storage\": {\n" +
+                "            \"value\": \"" + newBody + "\",\n" +
+                "            \"representation\": \"storage\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+*/
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         println("**** token is ${TOKEN}")
 
