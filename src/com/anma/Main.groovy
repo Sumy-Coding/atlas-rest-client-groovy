@@ -26,7 +26,10 @@ class Main {
 //        println(PageService.getChildren(id).results)
 
         // GET descendants
-        println(PageService.getDescendants(CONF_URL, "admin", "admin", id).each {println(it.title)})
+//        println(PageService.getDescendants(CONF_URL, "admin", "admin", id).each {println(it.title)})
+
+        // GET by label
+        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
 
         // PUT
 //        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
