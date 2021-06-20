@@ -17,10 +17,22 @@ class Main {
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
 
-        def id = 6324225
+//        def id = 6324225
+
+        // ************* Start ************
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
+//        println(">> Enter URL")
+//        String CONF_URL = reader.readLine()
+        println(">> Enter username")
+        String username = reader.readLine()
+        println(">> Enter password")
+        String password = reader.readLine()
+        println(">> Enter page ID")
+        long id = reader.readLine().toInteger()
 
         // GET page
-//        println(PageService.getPage(id))
+        println(PageService.getPage(CONF_URL, username, password, id))
 
         // GET children
 //        println(PageService.getChildren(id).results)
@@ -38,9 +50,9 @@ class Main {
 //        println(PageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
 
         // PUT -> update pages with label
-        PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {
-            println(PageService.updatePage(CONF_URL, "admin", "admin", it.id, toFind, toReplace))
-        }
+//        PageService.getDescendantsWithLabel(CONF_URL, "admin", "admin", id, "test").each {
+//            println(PageService.updatePage(CONF_URL, "admin", "admin", it.id, toFind, toReplace))
+//        }
 
         // PUT children
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
