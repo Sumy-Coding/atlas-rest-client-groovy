@@ -212,16 +212,18 @@ class PageService {
         return response
     }
 
-    static def addPageTitle(CONF_URL, username, password, id, toAdd, position) {
+    static def addPageTitlePart(CONF_URL, username, password, id, toAdd, position) {
 
         def page = getPage(CONF_URL, username, password, id)
         def pageVersion = page.version.number
         String title = page.title
         def newTitle = ""
-        if (position.equals("postfix")) {
+        if (position.equals(TitlePosition.POSTFIX.name())) {
             newTitle = title.concat(toAdd)
-        } else if (position.equals("prefix")) {
+        } else if (position.equals(TitlePosition.PREFIX.name())) {
             newTitle = toAdd + title
+        } else {
+            newTitle = title
         }
 
         // create entity for converting to JSON

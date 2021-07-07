@@ -1,9 +1,7 @@
 package com.anma
 
-import com.anma.models.Contents
+
 import com.anma.services.PageService
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 class Main {
 
@@ -60,8 +58,9 @@ class Main {
 //        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
 
         // Rename Page
+        // rest test - 1065015088
 //        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
-        PageService.addPageTitle(CONF_URL, username, password, id, "[PREFIX] ", "prefix")
+        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "prefix")
 
     }
 
