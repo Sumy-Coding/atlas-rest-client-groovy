@@ -34,7 +34,7 @@ class Main {
 //        println(PageService.getPage(CONF_URL, username, password, id))
 
         // GET children
-//        println(PageService.getChildren(id).results)
+        println(PageService.getChildren(CONF_URL, username, password, id).results)
 
         // GET descendants
 //        println(PageService.getDescendants(CONF_URL, "admin", "admin", id).each {println(it.title)})

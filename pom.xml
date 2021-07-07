@@ -8,7 +8,7 @@
     <artifactId>conf-groovy</artifactId>
     <version>1.0.0</version>
     <name>groovy-conf</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>

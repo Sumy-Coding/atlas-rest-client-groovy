@@ -13,7 +13,7 @@ class PageService {
 
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    static def getPage(CONF_URL, username, password, id) {
+    static Content getPage(CONF_URL, username, password, id) {
 //        id = 6324225
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
@@ -25,7 +25,7 @@ class PageService {
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return gson.fromJson(response.body(), Content.class).toString()
+        return gson.fromJson(response.body(), Content.class)
 
     }
 
@@ -72,7 +72,7 @@ class PageService {
 
     }
 
-    static def updatePage(confURL, username, password, id, toFind, toReplace) {
+    static def updateContentOnPage(confURL, username, password, id, toFind, toReplace) {
 
         final String CONF_URL = confURL
 
@@ -210,6 +210,12 @@ class PageService {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
         return response
+    }
+
+    static def renamePage(CONF_URL, username, password, id) {
+
+        def page = getPage(CONF_URL, username, password, id)
+
     }
 
 }
