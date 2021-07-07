@@ -212,9 +212,59 @@ class PageService {
         return response
     }
 
-    static def renamePage(CONF_URL, username, password, id) {
+    static def renamePage(CONF_URL, username, password, id, newTitle) {
 
         def page = getPage(CONF_URL, username, password, id)
+
+
+
+    }
+
+    static def findReplacePageTitlePart(CONF_URL, username, password, id, find, replace) {
+
+        def page = getPage(CONF_URL, username, password, id)
+
+        def pageVersion = page.version.number
+        String title = page.title
+        def newTitle = title.replace(find, replace)
+
+        // create entity for converting to JSON
+        Content updatedPage = new Content()
+        Version version = new Version()
+        version.number = pageVersion + 1
+        version.message = "changed with REST"
+        updatedPage.version = version
+        updatedPage.title = newTitle        // updated the title
+        updatedPage.type = "page"
+
+        String pageJSON = gson.toJson(updatedPage)  // convert to JSON
+        println(pageJSON)
+
+/*        String updatedPageBody = "{\n" +
+                "    \"version\": {\n" +
+                "        \"number\": " + (pageVersion + 1) + "\n" +
+                "    },\n" +
+                "    \"title\": \"" + title + "\",\n" +
+                "    \"type\": \"page\"\n" +
+                "}";
+*/
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        println("**** token is ${TOKEN}")
+
+        /* Performing the PUT request to replace body */
+        HttpClient client = HttpClient.newBuilder().build();
+//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
+        HttpRequest postReq = HttpRequest.newBuilder()
+                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
+                .PUT(publisher)
+                .headers("Authorization", "Basic ${TOKEN}")
+                .headers("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+
+        return postResponse.body()
 
     }
 

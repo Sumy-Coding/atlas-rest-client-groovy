@@ -57,8 +57,10 @@ class Main {
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
         // Add labels to page
-        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
+//        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
 
+        // Rename Page
+        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
 
     }
 
