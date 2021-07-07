@@ -60,7 +60,8 @@ class Main {
 //        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
 
         // Rename Page
-        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
+//        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
+        PageService.addPageTitle(CONF_URL, username, password, id, "[PREFIX] ", "prefix")
 
     }
 
