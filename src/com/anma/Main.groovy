@@ -1,6 +1,6 @@
 package com.anma
 
-
+import com.anma.models.TitlePosition
 import com.anma.services.PageService
 
 class Main {
@@ -60,7 +60,7 @@ class Main {
         // Rename Page
         // rest test - 1065015088
 //        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
-        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "prefix")
+        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
     }
 
