@@ -8,5 +8,4 @@ class Contents {
     def size
     def _links
 
-
 }

@@ -17,7 +17,7 @@ class PageService {
 //        id = 6324225
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))
+                URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))   // currently Storage is used for body
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();

@@ -7,9 +7,15 @@ class Main {
 
     static void main(String[] args) {
 
-        final String CONF_URL = "https://bass.netcracker.com"
+//=========== DU
+        def username = "Andrii.Maliuta";
+        final String CONF_URL = "https://confluence-datacenter.du.ae"
+//===== BASS
+//        def username = "anma0513";
+//        final String CONF_URL = "https://bass.netcracker.com"
 //        final def CONF_URL = "http://localhost:8712"
 
+// ====== DATA
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
 //        def id = 6324225
@@ -19,8 +25,8 @@ class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
 //        println(">> Enter URL")
 //        String CONF_URL = reader.readLine()
-        println(">> Enter username")
-        String username = reader.readLine()
+//        println(">> Enter username")
+//        String username = reader.readLine()
         println(">> Enter password")
         String password = reader.readLine()
         println(">> Enter page ID")
