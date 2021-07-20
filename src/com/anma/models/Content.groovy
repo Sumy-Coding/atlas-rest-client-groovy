@@ -1,6 +1,7 @@
 package com.anma.models
 
 class Content {
+
     def id
     def title
     def type
