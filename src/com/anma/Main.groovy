@@ -61,6 +61,7 @@ class Main {
         // rest test - 1065015088
 //        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
+//        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
     }
 
