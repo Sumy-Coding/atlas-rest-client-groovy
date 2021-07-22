@@ -11,8 +11,10 @@ class Main {
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
 //===== BASS
+
         def username = "anma0513";
-        final String CONF_URL = "https://bass.netcracker.com"
+//        final String CONF_URL = "https://bass.netcracker.com"
+        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final def CONF_URL = "http://localhost:8712"
 
 // ====== DATA
@@ -71,7 +73,7 @@ class Main {
 
         // rename pages
         PageService.getChildren(CONF_URL, username, password, id).results.each {
-            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "rts", "RTS")
+            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
         }
     }
 
