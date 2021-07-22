@@ -8,11 +8,11 @@ class Main {
     static void main(String[] args) {
 
 //=========== DU
-        def username = "Andrii.Maliuta";
-        final String CONF_URL = "https://confluence-datacenter.du.ae"
+//        def username = "Andrii.Maliuta";
+//        final String CONF_URL = "https://confluence-datacenter.du.ae"
 //===== BASS
-//        def username = "anma0513";
-//        final String CONF_URL = "https://bass.netcracker.com"
+        def username = "anma0513";
+        final String CONF_URL = "https://bass.netcracker.com"
 //        final def CONF_URL = "http://localhost:8712"
 
 // ====== DATA
@@ -35,7 +35,7 @@ class Main {
         // ******** Operations **********
 
         // GET page
-        println(PageService.getPage(CONF_URL, username, password, id))
+//        println(PageService.getPage(CONF_URL, username, password, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -65,10 +65,14 @@ class Main {
 
         // Rename Page
         // rest test - 1065015088
-//        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
+//        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "")
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
+        // rename pages
+        PageService.getChildren(CONF_URL, username, password, id).results.each {
+            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "rts", "RTS")
+        }
     }
 
 }
