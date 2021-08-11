@@ -35,7 +35,7 @@ class PageService {
 
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}/child/page"))
+                URI.create("${CONF_URL}/rest/api/content/${id}/child/page?limit=100"))      // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
@@ -53,7 +53,7 @@ class PageService {
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}"))
+                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=100"))     // limit = 100 pages
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
