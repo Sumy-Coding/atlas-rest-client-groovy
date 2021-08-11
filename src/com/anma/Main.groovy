@@ -13,8 +13,8 @@ class Main {
 //===== BASS
 
         def username = "anma0513";
-//        final String CONF_URL = "https://bass.netcracker.com"
-        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
+        final String CONF_URL = "https://bass.netcracker.com"
+//        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final def CONF_URL = "http://localhost:8712"
 
 // ====== DATA
@@ -77,7 +77,11 @@ class Main {
 //        }
 
         // replace PAGE INFO
-        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
+//        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
+        // multiple
+        PageService.getChildren(CONF_URL, username, password, id).results.each {
+            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
+        }
     }
 
 }

@@ -93,7 +93,8 @@ class PageService {
         Content updatedPage = new Content()
         Version version = new Version()
         version.number = pageVersion + 1
-        version.message = "changed with REST"
+//        version.message = "changed with REST"
+        version.message = ""
         updatedPage.version = version
         updatedPage.title = title
         updatedPage.type = "page"
@@ -147,7 +148,14 @@ class PageService {
         def pageVersion = getPage(CONF_URL, username, password, id).version.number
         def title = getPage(CONF_URL, username, password, id).title
         String body = getPage(CONF_URL, username, password, id).body.storage.value
-        String macroString = body.substring(body.indexOf("<ac:structured-macro ac:name=\"page-info\""), body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
+        String macroString = "";
+        if (body.contains("<ac:structured-macro ac:name=\"page-info\"")) {
+            try {
+                macroString = body.substring(body.indexOf("<ac:structured-macro ac:name=\"page-info\""), body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
+            } catch(Exception e) {
+                e.printStackTrace()
+            }
+        }
 
         String newBody = body.replace(macroString, title);
 
@@ -155,7 +163,7 @@ class PageService {
         Content updatedPage = new Content()
         Version version = new Version()
         version.number = pageVersion + 1
-        version.message = "changed with REST"
+        version.message = "changed page info macro"
         updatedPage.version = version
         updatedPage.title = title
         updatedPage.type = "page"
