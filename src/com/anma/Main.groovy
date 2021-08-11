@@ -72,9 +72,12 @@ class Main {
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
         // rename pages
-        PageService.getChildren(CONF_URL, username, password, id).results.each {
-            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
-        }
+//        PageService.getChildren(CONF_URL, username, password, id).results.each {
+//            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
+//        }
+
+        // replace PAGE INFO
+        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
     }
 
 }

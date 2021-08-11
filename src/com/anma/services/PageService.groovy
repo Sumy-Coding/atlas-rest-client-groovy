@@ -25,6 +25,8 @@ class PageService {
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+//        println(response.body())
+
         return gson.fromJson(response.body(), Content.class)
 
     }
@@ -121,11 +123,56 @@ class PageService {
                 "}";
 */
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
-        println("**** token is ${TOKEN}")
+//        println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
 //        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
+        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
+        HttpRequest postReq = HttpRequest.newBuilder()
+                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
+                .PUT(publisher)
+                .headers("Authorization", "Basic ${TOKEN}")
+                .headers("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+
+        return postResponse.body()
+
+    }
+
+    static def replacePageInfoMacro(CONF_URL, username, password, id) {
+
+        def pageVersion = getPage(CONF_URL, username, password, id).version.number
+        def title = getPage(CONF_URL, username, password, id).title
+        String body = getPage(CONF_URL, username, password, id).body.storage.value
+        String macroString = body.substring(body.indexOf("<ac:structured-macro ac:name=\"page-info\""), body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
+
+        String newBody = body.replace(macroString, title);
+
+        // create entity for converting to JSON
+        Content updatedPage = new Content()
+        Version version = new Version()
+        version.number = pageVersion + 1
+        version.message = "changed with REST"
+        updatedPage.version = version
+        updatedPage.title = title
+        updatedPage.type = "page"
+        Body updBody = new Body()
+        Storage storage = new Storage()
+        storage.value = newBody
+        storage.representation = "storage"
+        updBody.storage = storage
+        updatedPage.body = updBody
+
+        String pageJSON = gson.toJson(updatedPage)  // convert to JSON
+        println(pageJSON)
+
+        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+
+        /* Performing the PUT request to replace body */
+        HttpClient client = HttpClient.newBuilder().build();
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
         HttpRequest postReq = HttpRequest.newBuilder()
                 .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
