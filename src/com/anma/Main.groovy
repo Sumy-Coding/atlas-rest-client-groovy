@@ -79,7 +79,7 @@ class Main {
         // replace PAGE INFO
 //        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
         // multiple
-        PageService.getChildren(CONF_URL, username, password, id).results.each {
+        PageService.getDescendants(CONF_URL, username, password, id).results.each {
             PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
         }
     }

@@ -48,7 +48,8 @@ class PageService {
 
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
-    static def getDescendants(CONF_URL, username, password, id) {
+    /* ?cql=ancesto shows WRONG data - some pages are from other parent !! */
+    static def getDescendants(CONF_URL, username, password, id) {0
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
         def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
@@ -70,7 +71,7 @@ class PageService {
 //                while ()
 //            }
 //        }
-        return contents.results
+        return contents
 
     }
 
