@@ -7,9 +7,17 @@ class Main {
 
     static void main(String[] args) {
 
+//=========== DU
+//        def username = "Andrii.Maliuta";
+//        final String CONF_URL = "https://confluence-datacenter.du.ae"
+//===== BASS
+
+        def username = "anma0513";
         final String CONF_URL = "https://bass.netcracker.com"
+//        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final def CONF_URL = "http://localhost:8712"
 
+// ====== DATA
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
 //        def id = 6324225
@@ -19,8 +27,8 @@ class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
 //        println(">> Enter URL")
 //        String CONF_URL = reader.readLine()
-        println(">> Enter username")
-        String username = reader.readLine()
+//        println(">> Enter username")
+//        String username = reader.readLine()
         println(">> Enter password")
         String password = reader.readLine()
         println(">> Enter page ID")
@@ -59,9 +67,22 @@ class Main {
 
         // Rename Page
         // rest test - 1065015088
-//        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "test", "changed")
-        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
+//        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "")
+//        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
+//        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
+        // rename pages
+//        PageService.getChildren(CONF_URL, username, password, id).results.each {
+//            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
+//        }
+
+        // replace PAGE INFO
+//        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
+
+        // multiple page info
+        PageService.getDescendants(CONF_URL, username, password, id).results.each {
+            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
+        }
     }
 
 }

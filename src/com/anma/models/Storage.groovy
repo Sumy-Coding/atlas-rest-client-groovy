@@ -1,6 +1,6 @@
 package com.anma.models
 
 class Storage {
-    def value
+    String value
     def representation
 }
