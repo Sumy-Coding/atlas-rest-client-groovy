@@ -3,7 +3,6 @@ package com.anma.services
 import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.thoughtworks.xstream.core.util.Base64Encoder
 
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -15,7 +14,7 @@ class PageService {
 
     static Content getPage(CONF_URL, username, password, id) {
 //        id = 6324225
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))   // currently Storage is used for body
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -33,7 +32,7 @@ class PageService {
 
     static def getChildren(CONF_URL, username, password, id) {
 
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}/child/page?limit=100"))      // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -52,7 +51,7 @@ class PageService {
     static def getDescendants(CONF_URL, username, password, id) {0
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=100"))     // limit = 100 pages
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -124,7 +123,7 @@ class PageService {
                 "    }\n" +
                 "}";
 */
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 //        println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */
@@ -178,7 +177,7 @@ class PageService {
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 
         /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
@@ -199,7 +198,8 @@ class PageService {
     static def getSpacePagesByLabel(CONF_URL, username, password, spaceKey, label) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+//        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"))       // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -217,7 +217,7 @@ class PageService {
     static def getDescendantsWithLabel(CONF_URL, username, password, id, label) {
 
 //        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        String TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}&limit=100"))      // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -294,7 +294,7 @@ class PageService {
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */
@@ -343,7 +343,7 @@ class PageService {
                 "    \"type\": \"page\"\n" +
                 "}";
 */
-        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */

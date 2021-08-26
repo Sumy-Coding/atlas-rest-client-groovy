@@ -13,8 +13,8 @@ class Main {
 //===== BASS
 
         def username = "anma0513";
-        final String CONF_URL = "https://bass.netcracker.com"
-//        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
+//        final String CONF_URL = "https://bass.netcracker.com"
+        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final def CONF_URL = "http://localhost:8712"
 
 // ====== DATA
