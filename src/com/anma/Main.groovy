@@ -12,7 +12,7 @@ class Main {
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
 //===== BASS
 
-        def username = "anma0513";
+        def username = "beastiehut@gmail.com";
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
         final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
@@ -35,10 +35,12 @@ class Main {
         println(">> Enter page ID")
         long id = reader.readLine().toInteger()
 
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
+
         // ******** Operations **********
 
         // GET page
-//        println(PageService.getPage(CONF_URL, username, password, id))
+        println(PageService.getPage(CONF_URL, TOKEN, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)

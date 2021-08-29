@@ -3,6 +3,7 @@ package com.anma.services
 import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.mashape.unirest.http.Unirest
 
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -12,9 +13,8 @@ class PageService {
 
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    static Content getPage(CONF_URL, username, password, id) {
+    static Content getPage(CONF_URL, TOKEN, id) {
 
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))   // currently Storage is used for body
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -23,7 +23,6 @@ class PageService {
 //        HttpHeaders httpHeaders = HttpHeaders();
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
 //        println(response.body())
 
         return gson.fromJson(response.body(), Content.class)
@@ -47,7 +46,7 @@ class PageService {
 
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
-    /* ?cql=ancesto shows WRONG data - some pages are from other parent !! */
+    /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
     static def getDescendants(CONF_URL, username, password, id) {0
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
@@ -59,7 +58,6 @@ class PageService {
                 .build();
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
 //        def allPages = []
 
         Contents contents = gson.fromJson(response.body(), Contents.class)
@@ -74,18 +72,27 @@ class PageService {
 
     }
 
-    static def updateContentOnPage(confURL, username, password, id, toFind, toReplace) {
+    static def getSpacePagesByLabel() {
 
-        final String CONF_URL = confURL
+    }
 
-        def pageVersion = getPage(confURL, username, password, id).version.number
-        def title = getPage(confURL, username, password, id).title
-        String body = getPage(confURL, username, password, id).body.storage.value
+    static def createPage(CONF_URL, TOKEN, parentId) {
 
-//        println("+++ in update")
-//        println(pageVersion)
-//        println(title)
-//        println(body)
+        Unirest.setTimeouts(0, 0);
+        Map<String, String> headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
+        def conent = new Content()
+        def body = ""
+        return Unirest.post("${CONF_URL}/rest/api/content")
+                .headers(headers).body()
+                .body()
+                .asString()
+    }
+
+    static def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
+
+        def pageVersion = getPage(confURL, TOKEN, id).version.number
+        def title = getPage(confURL, TOKEN, id).title
+        String body = getPage(confURL, TOKEN, id).body.storage.value
 
         String newBody = body.replace(toFind, toReplace);
 
@@ -123,15 +130,12 @@ class PageService {
                 "    }\n" +
                 "}";
 */
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-//        println("**** token is ${TOKEN}")
-
         /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
 //        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
         HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
         HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
+                .uri(URI.create("${confURL}/rest/api/content/${id}"))
                 .PUT(publisher)
                 .headers("Authorization", "Basic ${TOKEN}")
                 .headers("Content-Type", "application/json")
@@ -143,11 +147,11 @@ class PageService {
 
     }
 
-    static def replacePageInfoMacro(CONF_URL, username, password, id) {
+    static def replacePageInfoMacro(CONF_URL, TOKEN, id) {
 
-        def pageVersion = getPage(CONF_URL, username, password, id).version.number
-        def title = getPage(CONF_URL, username, password, id).title
-        String body = getPage(CONF_URL, username, password, id).body.storage.value
+        def pageVersion = getPage(CONF_URL, TOKEN, id).version.number
+        def title = getPage(CONF_URL, TOKEN, id).title
+        String body = getPage(CONF_URL, TOKEN, id).body.storage.value
         String macroString = "";
         if (body.contains("<ac:structured-macro ac:name=\"page-info\"")) {
             try {
@@ -176,8 +180,6 @@ class PageService {
 
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
-
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 
         /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
@@ -242,7 +244,7 @@ class PageService {
 
         labels.each { label ->
             Label label1 = new Label()
-            label1.setPrefix("global")
+            label1.prefix = "global"
             label1.setName(label)
 //            String labelJson = gson.toJson(label1, Label.class)
             labelsArray.add(label1)
