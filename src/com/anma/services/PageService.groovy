@@ -13,7 +13,7 @@ class PageService {
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     static Content getPage(CONF_URL, username, password, id) {
-//        id = 6324225
+
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))   // currently Storage is used for body
@@ -312,7 +312,6 @@ class PageService {
 
         return postResponse.body()
 
-
     }
 
     static def findReplacePageTitlePart(CONF_URL, username, password, id, find, replace) {
@@ -362,5 +361,4 @@ class PageService {
         return postResponse.body()
 
     }
-
 }
