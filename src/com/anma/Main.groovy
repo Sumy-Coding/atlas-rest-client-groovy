@@ -1,6 +1,6 @@
 package com.anma
 
-import com.anma.models.TitlePosition
+
 import com.anma.services.PageService
 
 class Main {
@@ -12,16 +12,18 @@ class Main {
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
 //===== BASS
 
-        def username = "beastiehut@gmail.com";
+//        def username = "beastiehut@gmail.com";
+        def username = "admin";
+        String password = 'admin'
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
-//        final def CONF_URL = "http://localhost:8712"
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
+        final def CONF_URL = "http://localhost:7130"
+        def id = 884752
 
 // ====== DATA
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
-//        def id = 6324225
 
         // ************* Start ************
 
@@ -30,17 +32,17 @@ class Main {
 //        String CONF_URL = reader.readLine()
 //        println(">> Enter username")
 //        String username = reader.readLine()
-        println(">> Enter password")
-        String password = reader.readLine()
-        println(">> Enter page ID")
-        long id = reader.readLine().toInteger()
+//        println(">> Enter password")
+//        String password = reader.readLine()
+//        println(">> Enter page ID")
+//        long id = reader.readLine().toInteger()
 
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 
         // ******** Operations **********
 
         // GET page
-        println(PageService.getPage(CONF_URL, TOKEN, id))
+//        println(PageService.getPage(CONF_URL, TOKEN, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -83,9 +85,12 @@ class Main {
 //        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
 
         // multiple page info
-        PageService.getDescendants(CONF_URL, username, password, id).results.each {
-            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
-        }
+//        PageService.getDescendants(CONF_URL, username, password, id).results.each {
+//            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
+//        }
+
+        // Create comment
+        println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], id, 'page', 'REST comment').status)
     }
 
 }

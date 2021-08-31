@@ -7,8 +7,10 @@ class Content {
     def type
     def status
     def ancestors
+    Container container
     Version version
     Body body
+    Space space
 
     @Override
     String toString() {

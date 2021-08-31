@@ -88,6 +88,33 @@ class PageService {
                 .asString()
     }
 
+    static def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
+
+        Unirest.setTimeouts(0, 0);
+        def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
+        def content = new Content()
+        content.title = 'comment'
+        content.type = 'comment'
+        content.status = 'current'
+        Space space1 = new Space()
+        content.space = space1
+        space1.key = space
+        Container container = new Container()
+        container.type = containerType
+        container.id = containerId
+        Body body1 = new Body()
+        Storage storage = new Storage()
+        storage.representation = 'storage'
+        storage.value = body
+        body1.storage = storage
+
+        return Unirest.post("${CONF_URL}/rest/api/content")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .body(gson.toJson(content))
+                .asString()
+    }
+
     static def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
 
         def pageVersion = getPage(confURL, TOKEN, id).version.number
@@ -114,7 +141,6 @@ class PageService {
 //        println(updatedPage)
 
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
-        println(pageJSON)
 
 /*        String updatedPageBody = "{\n" +
                 "    \"version\": {\n" +
