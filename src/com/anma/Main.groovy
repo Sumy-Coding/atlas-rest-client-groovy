@@ -5,6 +5,18 @@ import com.anma.services.PageService
 
 class Main {
 
+    private static String getRandomString(length) {
+        Random random = new Random()
+        def lorem = 'Lorem ipsum dolor sit amet consectetur adipiscing elit maecenas interdum pellentesque, ' +
+                'sollicitudin hendrerit cubilia primis nisl feugiat placerat tellus mauris'
+        def loremArr = lorem.split(' ')
+        def randomString = ''
+        for (i in 0..<length) {
+            randomString = randomString.concat(loremArr[random.nextInt(loremArr.length - 1)]).concat(' ')
+        }
+        return randomString
+    }
+
     static void main(String[] args) {
 
 //=========== DU
@@ -38,6 +50,7 @@ class Main {
 //        long id = reader.readLine().toInteger()
 
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
+
 
         // ******** Operations **********
 
@@ -90,11 +103,9 @@ class Main {
 //        }
 
 // ========  Create comment
-//        Random random = new Random()
-//        int randomInt = random.nextInt()
-        for (i in 1..100) {
-            def commentBody = "Lorem ipsum dolor sit amet consectetur adipiscing elit etiam est pulvinar fames, vestibulum ${i}"
-            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 1179842, 'page', commentBody).status)
+        for (i in 1..10) {
+            String randomString = getRandomString(15)
+            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 1179841, 'page', randomString).status)
         }
 
 // ======= Create PAGE
@@ -104,5 +115,7 @@ class Main {
 //            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', id, title, pageBody).body)
 //        }
     }
+
+
 
 }
