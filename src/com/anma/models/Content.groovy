@@ -6,7 +6,7 @@ class Content {
     def title
     def type
     def status
-    def ancestors
+    Ancestor[] ancestors
     Container container
     Version version
     Body body

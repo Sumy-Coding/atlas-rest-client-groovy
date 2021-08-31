@@ -19,7 +19,7 @@ class Main {
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
         final def CONF_URL = "http://localhost:7130"
-        def id = 884752
+        def id = 1179674
 
 // ====== DATA
         def toFind = "lorem dolor"
@@ -92,10 +92,17 @@ class Main {
 // ========  Create comment
 //        Random random = new Random()
 //        int randomInt = random.nextInt()
-        for (i in 0..30) {
+        for (i in 1..100) {
             def commentBody = "Lorem ipsum dolor sit amet consectetur adipiscing elit etiam est pulvinar fames, vestibulum ${i}"
-            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], id, 'page', commentBody).status)
+            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 1179842, 'page', commentBody).status)
         }
+
+// ======= Create PAGE
+//        for (i in 2..100) {
+//            def pageBody = "Lorem ipsum dolor sit amet consectetur adipiscing elit etiam est pulvinar fames, vestibulum ${i}"
+//            def title = "TEST Page REST new " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', id, title, pageBody).body)
+//        }
     }
 
 }

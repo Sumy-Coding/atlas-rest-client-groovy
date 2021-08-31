@@ -76,15 +76,42 @@ class PageService {
 
     }
 
-    static def createPage(CONF_URL, TOKEN, parentId) {
-
+    static def createPage(CONF_URL, TOKEN, space, parentId, title,body) {
+        println(">>>>>>> Performing CREATE PAGE request")
         Unirest.setTimeouts(0, 0);
-        Map<String, String> headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
-        def conent = new Content()
-        def body = ""
+        def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
+
+        def content = new Content()
+        content.title = title
+        content.type = 'page'
+        content.status = 'current'
+        Space space1 = new Space()
+        content.space = space1
+        space1.key = space
+//        Container container = new Container()   // Can be skipped
+//        container.type = 'page'
+//        container.id = pare
+//        content.container = container
+        Ancestor ancestor = new Ancestor()
+        Body body1 = new Body()
+        Storage storage = new Storage()
+        body1.storage = storage
+        storage.representation = 'storage'
+        storage.value = body
+        content.body = body1
+//        Version version = new Version()
+//        version.message = 'test'
+//        version.number = 1
+//        content.version = version
+        ancestor.id = parentId.toString()
+        Ancestor[] ancestors = [ ancestor ]
+        content.ancestors = ancestors
+//        println(gson.toJson(content))
+
         return Unirest.post("${CONF_URL}/rest/api/content")
-                .headers(headers).body()
-                .body()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .body(gson.toJson(content))
                 .asString()
     }
 
