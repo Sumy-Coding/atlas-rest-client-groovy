@@ -89,8 +89,13 @@ class Main {
 //            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
 //        }
 
-        // Create comment
-        println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], id, 'page', 'REST comment').status)
+// ========  Create comment
+//        Random random = new Random()
+//        int randomInt = random.nextInt()
+        for (i in 0..30) {
+            def commentBody = "Lorem ipsum dolor sit amet consectetur adipiscing elit etiam est pulvinar fames, vestibulum ${i}"
+            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], id, 'page', commentBody).status)
+        }
     }
 
 }

@@ -89,7 +89,7 @@ class PageService {
     }
 
     static def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
-
+        println(">>>>>>>>> Performing Create Comment request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
@@ -104,9 +104,12 @@ class PageService {
         container.id = containerId
         Body body1 = new Body()
         Storage storage = new Storage()
+        body1.storage = storage
         storage.representation = 'storage'
         storage.value = body
-        body1.storage = storage
+        content.body = body1
+        content.container = container
+//        println(gson.toJson(content))
 
         return Unirest.post("${CONF_URL}/rest/api/content")
                 .header("Content-Type", "application/json")
