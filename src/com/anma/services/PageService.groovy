@@ -69,10 +69,23 @@ class PageService {
 //            }
 //        }
         return contents
-
     }
 
     static def getSpacePagesByLabel() {
+        println(">>>>>>> Performing GET Pages request")
+
+    }
+
+    static def getPageLabels() {
+        println(">>>>>>> Performing GET LABELS request")
+
+    }
+
+    static def deletePageLabels() {
+
+    }
+
+    static def getScrollTemplates() {
 
     }
 
@@ -419,4 +432,14 @@ class PageService {
         return postResponse.body()
 
     }
+
+    static def getPageRestrictions() {
+        // todo GET /rest/api/content/{id}/restriction/byOperation
+        
+    }
+
+
+    // todo GET /rest/api/space/{spaceKey}/content
+    // todo GET /rest/api/content/{id}/child/attachment
+    // todo DELETE /rest/api/content/{id}/label/...
 }

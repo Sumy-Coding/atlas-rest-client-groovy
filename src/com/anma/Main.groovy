@@ -103,17 +103,17 @@ class Main {
 //        }
 
 // ========  Create comment
-        for (i in 1..10) {
-            String randomString = getRandomString(15)
-            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 1179841, 'page', randomString).status)
-        }
+//        for (i in 1..3) {
+//            String randomString = getRandomString(15)
+//            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 1179842, 'comment', randomString).status)
+//        }
 
 // ======= Create PAGE
-//        for (i in 2..100) {
-//            def pageBody = "Lorem ipsum dolor sit amet consectetur adipiscing elit etiam est pulvinar fames, vestibulum ${i}"
-//            def title = "TEST Page REST new " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', id, title, pageBody).body)
-//        }
+        for (i in 1..100) {
+            def pageBody = getRandomString(200)
+            def title = "TEST Page RST " + i
+            println(PageService.createPage(CONF_URL, TOKEN, 'DOCS', 1376264, title, pageBody).body)
+        }
     }
 
 
