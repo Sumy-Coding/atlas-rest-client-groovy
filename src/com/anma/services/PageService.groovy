@@ -89,6 +89,16 @@ class PageService {
 
     }
 
+    static def createSpace(CONF_URL, TOKEN, space) {
+        Space newSpace = new Space()
+
+        Unirest.post("${CONF_URL}/rest/api/space")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .body(gson.toJson(newSpace))
+                .asString()
+    }
+
     static def createPage(CONF_URL, TOKEN, space, parentId, title,body) {
         println(">>>>>>> Performing CREATE PAGE request")
         Unirest.setTimeouts(0, 0);
@@ -435,7 +445,7 @@ class PageService {
 
     static def getPageRestrictions() {
         // todo GET /rest/api/content/{id}/restriction/byOperation
-        
+
     }
 
 
