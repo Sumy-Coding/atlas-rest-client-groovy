@@ -1,6 +1,5 @@
 package com.anma
 
-
 import com.anma.services.PageService
 
 class Main {
@@ -48,9 +47,7 @@ class Main {
 //        String password = reader.readLine()
 //        println(">> Enter page ID")
 //        long id = reader.readLine().toInteger()
-
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-
 
         // ******** Operations **********
 
@@ -103,9 +100,16 @@ class Main {
 //        }
 
 // ========  Create comment
-        for (i in 1..30) {
-            String randomString = getRandomString(20)
-            println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], 1900545, 'page', randomString).body)
+//        for (i in 1..30) {
+//            String randomString = getRandomString(20)
+//            println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], 1900545, 'page', randomString).body)
+//        }
+        // == Create for children
+        PageService.getChildren(CONF_URL, TOKEN, 1900545).results.each {
+            for (i in 1..30) {
+                String randomString = getRandomString(20)
+                println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], it.id, 'page', randomString).body)
+            }
         }
 
 // ======= Create PAGE
@@ -115,7 +119,5 @@ class Main {
 //            println(PageService.createPage(CONF_URL, TOKEN, 'DOCS', 1900545, title, pageBody).body)
 //        }
     }
-
-
 
 }

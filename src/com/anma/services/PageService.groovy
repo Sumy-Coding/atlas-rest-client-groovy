@@ -29,11 +29,10 @@ class PageService {
 
     }
 
-    static def getChildren(CONF_URL, username, password, id) {
+    static def getChildren(CONF_URL, TOKEN, id) {
 
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}/child/page?limit=100"))      // 100 pages limit
+                URI.create("${CONF_URL}/rest/api/content/${id}/child/page?limit=300"))      // 300 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
@@ -41,7 +40,6 @@ class PageService {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         return gson.fromJson(response.body(), Contents.class)
-
     }
 
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */

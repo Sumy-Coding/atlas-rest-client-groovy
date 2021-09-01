@@ -14,6 +14,6 @@ class Content {
 
     @Override
     String toString() {
-        return "id: ${id} | title: ${title} | type: ${type} | Version: ${version.number} | Body: ${body.storage.value} "
+        return "id: ${id} | title: ${title} | type: ${type} | Version: ${version} | Body: ${body} "
     }
 }
