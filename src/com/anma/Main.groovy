@@ -24,13 +24,13 @@ class Main {
 //===== BASS
 
 //        def username = "beastiehut@gmail.com";
-        def username = "admin";
-        String password = 'admin'
+        def username = "beastiehut@gmail.com";
+        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
-        final def CONF_URL = "http://localhost:7130"
-        def id = 1179674
+        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
+//        final def CONF_URL = "http://localhost:7130"
+        def id = 431423503
 
 // ====== DATA
         def toFind = "lorem dolor"
@@ -52,7 +52,7 @@ class Main {
         // ******** Operations **********
 
         // GET page
-//        println(PageService.getPage(CONF_URL, TOKEN, id))
+        println(PageService.getPage(CONF_URL, TOKEN, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -105,12 +105,12 @@ class Main {
 //            println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], 1900545, 'page', randomString).body)
 //        }
         // == Create for children
-        PageService.getChildren(CONF_URL, TOKEN, 1900545).results.each {
-            for (i in 1..30) {
-                String randomString = getRandomString(20)
-                println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], it.id, 'page', randomString).body)
-            }
-        }
+//        PageService.getChildren(CONF_URL, TOKEN, 1900545).results.each {
+//            for (i in 1..30) {
+//                String randomString = getRandomString(20)
+//                println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], it.id, 'page', randomString).body)
+//            }
+//        }
 
 // ======= Create PAGE
 //        for (i in 1..200) {
