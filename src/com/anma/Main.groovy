@@ -61,7 +61,10 @@ class Main {
 //        println(PageService.getDescendants(CONF_URL, username, password, id).each {println(it.title)})
 
         // GET space pages
-        println(PageService.getSpacePages(CONF_URL, TOKEN, 'TEST').results)
+//        println(PageService.getSpacePages(CONF_URL, TOKEN, 'TEST').results)
+
+        // GET blogs
+        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
 
         // GET space pages by label
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
@@ -77,27 +80,27 @@ class Main {
 //            println(PageService.updatePage(CONF_URL, username, password, it.id, toFind, toReplace))
 //        }
 
-        // PUT children
+        // ==== PUT children
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
-        // Add labels to page
+        // ==== Add labels to page
 //        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
 
-        // Rename Page
+        // ==== Rename Page
         // rest test - 1065015088
 //        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "")
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
-        // rename pages
+        // ==== Rename pages
 //        PageService.getChildren(CONF_URL, username, password, id).results.each {
 //            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
 //        }
 
-        // replace PAGE INFO
+        // ==== replace PAGE INFO
 //        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
 
-        // multiple page info
+        // ==== multiple page info
 //        PageService.getDescendants(CONF_URL, username, password, id).results.each {
 //            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
 //        }
@@ -107,7 +110,7 @@ class Main {
 //            String randomString = getRandomString(20)
 //            println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], 1900545, 'page', randomString).body)
 //        }
-        // == Create for children
+        // == Create comments for children
 //        PageService.getChildren(CONF_URL, TOKEN, 1900545).results.each {
 //            for (i in 1..30) {
 //                String randomString = getRandomString(20)

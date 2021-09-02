@@ -48,7 +48,7 @@ class PageService {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=100"))     // limit = 100 pages
+                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=300"))     // limit = 300 pages
                 .header("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
@@ -80,7 +80,7 @@ class PageService {
         return contents
     }
 
-    static def getSpacePagesByLabel() {
+    static def getSpacePagesByLabel() {                                 // todo
         println(">>>>>>> Performing GET Pages request")
 
 
@@ -89,28 +89,47 @@ class PageService {
     static def getSpaceBlogs(CONF_URL, TOKEN, space) {
         println(">>>>>>> Performing GET Pages request")
         //http://localhost:7130/rest/api/content?type=blogpost&spaceKey=TEST
-        Unirest.get("${CONF_URL}/rest/api/content?type=blogpost&spaceKey=${space}")
-                .header("Authorization", "Basic ${TOKEN}")
-                .asString()
+        com.mashape.unirest.http.HttpResponse<String> response =
+                Unirest.get("${CONF_URL}/rest/api/content?type=blogpost&spaceKey=${space}&limit=300")  // limit = 300 blogs
+                    .header("Authorization", "Basic ${TOKEN}")
+                    .asString()
 
+        return gson.fromJson(response.body, Contents.class)
 
     }
 
-    static def getPageLabels() {
+    static def getPageLabels(CONF_URL, TOKEN, id) {
         println(">>>>>>> Performing GET LABELS request")
+        com.mashape.unirest.http.HttpResponse<String> response =
+                Unirest.get("${CONF_URL}/rest/api/content/${id}/label")
+                    .header("Authorization", "Basic ${TOKEN}")
+                    .asString()
 
+        return gson.fromJson(response.body, Contents.class)
     }
 
-    static def deletePageLabels() {
+    static def deletePageLabels(CONF_URL, TOKEN, id, label) {
+        println(">>>>>>> Performing DELETE LABELS request")
+        com.mashape.unirest.http.HttpResponse<String> response =
+                Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
 
+        return gson.fromJson(response.body, Contents.class)
     }
 
     static def getScrollTemplates() {
+        println(">>>>>>> Performing DELETE LABELS request")
+        com.mashape.unirest.http.HttpResponse<String> response =
+                Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
 
+        return gson.fromJson(response.body, Contents.class)
     }
 
     static def createSpace(CONF_URL, TOKEN, space) {
-        Space newSpace = new Space()
+        Space newSpace = new Space()            // todo
 
         Unirest.post("${CONF_URL}/rest/api/space")
                 .header("Content-Type", "application/json")
