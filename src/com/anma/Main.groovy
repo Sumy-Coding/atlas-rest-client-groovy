@@ -52,13 +52,16 @@ class Main {
         // ******** Operations **********
 
         // GET page
-        println(PageService.getPage(CONF_URL, TOKEN, id))
+//        println(PageService.getPage(CONF_URL, TOKEN, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
 
         // GET descendants
 //        println(PageService.getDescendants(CONF_URL, username, password, id).each {println(it.title)})
+
+        // GET space pages
+        println(PageService.getSpacePages(CONF_URL, TOKEN, 'TEST').results)
 
         // GET space pages by label
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})

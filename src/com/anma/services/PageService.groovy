@@ -26,7 +26,6 @@ class PageService {
 //        println(response.body())
 
         return gson.fromJson(response.body(), Content.class)
-
     }
 
     static def getChildren(CONF_URL, TOKEN, id) {
@@ -45,13 +44,12 @@ class PageService {
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
     /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
-    static def getDescendants(CONF_URL, username, password, id) {0
+    static def getDescendants(CONF_URL, TOKEN, id) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=100"))     // limit = 100 pages
-                .headers("Authorization", "Basic ${TOKEN}")
+                .header("Authorization", "Basic ${TOKEN}")
                 .GET()
                 .build();
         HttpClient client = HttpClient.newBuilder().build();
@@ -69,8 +67,32 @@ class PageService {
         return contents
     }
 
+    static def getSpacePages(CONF_URL, TOKEN, space) {
+        println(">>>>>>> Performing GET Pages request")
+        //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
+         com.mashape.unirest.http.HttpResponse<String> response =
+                 Unirest.get("${CONF_URL}/rest/api/content?type=page&spaceKey=${space}&limit=300")      // limit = 300 pages
+                    .header("Authorization", "Basic ${TOKEN}")
+                    .asString()
+
+        Contents contents = gson.fromJson(response.body, Contents.class)
+
+        return contents
+    }
+
     static def getSpacePagesByLabel() {
         println(">>>>>>> Performing GET Pages request")
+
+
+    }
+
+    static def getSpaceBlogs(CONF_URL, TOKEN, space) {
+        println(">>>>>>> Performing GET Pages request")
+        //http://localhost:7130/rest/api/content?type=blogpost&spaceKey=TEST
+        Unirest.get("${CONF_URL}/rest/api/content?type=blogpost&spaceKey=${space}")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
+
 
     }
 
@@ -271,14 +293,12 @@ class PageService {
         HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
         return postResponse.body()
-
     }
 
-    static def getSpacePagesByLabel(CONF_URL, username, password, spaceKey, label) {
+    static def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
 //        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"))       // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -293,10 +313,9 @@ class PageService {
 
     }
 
-    static def getDescendantsWithLabel(CONF_URL, username, password, id, label) {
+    static def getDescendantsWithLabel(CONF_URL, TOKEN, id, label) {
 
 //        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
-        String TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}&limit=100"))      // 100 pages limit
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -315,7 +334,7 @@ class PageService {
         POST /rest/api/content/{id}/label
         https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/label-deleteLabel
      */
-    static def addLabelsToPage(CONF_URL, username, password, id, List<String> labels) {
+    static def addLabelsToPage(CONF_URL, TOKEN, id, List<String> labels) {
 
         def labelsArray = []
 
@@ -333,7 +352,6 @@ class PageService {
 //        println(labelsArrayJSON)
 
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(labelsArrayJSON)
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("${CONF_URL}/rest/api/content/${id}/label"))
                 .headers("Authorization", "Basic ${TOKEN}")
@@ -347,9 +365,9 @@ class PageService {
         return response
     }
 
-    static def addPageTitlePart(CONF_URL, username, password, id, toAdd, position) {
+    static def addPageTitlePart(CONF_URL, TOKEN, id,toAdd, position) {
 
-        def page = getPage(CONF_URL, username, password, id)
+        def page = getPage(CONF_URL, TOKEN, id)
         def pageVersion = page.version.number
         String title = page.title
         def newTitle = ""
@@ -372,9 +390,6 @@ class PageService {
 
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
-
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-        println("**** token is ${TOKEN}")
 
         /* Performing the PUT request to replace body */
         HttpClient client = HttpClient.newBuilder().build();
