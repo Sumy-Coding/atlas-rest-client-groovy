@@ -18,12 +18,12 @@ class Main {
 
     static void main(String[] args) {
 
-//=========== DU
+// ====== DATA
+        //=========== DU
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
 //===== BASS
 
-//        def username = "beastiehut@gmail.com";
         def username = "beastiehut@gmail.com";
         String password = 'RtuJhOJZADwGBrJzofpBFCB8'
 //        final String CONF_URL = "https://bass.netcracker.com"
@@ -31,14 +31,13 @@ class Main {
         final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
 //        final def CONF_URL = "http://localhost:7130"
         def id = 431423503
-
-// ====== DATA
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
 
         // ************* Start ************
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
+        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 //        println(">> Enter URL")
 //        String CONF_URL = reader.readLine()
 //        println(">> Enter username")
@@ -47,7 +46,6 @@ class Main {
 //        String password = reader.readLine()
 //        println(">> Enter page ID")
 //        long id = reader.readLine().toInteger()
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
 
         // ******** Operations **********
 
