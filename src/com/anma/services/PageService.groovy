@@ -30,15 +30,11 @@ class PageService {
 
     static def getChildren(CONF_URL, TOKEN, id) {
 
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}/child/page?limit=300"))      // 300 pages limit
-                .headers("Authorization", "Basic ${TOKEN}")
-                .GET()
-                .build();
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}/child/page?limit=300")       // limit = 300 pages
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
 
-        return gson.fromJson(response.body(), Contents.class)
+        return gson.fromJson(response.body, Contents.class)
     }
 
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
@@ -69,6 +65,7 @@ class PageService {
 
     static def getSpacePages(CONF_URL, TOKEN, space) {
         println(">>>>>>> Performing GET Pages request")
+        // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
          com.mashape.unirest.http.HttpResponse<String> response =
                  Unirest.get("${CONF_URL}/rest/api/content?type=page&spaceKey=${space}&limit=300")      // limit = 300 pages
@@ -110,6 +107,7 @@ class PageService {
 
     static def deletePageLabels(CONF_URL, TOKEN, id, label) {
         println(">>>>>>> Performing DELETE LABELS request")
+        // todo DELETE /rest/api/content/{id}/label/...
         com.mashape.unirest.http.HttpResponse<String> response =
                 Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
                         .header("Authorization", "Basic ${TOKEN}")
@@ -481,7 +479,6 @@ class PageService {
     }
 
 
-    // todo GET /rest/api/space/{spaceKey}/content
     // todo GET /rest/api/content/{id}/child/attachment
-    // todo DELETE /rest/api/content/{id}/label/...
+
 }
