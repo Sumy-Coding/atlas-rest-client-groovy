@@ -64,7 +64,7 @@ class Main {
 //        println(PageService.getSpacePages(CONF_URL, TOKEN, 'TEST').results)
 
         // GET blogs
-        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
+//        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
 
         // GET space pages by label
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
@@ -106,9 +106,9 @@ class Main {
 //        }
 
 // ========  Create comment
-//        for (i in 1..30) {
+//        for (i in 1..10) {
 //            String randomString = getRandomString(20)
-//            println(PageService.createComment(CONF_URL, TOKEN, 'DOCS', [], 1900545, 'page', randomString).body)
+//            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 434995201, 'page', randomString).body)
 //        }
         // == Create comments for children
 //        PageService.getChildren(CONF_URL, TOKEN, 1900545).results.each {
@@ -119,11 +119,11 @@ class Main {
 //        }
 
 // ======= Create PAGE
-//        for (i in 1..200) {
-//            def pageBody = getRandomString(200)
-//            def title = "TEST Page RST New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'DOCS', 1900545, title, pageBody).body)
-//        }
+        for (i in 1..200) {
+            def pageBody = getRandomString(200)
+            def title = "TEST Page RST New " + i
+            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 78282867, title, pageBody).body)
+        }
     }
 
 }

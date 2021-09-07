@@ -118,10 +118,10 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
-    static def getScrollTemplates() {
-        println(">>>>>>> Performing DELETE LABELS request")
+    static def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
+        println(">>>>>>> Performing GET Scroll templates request")
         com.mashape.unirest.http.HttpResponse<String> response =
-                Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
+                Unirest.get("${CONF_URL}/plugins/servlet/scroll-office/api/templates?spaceKey=${spaceKey}")
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
 
@@ -178,7 +178,7 @@ class PageService {
     }
 
     static def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
-        println(">>>>>>>>> Performing Create Comment request")
+        println(">>>>>>>>> Performing CREATE COMMENT request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
