@@ -104,24 +104,25 @@ class Main {
 //        }
 
 // ========  Create comment
+        
 //        for (i in 1..10) {
 //            String randomString = getRandomString(20)
 //            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 434995201, 'page', randomString).body)
 //        }
         // == Create comments for children
-        PageService.getChildren(CONF_URL, TOKEN, 78282867).results.each {
-            for (i in 1..20) {
-                String randomString = getRandomString(20)
-                println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
-            }
-        }
+//        PageService.getChildren(CONF_URL, TOKEN, 78282867).results.each {
+//            for (i in 1..20) {
+//                String randomString = getRandomString(20)
+//                println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
+//            }
+//        }
 
 // ======= Create PAGE
-//        for (i in 1..200) {
-//            def pageBody = getRandomString(200)
-//            def title = "TEST Page RST New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 78282867, title, pageBody).body)
-//        }
+        for (i in 1..300) {
+            def pageBody = getRandomString(100)
+            def title = "TEST Page C New " + i
+            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 435194796, title, pageBody).body)
+        }
     }
 
 }
