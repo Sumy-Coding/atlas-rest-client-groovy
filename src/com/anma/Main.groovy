@@ -30,7 +30,7 @@ class Main {
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
         final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
 //        final def CONF_URL = "http://localhost:7130"
-        def id = 431423503
+        def id = 435162614
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
 
@@ -50,7 +50,7 @@ class Main {
         // ******** Operations **********
 
         // GET page
-//        println(PageService.getPage(CONF_URL, TOKEN, id))
+        println(PageService.getPage(CONF_URL, TOKEN, id))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -118,11 +118,11 @@ class Main {
 //        }
 
 // ======= Create PAGE
-        for (i in 1..300) {
-            def pageBody = getRandomString(100)
-            def title = "TEST Page C New " + i
-            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 435194796, title, pageBody).body)
-        }
+//        for (i in 1..300) {
+//            def pageBody = getRandomString(100)
+//            def title = "TEST Page C New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 435194796, title, pageBody).body)
+//        }
     }
 
 }

@@ -15,17 +15,11 @@ class PageService {
 
     static Content getPage(CONF_URL, TOKEN, id) {
 
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version"))   // currently Storage is used for body
-                .headers("Authorization", "Basic ${TOKEN}")
-                .GET()
-                .build();
-//        HttpHeaders httpHeaders = HttpHeaders();
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        println(response.body())
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
 
-        return gson.fromJson(response.body(), Content.class)
+        return gson.fromJson(response.body, Content.class)
     }
 
     static def getChildren(CONF_URL, TOKEN, id) {
