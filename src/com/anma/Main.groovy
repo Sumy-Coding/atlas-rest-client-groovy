@@ -2,6 +2,14 @@ package com.anma
 
 import com.anma.services.PageService
 
+import java.time.Duration
+import java.time.LocalTime
+import java.time.Period
+import java.time.temporal.ChronoUnit
+import java.time.temporal.Temporal
+import java.time.temporal.TemporalAdjusters
+import java.time.temporal.TemporalUnit
+
 class Main {
 
     private static String getRandomString(length) {
@@ -22,14 +30,18 @@ class Main {
         //=========== DU
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
+        //========== bh
+//        def username = "beastiehut@gmail.com";
+//        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
 //===== BASS
+// ==== local
+        def username = 'admin'
+        def password = 'admin'
 
-        def username = "beastiehut@gmail.com";
-        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
-//        final def CONF_URL = "http://localhost:7130"
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
+        final def CONF_URL = "http://localhost:7130"                    // localhost
         def id = 435162614
         def toFind = "lorem dolor"
         def toReplace = "REPLACED"
@@ -50,7 +62,7 @@ class Main {
         // ******** Operations **********
 
         // GET page
-        println(PageService.getPage(CONF_URL, TOKEN, id))
+//        println(PageService.getPage(CONF_URL, TOKEN, 65603))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -104,25 +116,33 @@ class Main {
 //        }
 
 // ========  Create comment
-        
+
 //        for (i in 1..10) {
 //            String randomString = getRandomString(20)
 //            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 434995201, 'page', randomString).body)
 //        }
         // == Create comments for children
-//        PageService.getChildren(CONF_URL, TOKEN, 78282867).results.each {
-//            for (i in 1..20) {
-//                String randomString = getRandomString(20)
-//                println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
-//            }
-//        }
+        def start = System.currentTimeMillis()
+        PageService.getChildren(CONF_URL, TOKEN, 854220).results.each {
+            for (i in 1..20) {
+                String randomString = getRandomString(23)
+                println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
+            }
+        }
+        def takenMillis = System.currentTimeMillis() - start
+        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
+        println(">>>>> Script took ${seconds} seconds")
 
 // ======= Create PAGE
-//        for (i in 1..300) {
+//        def start = System.currentTimeMillis()
+//        for (i in 1..240) {
 //            def pageBody = getRandomString(100)
 //            def title = "TEST Page C New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 435194796, title, pageBody).body)
+//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 854220, title, pageBody).body)
 //        }
+//        def takenMillis = System.currentTimeMillis() - start
+//        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
+//        println(">>>>> Script took ${seconds} seconds")
     }
 
 }
