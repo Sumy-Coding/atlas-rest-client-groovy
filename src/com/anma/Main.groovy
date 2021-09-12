@@ -33,18 +33,19 @@ class Main {
         //========== bh
 //        def username = "beastiehut@gmail.com";
 //        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
+        def username = "andymaliuta@gmail.com";
+        String password = 'VxHRL3rp319SgvhQYpcp0CBA'
 //===== BASS
 // ==== local
-        def username = 'admin'
-        def password = 'admin'
+//        def username = 'admin'
+//        def password = 'admin'
 
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // Cloud
-        final def CONF_URL = "http://localhost:7130"                    // localhost
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
+//        final def CONF_URL = "http://localhost:7130"                    // localhost
         def id = 435162614
-        def toFind = "lorem dolor"
-        def toReplace = "REPLACED"
 
         // ************* Start ************
 
@@ -123,7 +124,7 @@ class Main {
 //        }
         // == Create comments for children
         def start = System.currentTimeMillis()
-        PageService.getChildren(CONF_URL, TOKEN, 854220).results.each {
+        PageService.getChildren(CONF_URL, TOKEN, 148144411).results.each {
             for (i in 1..20) {
                 String randomString = getRandomString(23)
                 println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
@@ -135,10 +136,10 @@ class Main {
 
 // ======= Create PAGE
 //        def start = System.currentTimeMillis()
-//        for (i in 1..240) {
+//        for (i in 1..200) {
 //            def pageBody = getRandomString(100)
-//            def title = "TEST Page C New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 854220, title, pageBody).body)
+//            def title = "TEST Page AA New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 148144411, title, pageBody).body)
 //        }
 //        def takenMillis = System.currentTimeMillis() - start
 //        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
