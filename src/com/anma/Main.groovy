@@ -31,10 +31,10 @@ class Main {
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-//        def username = "beastiehut@gmail.com";
-//        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
-        def username = "andymaliuta@gmail.com";
-        String password = 'VxHRL3rp319SgvhQYpcp0CBA'
+        def username = "beastiehut@gmail.com";
+        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
+//        def username = "andymaliuta@gmail.com";
+//        String password = 'VxHRL3rp319SgvhQYpcp0CBA'
 //===== BASS
 // ==== local
 //        def username = 'admin'
@@ -42,8 +42,8 @@ class Main {
 
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
-        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
+        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+//        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
 //        final def CONF_URL = "http://localhost:7130"                    // localhost
         def id = 435162614
 
@@ -124,10 +124,10 @@ class Main {
 //        }
         // == Create comments for children
         def start = System.currentTimeMillis()
-        PageService.getChildren(CONF_URL, TOKEN, 148144411).results.each {
-            for (i in 1..20) {
+        PageService.getChildren(CONF_URL, TOKEN, 447512577).results.each {
+            for (i in 1..3) {
                 String randomString = getRandomString(23)
-                println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], it.id, 'page', randomString).body)
+                println(PageService.createComment(CONF_URL, TOKEN, 'test10', [], it.id, 'page', randomString).body)
             }
         }
         def takenMillis = System.currentTimeMillis() - start
@@ -136,10 +136,10 @@ class Main {
 
 // ======= Create PAGE
 //        def start = System.currentTimeMillis()
-//        for (i in 1..200) {
+//        for (i in 1..50) {
 //            def pageBody = getRandomString(100)
-//            def title = "TEST Page AA New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'TEST', 148144411, title, pageBody).body)
+//            def title = "TEST10 Page AA New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'test10', 447512577, title, pageBody).body)
 //        }
 //        def takenMillis = System.currentTimeMillis() - start
 //        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
