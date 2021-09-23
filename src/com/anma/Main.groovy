@@ -124,10 +124,10 @@ class Main {
 //        }
         // == Create comments for children
         def start = System.currentTimeMillis()
-        PageService.getChildren(CONF_URL, TOKEN, 447512577).results.each {
-            for (i in 1..3) {
+        PageService.getChildren(CONF_URL, TOKEN, 452132865).results.each {
+            for (i in 1..10) {
                 String randomString = getRandomString(23)
-                println(PageService.createComment(CONF_URL, TOKEN, 'test10', [], it.id, 'page', randomString).body)
+                println(PageService.createComment(CONF_URL, TOKEN, 'test8', [], it.id, 'page', randomString).body)
             }
         }
         def takenMillis = System.currentTimeMillis() - start
@@ -136,10 +136,10 @@ class Main {
 
 // ======= Create PAGE
 //        def start = System.currentTimeMillis()
-//        for (i in 1..50) {
-//            def pageBody = getRandomString(100)
-//            def title = "TEST10 Page AA New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'test10', 447512577, title, pageBody).body)
+//        for (i in 1..100) {
+//            def pageBody = getRandomString(80)
+//            def title = "TEST8 Page AA New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'test8', 452132865, title, pageBody).body)
 //        }
 //        def takenMillis = System.currentTimeMillis() - start
 //        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
