@@ -1,5 +1,6 @@
 package com.anma
 
+import com.anma.models.Space
 import com.anma.services.PageService
 import com.anma.services.SpaceService
 
@@ -55,14 +56,9 @@ class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-//        println(">> Enter URL")
-//        String CONF_URL = reader.readLine()
-//        println(">> Enter username")
-//        String username = reader.readLine()
-//        println(">> Enter password")
-//        String password = reader.readLine()
-//        println(">> Enter page ID")
-//        long id = reader.readLine().toInteger()
+        def key = "df1"
+        def start = System.currentTimeMillis()
+        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
         // ******** Operations **********
 
@@ -122,37 +118,33 @@ class Main {
 
 // ========  Create comment
 
-//        for (i in 1..10) {
+//        for (i in 1..20) {
 //            String randomString = getRandomString(20)
-//            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 434995201, 'page', randomString).body)
+//            println(PageService.createComment(CONF_URL, TOKEN, space.key, [], space.homepage.id, 'page', randomString).body)
 //        }
+
         // == Create comments for children
-//        def start = System.currentTimeMillis()
-//        PageService.getChildren(CONF_URL, TOKEN, pageId).results.each {
-//            for (i in 1..10) {
-//                String randomString = getRandomString(23)
-//                println(PageService.createComment(CONF_URL, TOKEN, 'DEV', [], it.id, 'page', randomString).body)
-//            }
-//        }
-//        def takenMillis = System.currentTimeMillis() - start
-//        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
-//        println(">>>>> Script took ${seconds} seconds")
+        PageService.getChildren(CONF_URL, TOKEN, space.homepage.id).results.each {
+            for (i in 1..14) {
+                String randomString = getRandomString(18)
+                println(PageService.createComment(CONF_URL, TOKEN, space.key, [], it.id, 'page', randomString).body)
+            }
+        }
 
 // ======= Create PAGE
-//        def start = System.currentTimeMillis()
-//        for (i in 1..100) {
-//            def pageBody = getRandomString(80)
-//            def title = "TEST Page AA New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'DEV', pageId, title, pageBody).body)
+//        for (i in 1..500) {
+//            def pageBody = getRandomString(100)
+//            def title = "${space.key} Page New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
 //        }
-//        def takenMillis = System.currentTimeMillis() - start
-//        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
-//        println(">>>>> Script took ${seconds} seconds")
-
-
         // ========== Create Space
-        def start = System.currentTimeMillis()
-        println(SpaceService.createSpace(CONF_URL, TOKEN, "dev1", "dev1"))
+//        println(SpaceService.createSpace(CONF_URL, TOKEN, "dev1", "dev1"))
+        // ========== Create spaces
+
+//        for (i in 1..<30) {
+//            println(SpaceService.createSpace(CONF_URL, TOKEN, key + i, key + i))
+//        }
+
         def takenMillis = System.currentTimeMillis() - start
         long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
         println(">>>>> Script took ${seconds} seconds")

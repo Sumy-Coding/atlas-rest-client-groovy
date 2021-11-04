@@ -16,7 +16,7 @@ class SpaceService {
     static def getSpace(CONF_URL, TOKEN, spaceKey) {
         //def URL = "http://example.com/confluence/rest/api/space?spaceKey=TST&spaceKey=ds\n"
         def expand = "homepage"
-        def response = Unirest.get("${CONF_URL}/rest/api/space?spaceKey=${spaceKey}&expand=${expand}")
+        def response = Unirest.get("${CONF_URL}/rest/api/space/${spaceKey}?expand=${expand}")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
 
