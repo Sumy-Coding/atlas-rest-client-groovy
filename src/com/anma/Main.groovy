@@ -1,6 +1,7 @@
 package com.anma
 
 import com.anma.services.PageService
+import com.anma.services.SpaceService
 
 import java.time.Duration
 import java.time.LocalTime
@@ -31,21 +32,24 @@ class Main {
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-        def username = "beastiehut@gmail.com";
-        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
+//        def username = "beastiehut@gmail.com";
+//        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
 //        def username = "andymaliuta@gmail.com";
 //        String password = 'VxHRL3rp319SgvhQYpcp0CBA'
-//===== BASS
+// DC AWS
+        def username = 'admin'
+        def password = 'admin'
 // ==== local
 //        def username = 'admin'
 //        def password = 'admin'
-
+//===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
 //        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
-//        final def CONF_URL = "http://localhost:7130"                    // localhost
-        def id = 435162614
+        final def CONF_URL = "http://localhost:7141"                    // localhost
+//        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
+        def pageId = 65611
 
         // ************* Start ************
 
@@ -123,27 +127,36 @@ class Main {
 //            println(PageService.createComment(CONF_URL, TOKEN, 'TEST', [], 434995201, 'page', randomString).body)
 //        }
         // == Create comments for children
-        def start = System.currentTimeMillis()
-        PageService.getChildren(CONF_URL, TOKEN, 452132865).results.each {
-            for (i in 1..10) {
-                String randomString = getRandomString(23)
-                println(PageService.createComment(CONF_URL, TOKEN, 'test8', [], it.id, 'page', randomString).body)
-            }
-        }
-        def takenMillis = System.currentTimeMillis() - start
-        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
-        println(">>>>> Script took ${seconds} seconds")
+//        def start = System.currentTimeMillis()
+//        PageService.getChildren(CONF_URL, TOKEN, pageId).results.each {
+//            for (i in 1..10) {
+//                String randomString = getRandomString(23)
+//                println(PageService.createComment(CONF_URL, TOKEN, 'DEV', [], it.id, 'page', randomString).body)
+//            }
+//        }
+//        def takenMillis = System.currentTimeMillis() - start
+//        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
+//        println(">>>>> Script took ${seconds} seconds")
 
 // ======= Create PAGE
 //        def start = System.currentTimeMillis()
 //        for (i in 1..100) {
 //            def pageBody = getRandomString(80)
-//            def title = "TEST8 Page AA New " + i
-//            println(PageService.createPage(CONF_URL, TOKEN, 'test8', 452132865, title, pageBody).body)
+//            def title = "TEST Page AA New " + i
+//            println(PageService.createPage(CONF_URL, TOKEN, 'DEV', pageId, title, pageBody).body)
 //        }
 //        def takenMillis = System.currentTimeMillis() - start
 //        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
 //        println(">>>>> Script took ${seconds} seconds")
+
+
+        // ========== Create Space
+        def start = System.currentTimeMillis()
+        println(SpaceService.createSpace(CONF_URL, TOKEN, "dev1", "dev1"))
+        def takenMillis = System.currentTimeMillis() - start
+        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
+        println(">>>>> Script took ${seconds} seconds")
+
     }
 
 }
