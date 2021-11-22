@@ -49,7 +49,6 @@ class Main {
 //        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
         final def CONF_URL = "http://localhost:7141"                    // localhost
 //        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
-        def pageId = 65611
 
         // ************* Start ************
 
@@ -139,15 +138,15 @@ class Main {
 
         // ======== create pages for Spaces
 
-        for (i in 1..<80) {
-            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
-            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
-            for (a in 1..200) {
-                def pageBody = getRandomString(100)
-                def title = "${space.key} Page New " + a
-                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
-            }
-        }
+//        for (i in 1..<80) {
+//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
+//            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+//            for (a in 1..200) {
+//                def pageBody = getRandomString(100)
+//                def title = "${space.key} Page New " + a
+//                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
+//            }
+//        }
 
 // ======= Create PAGES
 
@@ -162,6 +161,9 @@ class Main {
 //        for (i in 2..<100) {
 //            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
 //        }
+
+        // === MOVE page
+        println(PageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
 
         def takenMillis = System.currentTimeMillis() - start
         long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds

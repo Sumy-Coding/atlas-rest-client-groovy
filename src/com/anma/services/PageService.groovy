@@ -15,7 +15,7 @@ class PageService {
 
     static Content getPage(CONF_URL, TOKEN, id) {
 
-        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}")
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
 
@@ -464,6 +464,38 @@ class PageService {
         HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
         return postResponse.body()
+
+    }
+
+    static def movePage(CONF_URL, TOKEN, pageId, targetParentId) {
+
+        Content content = getPage(CONF_URL, TOKEN, pageId)
+        Ancestor ancestor = new Ancestor()
+        ancestor.id = targetParentId
+        content.ancestors = [ancestor]
+        content.version.number += 1
+
+        println(gson.toJson(content))
+
+        return Unirest.put("${CONF_URL}/rest/api/content/" + pageId)
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .body(gson.toJson(content))
+                .asString()
+                .body
+    }
+
+    static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId) {
+        println(">>>>>>> Performing COPY page BRANCH  request")
+
+        Content rotPage = getPage(CONF_URL, TOKEN, parentId)
+        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+        Content[] children = getChildren(CONF_URL, TOKEN, parentId).results
+        children.each {
+
+        }
+
+
 
     }
 
