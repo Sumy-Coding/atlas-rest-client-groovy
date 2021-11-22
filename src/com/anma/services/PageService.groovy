@@ -15,7 +15,7 @@ class PageService {
 
     static Content getPage(CONF_URL, TOKEN, id) {
 
-        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version")
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
 
@@ -34,6 +34,7 @@ class PageService {
     /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
     /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
+
     static def getDescendants(CONF_URL, TOKEN, id) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
@@ -61,10 +62,10 @@ class PageService {
         println(">>>>>>> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
-         com.mashape.unirest.http.HttpResponse<String> response =
-                 Unirest.get("${CONF_URL}/rest/api/content?type=page&spaceKey=${space}&limit=300")      // limit = 300 pages
-                    .header("Authorization", "Basic ${TOKEN}")
-                    .asString()
+        com.mashape.unirest.http.HttpResponse<String> response =
+                Unirest.get("${CONF_URL}/rest/api/content?type=page&spaceKey=${space}&limit=300")      // limit = 300 pages
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
 
         Contents contents = gson.fromJson(response.body, Contents.class)
 
@@ -82,8 +83,8 @@ class PageService {
         //http://localhost:7130/rest/api/content?type=blogpost&spaceKey=TEST
         com.mashape.unirest.http.HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content?type=blogpost&spaceKey=${space}&limit=300")  // limit = 300 blogs
-                    .header("Authorization", "Basic ${TOKEN}")
-                    .asString()
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
 
         return gson.fromJson(response.body, Contents.class)
 
@@ -93,10 +94,10 @@ class PageService {
         println(">>>>>>> Performing GET LABELS request")
         com.mashape.unirest.http.HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content/${id}/label")
-                    .header("Authorization", "Basic ${TOKEN}")
-                    .asString()
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
 
-        return gson.fromJson(response.body, Contents.class)
+        return gson.fromJson(response.body, Labels.class)
     }
 
     static def deletePageLabels(CONF_URL, TOKEN, id, label) {
@@ -130,7 +131,7 @@ class PageService {
                 .asString()
     }
 
-    static def createPage(CONF_URL, TOKEN, space, parentId, title,body) {
+    static def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
         println(">>>>>>> Performing CREATE PAGE request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
@@ -158,7 +159,7 @@ class PageService {
 //        version.number = 1
 //        content.version = version
         ancestor.id = parentId.toString()
-        Ancestor[] ancestors = [ ancestor ]
+        Ancestor[] ancestors = [ancestor]
         content.ancestors = ancestors
 //        println(gson.toJson(content))
 
@@ -266,7 +267,7 @@ class PageService {
         if (body.contains("<ac:structured-macro ac:name=\"page-info\"")) {
             try {
                 macroString = body.substring(body.indexOf("<ac:structured-macro ac:name=\"page-info\""), body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace()
             }
         }
@@ -345,7 +346,8 @@ class PageService {
         POST /rest/api/content/{id}/label
         https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/label-deleteLabel
      */
-    static def addLabelsToPage(CONF_URL, TOKEN, id, List<String> labels) {
+
+    static def addLabelsToPage(CONF_URL, TOKEN, id, List<String> labels) {  // todo - add Label obj?
 
         def labelsArray = []
 
@@ -362,21 +364,15 @@ class PageService {
         def labelsArrayJSON = gson.toJson(labelsArray, ArrayList.class)
 //        println(labelsArrayJSON)
 
-        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(labelsArrayJSON)
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/${id}/label"))
-                .headers("Authorization", "Basic ${TOKEN}")
-                .headers("Content-Type", "application/json")
-                .POST(body)
-                .build();
-        HttpClient client = HttpClient.newBuilder().build()
+        return Unirest.post("${CONF_URL}/rest/api/content/${id}/label")
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .body(labelsArrayJSON)
+                .asString().body
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString())
-
-        return response
     }
 
-    static def addPageTitlePart(CONF_URL, TOKEN, id,toAdd, position) {
+    static def addPageTitlePart(CONF_URL, TOKEN, id, toAdd, position) {
 
         def page = getPage(CONF_URL, TOKEN, id)
         def pageVersion = page.version.number
@@ -485,17 +481,49 @@ class PageService {
                 .body
     }
 
-    static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId) {
-        println(">>>>>>> Performing COPY page BRANCH  request")
-
-        Content rotPage = getPage(CONF_URL, TOKEN, parentId)
+    static def copyPage(CONF_URL, TOKEN, parentId, targetId, String newTitle,
+                        boolean copyLabels, boolean copyAttach, boolean copyComments) {
+        Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
-        Content[] children = getChildren(CONF_URL, TOKEN, parentId).results
-        children.each {
-
+        if (null == newTitle || newTitle.isEmpty()) {
+            newTitle = "Copy of " + rootPage.title
+        }
+        // copy root
+        def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+        def createdPage = gson.fromJson(body, Content.class)
+        // copy lables
+        if (copyLabels) {
+            def labels = getPageLabels(CONF_URL, TOKEN, rootPage.id).results
+            labels.each {
+                addLabelsToPage(CONF_URL, TOKEN, createdPage.id, [ it.name ])    // todo - not good
+            }
         }
 
+        if (copyAttach) {
+           // todo
+        }
 
+        if (copyComments) {
+            // todo
+        }
+    }
+
+    static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
+                               boolean copyLabels, boolean copyAttach, boolean copyComments) {
+        println(">>>>>>> Performing COPY page BRANCH  request")
+
+        Content rootPage = getPage(CONF_URL, TOKEN, parentId)
+        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+        Content[] children = getChildren(CONF_URL, TOKEN, parentId).results
+        if (null == newTitle || newTitle.isEmpty()) {
+            newTitle = "Copy of " + rootPage.title
+        }
+        // copy root
+        createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+//        def copiedPage = gson.fromJson(respBody, Content.class)
+        children.each {
+            copyPage()
+        }
 
     }
 

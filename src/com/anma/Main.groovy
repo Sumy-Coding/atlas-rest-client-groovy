@@ -95,7 +95,10 @@ class Main {
 
         // ==== Add labels to page
 
-//        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
+//        println(PageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"]))
+
+        // GET labels
+//        PageService.getPageLabels(CONF_URL, TOKEN, 1966096).results.each {println(it)}
 
         // ==== Rename Page
 
@@ -163,8 +166,13 @@ class Main {
 //        }
 
         // === MOVE page
-        println(PageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
+//        println(PageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
 
+        // COPY page
+        println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
+
+
+        // END
         def takenMillis = System.currentTimeMillis() - start
         long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
         println(">>>>> Script took ${seconds} seconds")

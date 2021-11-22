@@ -1,22 +1,17 @@
 package com.anma.models
 
 class Label {
-    private String prefix
-    private String name
+    String prefix
+    String name
+    long id
 
-    String getPrefix() {
-        return prefix
-    }
 
-    void setPrefix(String prefix) {
-        this.prefix = prefix
-    }
-
-    String getName() {
-        return name
-    }
-
-    void setName(String name) {
-        this.name = name
+    @Override
+    public String toString() {
+        return "Label{" +
+                "prefix='" + prefix + '\'' +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 }
