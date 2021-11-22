@@ -124,12 +124,12 @@ class Main {
 //        }
 
         // == Create comments for children
-        PageService.getChildren(CONF_URL, TOKEN, space.homepage.id).results.each {
-            for (i in 1..14) {
-                String randomString = getRandomString(18)
-                println(PageService.createComment(CONF_URL, TOKEN, space.key, [], it.id, 'page', randomString).body)
-            }
-        }
+//        PageService.getChildren(CONF_URL, TOKEN, space.homepage.id).results.each {
+//            for (i in 1..14) {
+//                String randomString = getRandomString(18)
+//                println(PageService.createComment(CONF_URL, TOKEN, space.key, [], it.id, 'page', randomString).body)
+//            }
+//        }
 
 // ======= Create PAGE
 //        for (i in 1..500) {
@@ -137,8 +137,10 @@ class Main {
 //            def title = "${space.key} Page New " + i
 //            println(PageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
 //        }
-        // ========== Create Space
-//        println(SpaceService.createSpace(CONF_URL, TOKEN, "dev1", "dev1"))
+        // ========== Create Spaces
+//        for (i in 2..<100) {
+//            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
+//        }
         // ========== Create spaces
 
 //        for (i in 1..<30) {
