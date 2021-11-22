@@ -149,7 +149,7 @@ class Main {
             }
         }
 
-// ======= Create PAGE
+// ======= Create PAGES
 
 //        for (i in 1..200) {
 //            def pageBody = getRandomString(100)
@@ -161,12 +161,6 @@ class Main {
 
 //        for (i in 2..<100) {
 //            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
-//        }
-
-        // ========== Create spaces
-
-//        for (i in 1..<30) {
-//            println(SpaceService.createSpace(CONF_URL, TOKEN, key + i, key + i))
 //        }
 
         def takenMillis = System.currentTimeMillis() - start
