@@ -30,6 +30,7 @@ class Main {
 
 // ====== DATA
         //=========== DU
+
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
@@ -40,9 +41,7 @@ class Main {
 // DC AWS
         def username = 'admin'
         def password = 'admin'
-// ==== local
-//        def username = 'admin'
-//        def password = 'admin'
+
 //===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
@@ -92,7 +91,7 @@ class Main {
 //        }
 
         // ==== PUT children
-        
+
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
         // ==== Add labels to page
