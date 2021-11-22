@@ -58,7 +58,7 @@ class Main {
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         def key = "df1"
         def start = System.currentTimeMillis()
-        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
+//        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
         // ******** Operations **********
 
@@ -131,8 +131,20 @@ class Main {
 //            }
 //        }
 
+        //======== create pages for Spaces
+        for (i in 1..<80) {
+            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
+            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+            for (a in 1..200) {
+                def pageBody = getRandomString(100)
+                def title = "${space.key} Page New " + a
+                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
+            }
+        }
+
+
 // ======= Create PAGE
-//        for (i in 1..500) {
+//        for (i in 1..200) {
 //            def pageBody = getRandomString(100)
 //            def title = "${space.key} Page New " + i
 //            println(PageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
