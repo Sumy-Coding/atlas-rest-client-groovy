@@ -92,26 +92,32 @@ class Main {
 //        }
 
         // ==== PUT children
+        
 //        PageService.getChildren(id).results.each {page -> PageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
 
         // ==== Add labels to page
+
 //        PageService.addLabelsToPage(CONF_URL, username, password, id, ["added_1", "added_2"])
 
         // ==== Rename Page
+
         // rest test - 1065015088
 //        PageService.findReplacePageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "")
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
 //        PageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
         // ==== Rename pages
+
 //        PageService.getChildren(CONF_URL, username, password, id).results.each {
 //            PageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
 //        }
 
         // ==== replace PAGE INFO
+
 //        PageService.replacePageInfoMacro(CONF_URL, username, password, id)
 
         // ==== multiple page info
+
 //        PageService.getDescendants(CONF_URL, username, password, id).results.each {
 //            PageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
 //        }
@@ -124,6 +130,7 @@ class Main {
 //        }
 
         // == Create comments for children
+
 //        PageService.getChildren(CONF_URL, TOKEN, space.homepage.id).results.each {
 //            for (i in 1..14) {
 //                String randomString = getRandomString(18)
@@ -131,7 +138,8 @@ class Main {
 //            }
 //        }
 
-        //======== create pages for Spaces
+        // ======== create pages for Spaces
+
         for (i in 1..<80) {
             Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
             def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
@@ -142,17 +150,20 @@ class Main {
             }
         }
 
-
 // ======= Create PAGE
+
 //        for (i in 1..200) {
 //            def pageBody = getRandomString(100)
 //            def title = "${space.key} Page New " + i
 //            println(PageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
 //        }
+
         // ========== Create Spaces
+
 //        for (i in 2..<100) {
 //            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
 //        }
+
         // ========== Create spaces
 
 //        for (i in 1..<30) {
