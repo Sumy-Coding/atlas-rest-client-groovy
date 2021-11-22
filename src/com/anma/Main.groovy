@@ -54,7 +54,6 @@ class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-        def key = "df1"
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
@@ -170,6 +169,12 @@ class Main {
 
         // COPY page
         println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
+
+        // copy page labels
+//        println(PageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
+
+        // GET Attaches
+//        println(PageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
 
 
         // END

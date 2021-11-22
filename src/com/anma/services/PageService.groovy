@@ -493,19 +493,24 @@ class PageService {
         def createdPage = gson.fromJson(body, Content.class)
         // copy lables
         if (copyLabels) {
-            def labels = getPageLabels(CONF_URL, TOKEN, rootPage.id).results
-            labels.each {
-                addLabelsToPage(CONF_URL, TOKEN, createdPage.id, [ it.name ])    // todo - not good
-            }
+            copyPageLabels(CONF_URL, TOKEN, rootPage, createdPage)
         }
 
         if (copyAttach) {
-           // todo
+            copyPageAttaches(CONF_URL, TOKEN, rootPage, createdPage)
         }
 
         if (copyComments) {
-            // todo
+            copyPageComments(CONF_URL, TOKEN, rootPage, createdPage)
         }
+    }
+
+    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId) {
+        def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
+        labels.each {
+            addLabelsToPage(CONF_URL, TOKEN, targetPageId, [it.name])    // todo - not good
+        }
+        println(">> Labels added to page " + targetPageId)
     }
 
     static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
@@ -533,6 +538,23 @@ class PageService {
     }
 
 
-    // todo GET /rest/api/content/{id}/child/attachment
+    static def getPageAttachments(CONF_URL, TOKEN, pageId) {
+        //  GET /rest/api/content/{id}/child/attachment
+         def response = Unirest.get("${CONF_URL}/rest/api/content/" + pageId + "/child/attachment")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString().body
+        return gson.fromJson(response, Contents.class)
+    }
 
+
+    static def copyPageComments(CONF_URL, TOKEN, sourcePageId, targetPageId) {
+
+
+    }
+
+    static def copyPageAttaches(CONF_URL, TOKEN, rootPage, createdPage) {
+
+        
+
+    }
 }
