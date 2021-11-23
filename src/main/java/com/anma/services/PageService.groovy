@@ -8,17 +8,6 @@ import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.Unirest
 import com.mashape.unirest.request.HttpRequest
 import com.mashape.unirest.request.body.MultipartBody
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.entity.mime.content.FileBody
-import org.apache.http.impl.client.HttpClientBuilder
-
-//import org.apache.hc.client5.http.auth.AuthScope;
-
-//import java.net.http.HttpClient
-//import java.net.http.HttpRequest
-//import java.net.http.HttpResponse
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
@@ -529,9 +518,10 @@ class PageService {
 
         def attach = getPageAttachment(CONF_URL, TOKEN, attachId)
         URL fileURL = new URL(attach._links.base + attach._links.download)
+        def savedAttach = "src/main/resources/" + attach.title
 
         ReadableByteChannel readableByteChannel = Channels.newChannel(fileURL.openStream());
-        FileOutputStream fileOutputStream = new FileOutputStream(attach.title);
+        FileOutputStream fileOutputStream = new FileOutputStream(savedAttach);
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
@@ -548,8 +538,7 @@ class PageService {
 //                .build();
 //        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
-        def pathname = attach.title
-        File fileUpload = new File(pathname)
+        File fileUpload = new File(savedAttach)
 
         def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment"
         HttpRequest request = new HttpRequest(HttpMethod.POST, url)
