@@ -8,6 +8,9 @@ import com.mashape.unirest.http.Unirest
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.channels.Channels
+import java.nio.channels.FileChannel
+import java.nio.channels.ReadableByteChannel
 
 class PageService {
 
@@ -520,14 +523,9 @@ class PageService {
         Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
         Content[] children = getChildren(CONF_URL, TOKEN, parentId).results
-        if (null == newTitle || newTitle.isEmpty()) {
-            newTitle = "Copy of " + rootPage.title
-        }
-        // copy root
-        createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
-//        def copiedPage = gson.fromJson(respBody, Content.class)
+
         children.each {
-            copyPage()
+//            copyPage(CONF_URL, TOKEN, )   // ...
         }
 
     }
@@ -546,15 +544,37 @@ class PageService {
         return gson.fromJson(response, Contents.class)
     }
 
+    static def addAttachToPage(CONF_URL, TOKEN, attach, targetPageId) {
+
+        ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(attach).openStream());
+        FileOutputStream fileOutputStream = new FileOutputStream("res.txt");
+        FileChannel fileChannel = fileOutputStream.getChannel();
+        fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+
+        InputStream file = new FileInputStream(new File("res.txt"));
+
+        return Unirest.post("${CONF_URL}/rest/api/content/${targetPageId}/child/attachment")
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("X-Atlassian-Token", "nocheck")
+//                .field("upload", new File("copy.edn"))
+                .field("upload", file, "res.txt")
+
+                .asString()
+
+    }
 
     static def copyPageComments(CONF_URL, TOKEN, sourcePageId, targetPageId) {
 
 
+
     }
 
-    static def copyPageAttaches(CONF_URL, TOKEN, rootPage, createdPage) {
+    static def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId) {
+        //https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/child/attachment-createAttachments
 
-        
+        def page = getPage(CONF_URL, TOKEN, sourcePageId)
+        def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
 
+        //"X-Atlassian-Token: nocheck"
     }
 }

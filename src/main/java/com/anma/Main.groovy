@@ -168,13 +168,20 @@ class Main {
 //        println(PageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
 
         // COPY page
-        println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
+//        println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
 
         // copy page labels
 //        println(PageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
 
         // GET Attaches
 //        println(PageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
+
+        // ATTACH file to page
+        File file = new File("res.txt")
+        FileReader fileReader = new FileReader(file)
+        println(fileReader.readLine())
+//        println(PageService.addAttachToPage(CONF_URL, TOKEN,
+//                "http://localhost:7141/download/attachments/1966096/tests.edn?version=1&modificationDate=1637600358709&api=v2", 1966081).body)
 
 
         // END
