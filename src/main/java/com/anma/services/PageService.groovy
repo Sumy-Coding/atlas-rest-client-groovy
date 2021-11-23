@@ -39,7 +39,7 @@ class PageService {
     static def pageContains(CONF_URL, TOKEN, id, toFind) {
         def page = getPage(CONF_URL, TOKEN, id)
         return page.body.storage.value.contains(toFind)
-                
+
     }
 
     static def getDescendants(CONF_URL, TOKEN, id) {
@@ -74,15 +74,15 @@ class PageService {
     }
 
     static def getSpacePagesByLabel() {                                 // todo
-        println(">>>>>>> Performing GET Pages request")
+        println(PageService.class.name + " :: " + ">> Performing GET Pages request")
 
 
     }
 
     static def getSpaceBlogs(CONF_URL, TOKEN, space) {
-        println(">>>>>>> Performing GET Pages request")
+        println(PageService.class.name + " :: " + ">> Performing GET Pages request")
         //http://localhost:7130/rest/api/content?type=blogpost&spaceKey=TEST
-        com.mashape.unirest.http.HttpResponse<String> response =
+        HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content?type=blogpost&spaceKey=${space}&limit=300")  // limit = 300 blogs
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
@@ -92,7 +92,7 @@ class PageService {
     }
 
     static def getPageLabels(CONF_URL, TOKEN, long id) {
-        println(">>>>>>> Performing GET LABELS request")
+        println(PageService.class.name + " :: " + ">>> Performing GET LABELS request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content/" + id + "/label")
                         .header("Authorization", "Basic ${TOKEN}")
@@ -480,33 +480,64 @@ class PageService {
     }
 
     static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
-                               boolean copyLabels, boolean copyAttach, boolean copyComments) {
+                               copyLabels, copyAttach, boolean copyComments) {
         println(">>>>>>> Performing COPY page BRANCH  request")
 
         Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
         Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+        int length = children.length
 
-        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", true, true, false)
+//        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", copyLabels, copyAttach, copyComments)
+//        println(">> Root page copied ${rootCopy}")
 
-        children.each {child ->
-            copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, "", true, true, false)
-            def descendants = getChildren(CONF_URL, TOKEN, child.id).results   // descendants
-            int length = descendants.length
-            if (length > 0) {
-                while (length > 0) {
-                    descendants.each { desc ->
-                        copyPage(CONF_URL, TOKEN, desc.id, child.id, "", true, true, false)
-                    }
-                    descendants = getChildren(CONF_URL, TOKEN, desc.id).results
-                    length = descendants.length
+        if (length > 0) {
+            while (length > 0) {
+                def copies = copyChildren(CONF_URL, TOKEN, parentId, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                println(PageService.class.name + " :: " + ">> Descendant page copied ${copies}")
+                children.each { child ->
+                    def descCopies = copyChildren(CONF_URL, TOKEN, child.id, copies.keySet()[0].id, newTitle, copyLabels, copyAttach, copyComments)
+                    children = getChildren(CONF_URL, TOKEN, child.id).results
+                    length = children.length
+//                    descChilds.each { desc ->
+//                        def descCopiesX2 = copyChildren(CONF_URL, TOKEN, desc.id, childCopy.id, "", copyLabels, copyAttach, copyComments)
+//                        def descX3 = getChildren(CONF_URL, TOKEN, desc.id).results
+//                        length = descX3.length
+//                    }
                 }
             }
         }
+
+    }
+
+    static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
+                            boolean copyLabels, boolean copyAttach, boolean copyComments) {
+        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
+        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+        Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+
+        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+        println(getClass().name + " :: " + " Root page copied ${rootCopy}")
+
+        def copies = []
+        children.each { child ->
+            def childCopy = copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+            println(getClass().name + " :: " + " Root page copied ${childCopy}")
+            copies.add(childCopy)
+//            def descendants = getChildren(CONF_URL, TOKEN, child.id).results   // descendants
+//            int length = descendants.length
+//
+//            descendants.each { desc ->
+//                copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,copyLabels,copyAttach,copyComments)
+//                descendants = getChildren(CONF_URL, TOKEN, desc.id).results
+//                length = descendants.length
+//            }
+        }
+        return Map.of(rootCopy, copies)
     }
 
     static def getPageRestrictions() {
-        // todo GET /rest/api/content/{id}/restriction/byOperation
+        // todo - GET /rest/api/content/{id}/restriction/byOperation
 
     }
 
