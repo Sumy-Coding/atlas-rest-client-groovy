@@ -11,6 +11,8 @@ import com.mashape.unirest.request.body.MultipartBody
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
+import java.nio.file.Files
+import java.nio.file.Path
 
 class PageService {
 
@@ -34,11 +36,15 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
-    /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
-
-    /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
+    static def pageContains(CONF_URL, TOKEN, id, toFind) {
+        def page = getPage(CONF_URL, TOKEN, id)
+        return page.body.storage.value.contains(toFind)
+                
+    }
 
     static def getDescendants(CONF_URL, TOKEN, id) {
+        /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
+        /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
         def Url = "${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=300"
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
@@ -236,17 +242,6 @@ class PageService {
                 "    }\n" +
                 "}";
 */
-        /* Performing the PUT request to replace body */
-//        HttpClient client = HttpClient.newBuilder().build();
-////        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
-//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-//        HttpRequest postReq = HttpRequest.newBuilder()
-//                .uri(URI.create())
-//                .PUT(publisher)
-//                .headers("Authorization", "Basic ${TOKEN}")
-//                .headers("Content-Type", "application/json")
-//                .build();
-//        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
         def url = "${confURL}/rest/api/content/${id}"
         def response = Unirest.put(url)
@@ -494,11 +489,20 @@ class PageService {
 
         def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", true, true, false)
 
-        children.each {
-            copyPage(CONF_URL, TOKEN, it.id, rootCopy.id, "", true, true, false)
-//            while ()
+        children.each {child ->
+            copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, "", true, true, false)
+            def descendants = getChildren(CONF_URL, TOKEN, child.id).results   // descendants
+            int length = descendants.length
+            if (length > 0) {
+                while (length > 0) {
+                    descendants.each { desc ->
+                        copyPage(CONF_URL, TOKEN, desc.id, child.id, "", true, true, false)
+                    }
+                    descendants = getChildren(CONF_URL, TOKEN, desc.id).results
+                    length = descendants.length
+                }
+            }
         }
-
     }
 
     static def getPageRestrictions() {
@@ -593,6 +597,11 @@ class PageService {
 
         attachments.each {
             addAttachToPage(CONF_URL, TOKEN, it.id, targetPageId)
+            try {
+                Files.delete(Path.of("src/main/resources/" + it.title))     // delete after copy
+            } catch (Exception e) {
+                e.printStackTrace()
+            }
         }
 
     }
