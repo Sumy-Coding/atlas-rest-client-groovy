@@ -3,7 +3,7 @@ package com.anma.models
 class Content {
 
     def id
-    def title
+    String title
     def type
     def status
     Ancestor[] ancestors
@@ -11,6 +11,7 @@ class Content {
     Version version
     Body body
     Space space
+    Links _links
 
     @Override
     String toString() {

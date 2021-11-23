@@ -168,8 +168,7 @@ class Main {
 //        File file = new File("res.txt")
 //        FileReader fileReader = new FileReader(file)
 //        println(fileReader.readLine())
-        println(PageService.addAttachToPage(CONF_URL, TOKEN,
-                "http://localhost:7141/download/attachments/1966096/tests.edn?version=1&modificationDate=1637600358709&api=v2", 1966081))
+        println(PageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
 
 
 

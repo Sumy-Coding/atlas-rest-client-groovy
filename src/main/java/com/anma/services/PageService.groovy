@@ -508,6 +508,13 @@ class PageService {
 
     }
 
+    static def getPageAttachment(CONF_URL, TOKEN, attachId) {
+        //  GET /rest/api/content/{id}/child/attachment
+        def response = Unirest.get("${CONF_URL}/rest/api/content/" + attachId)
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString().body
+        return gson.fromJson(response, Content.class)
+    }
 
     static def getPageAttachments(CONF_URL, TOKEN, pageId) {
         //  GET /rest/api/content/{id}/child/attachment
@@ -517,17 +524,18 @@ class PageService {
         return gson.fromJson(response, Contents.class)
     }
 
-    static def addAttachToPage(CONF_URL, TOKEN, attach, targetPageId) {
+    static def addAttachToPage(CONF_URL, TOKEN, attachId, targetPageId) {
+        //https://community.atlassian.com/t5/Jira-questions/Upload-Attach-API-Token-Java/qaq-p/970011
 
-        ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(attach).openStream());
-        FileOutputStream fileOutputStream = new FileOutputStream("res.txt");
+        def attach = getPageAttachment(CONF_URL, TOKEN, attachId)
+        URL fileURL = new URL(attach._links.base + attach._links.download)
+
+        ReadableByteChannel readableByteChannel = Channels.newChannel(fileURL.openStream());
+        FileOutputStream fileOutputStream = new FileOutputStream(attach.title);
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
-        InputStream file = new FileInputStream(new File("res.txt"));
-
-
-        //https://community.atlassian.com/t5/Jira-questions/Upload-Attach-API-Token-Java/qaq-p/970011
+//        InputStream file = new FileInputStream(new File("res.txt"));
 
 //        HttpClient client = HttpClient.newBuilder().build();
 ////        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
@@ -540,8 +548,8 @@ class PageService {
 //                .build();
 //        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
-        String pathname = "res.txt";
-        File fileUpload = new File(pathname);
+        def pathname = attach.title
+        File fileUpload = new File(pathname)
 
         def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment"
         HttpRequest request = new HttpRequest(HttpMethod.POST, url)
@@ -554,7 +562,6 @@ class PageService {
 //                .field("upload", new File("copy.edn"))
                 .field("file", fileUpload)
                 .asString().body
-
 
         // == Apache
 //        HttpClient httpClient = HttpClientBuilder.create().build();
