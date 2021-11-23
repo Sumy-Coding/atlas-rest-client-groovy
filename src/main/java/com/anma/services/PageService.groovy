@@ -520,7 +520,11 @@ class PageService {
         URL fileURL = new URL(attach._links.base + attach._links.download)
         def savedAttach = "src/main/resources/" + attach.title
 
-        ReadableByteChannel readableByteChannel = Channels.newChannel(fileURL.openStream());
+        def stream = Unirest.get(fileURL.toURI().toString())
+                .header("Authorization", "Basic ${TOKEN}")
+                .asBinary().body
+
+        ReadableByteChannel readableByteChannel = Channels.newChannel(stream);
         FileOutputStream fileOutputStream = new FileOutputStream(savedAttach);
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
@@ -577,6 +581,9 @@ class PageService {
         def page = getPage(CONF_URL, TOKEN, sourcePageId)
         def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
 
-        //"X-Atlassian-Token: nocheck"
+        attachments.each {
+            addAttachToPage(CONF_URL, TOKEN, it.id, targetPageId)
+        }
+
     }
 }

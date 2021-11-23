@@ -165,11 +165,11 @@ class Main {
 //        println(PageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
 
         // ATTACH file to page
-//        File file = new File("res.txt")
-//        FileReader fileReader = new FileReader(file)
-//        println(fileReader.readLine())
-        println(PageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
 
+//        println(PageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
+
+        //===  Copy Page attches
+        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
 
 
