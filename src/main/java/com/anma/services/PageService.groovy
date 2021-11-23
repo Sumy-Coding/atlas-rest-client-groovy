@@ -85,10 +85,10 @@ class PageService {
 
     }
 
-    static def getPageLabels(CONF_URL, TOKEN, id) {
+    static def getPageLabels(CONF_URL, TOKEN, long id) {
         println(">>>>>>> Performing GET LABELS request")
-        com.mashape.unirest.http.HttpResponse<String> response =
-                Unirest.get("${CONF_URL}/rest/api/content/${id}/label")
+        HttpResponse<String> response =
+                Unirest.get("${CONF_URL}/rest/api/content/" + id + "/label")
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
 
@@ -98,7 +98,7 @@ class PageService {
     static def deletePageLabels(CONF_URL, TOKEN, id, label) {
         println(">>>>>>> Performing DELETE LABELS request")
         // todo DELETE /rest/api/content/{id}/label/...
-        com.mashape.unirest.http.HttpResponse<String> response =
+        HttpResponse<String> response =
                 Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
@@ -108,7 +108,7 @@ class PageService {
 
     static def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
         println(">>>>>>> Performing GET Scroll templates request")
-        com.mashape.unirest.http.HttpResponse<String> response =
+        HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/plugins/servlet/scroll-office/api/templates?spaceKey=${spaceKey}")
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
@@ -446,9 +446,9 @@ class PageService {
                 .body
     }
 
-    static def copyPage(CONF_URL, TOKEN, parentId, targetId, String newTitle,
+    static def copyPage(CONF_URL, TOKEN, sourceId, long targetId, String newTitle,
                         boolean copyLabels, boolean copyAttach, boolean copyComments) {
-        Content rootPage = getPage(CONF_URL, TOKEN, parentId)
+        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
         if (null == newTitle || newTitle.isEmpty()) {
             newTitle = "Copy of " + rootPage.title
@@ -458,24 +458,30 @@ class PageService {
         def createdPage = gson.fromJson(body, Content.class)
         // copy lables
         if (copyLabels) {
-            copyPageLabels(CONF_URL, TOKEN, rootPage, createdPage)
+            copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
         }
 
         if (copyAttach) {
-            copyPageAttaches(CONF_URL, TOKEN, rootPage, createdPage)
+            copyPageAttaches(CONF_URL, TOKEN, rootPage.id, createdPage.id)
         }
 
         if (copyComments) {
-            copyPageComments(CONF_URL, TOKEN, rootPage, createdPage)
+            copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
         }
+
+        return createdPage
     }
 
-    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId) {
+    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, long targetPageId) {
         def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
-        labels.each {
-            addLabelsToPage(CONF_URL, TOKEN, targetPageId, [it.name])    // todo - not good
+        if (labels != null) {
+            if (labels != null || labels.length > 0) {
+                labels.each {
+                    addLabelsToPage(CONF_URL, TOKEN, targetPageId, [it.name])    // todo - not good
+                    println(">> Labels added to page " + targetPageId)
+                }
+            }
         }
-        println(">> Labels added to page " + targetPageId)
     }
 
     static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
@@ -484,10 +490,13 @@ class PageService {
 
         Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
-        Content[] children = getChildren(CONF_URL, TOKEN, parentId).results
+        Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+
+        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", true, true, false)
 
         children.each {
-//            copyPage(CONF_URL, TOKEN, )   // ...
+            copyPage(CONF_URL, TOKEN, it.id, rootCopy.id, "", true, true, false)
+//            while ()
         }
 
     }
@@ -572,6 +581,7 @@ class PageService {
 
     static def copyPageComments(CONF_URL, TOKEN, sourcePageId, targetPageId) {
 
+        //todo
 
     }
 

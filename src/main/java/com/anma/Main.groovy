@@ -85,7 +85,7 @@ class Main {
 //        println(PageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"]))
 
         // GET labels
-//        PageService.getPageLabels(CONF_URL, TOKEN, 1966096).results.each {println(it)}
+//        PageService.getPageLabels(CONF_URL, TOKEN, 2490384).results.each {println(it)}
 
         // ==== Rename Page
 
@@ -169,7 +169,10 @@ class Main {
 //        println(PageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
 
         //===  Copy Page attches
-        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
+//        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
+
+        // === Copy children
+        PageService.copyPagesBranch(CONF_URL, TOKEN, 65603, 1966081, "", true,true, false)
 
 
 
