@@ -14,18 +14,6 @@ import java.time.temporal.TemporalUnit
 
 class Main {
 
-    private static String getRandomString(length) {
-        Random random = new Random()
-        def lorem = 'Lorem ipsum dolor sit amet consectetur adipiscing elit maecenas interdum pellentesque, ' +
-                'sollicitudin hendrerit cubilia primis nisl feugiat placerat tellus mauris'
-        def loremArr = lorem.split(' ')
-        def randomString = ''
-        for (i in 0..<length) {
-            randomString = randomString.concat(loremArr[random.nextInt(loremArr.length - 1)]).concat(' ')
-        }
-        return randomString
-    }
-
     static void main(String[] args) {
 
 // ====== DATA
@@ -177,11 +165,16 @@ class Main {
 //        println(PageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
 
         // ATTACH file to page
-        File file = new File("res.txt")
-        FileReader fileReader = new FileReader(file)
-        println(fileReader.readLine())
-//        println(PageService.addAttachToPage(CONF_URL, TOKEN,
-//                "http://localhost:7141/download/attachments/1966096/tests.edn?version=1&modificationDate=1637600358709&api=v2", 1966081).body)
+//        File file = new File("res.txt")
+//        FileReader fileReader = new FileReader(file)
+//        println(fileReader.readLine())
+        println(PageService.addAttachToPage(CONF_URL, TOKEN,
+                "http://localhost:7141/download/attachments/1966096/tests.edn?version=1&modificationDate=1637600358709&api=v2", 1966081))
+
+
+
+
+
 
 
         // END

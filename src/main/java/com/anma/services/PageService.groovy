@@ -3,11 +3,22 @@ package com.anma.services
 import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.mashape.unirest.http.HttpMethod
+import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.Unirest
+import com.mashape.unirest.request.HttpRequest
+import com.mashape.unirest.request.body.MultipartBody
+import org.apache.http.client.HttpClient
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.mime.content.FileBody
+import org.apache.http.impl.client.HttpClientBuilder
 
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+//import org.apache.hc.client5.http.auth.AuthScope;
+
+//import java.net.http.HttpClient
+//import java.net.http.HttpRequest
+//import java.net.http.HttpResponse
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
@@ -40,24 +51,16 @@ class PageService {
 
     static def getDescendants(CONF_URL, TOKEN, id) {
 
+        def Url = "${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=300"
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=300"))     // limit = 300 pages
-                .header("Authorization", "Basic ${TOKEN}")
-                .GET()
-                .build();
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        def allPages = []
 
-        Contents contents = gson.fromJson(response.body(), Contents.class)
-//        def children = contents.results
-//        if (children.size() > 0) {
-//            children.each {page ->
-//                allPages.add(page)
-//                while ()
-//            }
-//        }
+
+        def response = Unirest.get(Url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
+
+        Contents contents = gson.fromJson(response.body, Contents.class)
+
         return contents
     }
 
@@ -65,7 +68,7 @@ class PageService {
         println(">>>>>>> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
-        com.mashape.unirest.http.HttpResponse<String> response =
+        HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content?type=page&spaceKey=${space}&limit=300")      // limit = 300 pages
                         .header("Authorization", "Basic ${TOKEN}")
                         .asString()
@@ -245,19 +248,25 @@ class PageService {
                 "}";
 */
         /* Performing the PUT request to replace body */
-        HttpClient client = HttpClient.newBuilder().build();
-//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
-        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-        HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("${confURL}/rest/api/content/${id}"))
-                .PUT(publisher)
-                .headers("Authorization", "Basic ${TOKEN}")
-                .headers("Content-Type", "application/json")
-                .build();
+//        HttpClient client = HttpClient.newBuilder().build();
+////        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
+//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
+//        HttpRequest postReq = HttpRequest.newBuilder()
+//                .uri(URI.create())
+//                .PUT(publisher)
+//                .headers("Authorization", "Basic ${TOKEN}")
+//                .headers("Content-Type", "application/json")
+//                .build();
+//        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
 
-        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+        def url = "${confURL}/rest/api/content/${id}"
+        def response = Unirest.put(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString()
 
-        return postResponse.body()
+
+        return response.body
 
     }
 
@@ -296,52 +305,36 @@ class PageService {
         println(pageJSON)
 
         /* Performing the PUT request to replace body */
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-        HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
-                .PUT(publisher)
-                .headers("Authorization", "Basic ${TOKEN}")
-                .headers("Content-Type", "application/json")
-                .build();
 
-        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+        def url = "${CONF_URL}/rest/api/content/${id}"
+        def response = Unirest.put(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString()
 
-        return postResponse.body()
+        return response.body
     }
 
     static def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
-//        def TOKEN = new Base64Encoder().encode("${username}:${password}".bytes)
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"))       // 100 pages limit
-                .headers("Authorization", "Basic ${TOKEN}")
-                .GET()
-                .build();
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        Contents contents = gson.fromJson(response.body(), Contents.class)
-
-        return contents.results
+        def url = "${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"
+        return Unirest.get(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString().body
 
     }
 
     static def getDescendantsWithLabel(CONF_URL, TOKEN, id, label) {
 
 //        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
-        HttpRequest request = HttpRequest.newBuilder(
-                URI.create("${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}&limit=100"))      // 100 pages limit
-                .headers("Authorization", "Basic ${TOKEN}")
-                .GET()
-                .build()
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Contents contents = gson.fromJson(response.body(), Contents.class)
-
-        return contents.results
+        def url = "${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}&limit=100"
+        return Unirest.get(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString().body
 
     }
 
@@ -401,26 +394,18 @@ class PageService {
         String pageJSON = gson.toJson(updatedPage)  // convert to JSON
         println(pageJSON)
 
-        /* Performing the PUT request to replace body */
-        HttpClient client = HttpClient.newBuilder().build();
-//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
-        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-        HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
-                .PUT(publisher)
-                .headers("Authorization", "Basic ${TOKEN}")
-                .headers("Content-Type", "application/json")
-                .build();
+        def url = "${CONF_URL}/rest/api/content/${id}"
+        return Unirest.put(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString().body
 
-        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
-
-        return postResponse.body()
 
     }
 
-    static def findReplacePageTitlePart(CONF_URL, username, password, id, find, replace) {
+    static def findReplacePageTitlePart(CONF_URL, TOKEN, id, find, replace) {
 
-        def page = getPage(CONF_URL, username, password, id)
+        def page = getPage(CONF_URL, TOKEN, id)
 
         def pageVersion = page.version.number
         String title = page.title
@@ -446,23 +431,11 @@ class PageService {
                 "    \"type\": \"page\"\n" +
                 "}";
 */
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
-        println("**** token is ${TOKEN}")
-
-        /* Performing the PUT request to replace body */
-        HttpClient client = HttpClient.newBuilder().build();
-//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
-        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-        HttpRequest postReq = HttpRequest.newBuilder()
-                .uri(URI.create("${CONF_URL}/rest/api/content/${id}"))
-                .PUT(publisher)
-                .headers("Authorization", "Basic ${TOKEN}")
-                .headers("Content-Type", "application/json")
-                .build();
-
-        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
-
-        return postResponse.body()
+        def url = "${CONF_URL}/rest/api/content/${id}"
+        return Unirest.put(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString().body
 
     }
 
@@ -538,7 +511,7 @@ class PageService {
 
     static def getPageAttachments(CONF_URL, TOKEN, pageId) {
         //  GET /rest/api/content/{id}/child/attachment
-         def response = Unirest.get("${CONF_URL}/rest/api/content/" + pageId + "/child/attachment")
+        def response = Unirest.get("${CONF_URL}/rest/api/content/" + pageId + "/child/attachment")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString().body
         return gson.fromJson(response, Contents.class)
@@ -553,18 +526,51 @@ class PageService {
 
         InputStream file = new FileInputStream(new File("res.txt"));
 
+
+        //https://community.atlassian.com/t5/Jira-questions/Upload-Attach-API-Token-Java/qaq-p/970011
+
+//        HttpClient client = HttpClient.newBuilder().build();
+////        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
+//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
+//        HttpRequest postReq = HttpRequest.newBuilder()
+//                .uri(URI.create())
+//                .PUT(publisher)
+//                .headers("Authorization", "Basic ${TOKEN}")
+//                .headers("Content-Type", "application/json")
+//                .build();
+//        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
+
+        String pathname = "res.txt";
+        File fileUpload = new File(pathname);
+
+        def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment"
+        HttpRequest request = new HttpRequest(HttpMethod.POST, url)
+        MultipartBody multipartBody = new MultipartBody(request)
+        multipartBody.field("upload", fileUpload)
+
         return Unirest.post("${CONF_URL}/rest/api/content/${targetPageId}/child/attachment")
                 .header("Authorization", "Basic ${TOKEN}")
                 .header("X-Atlassian-Token", "nocheck")
 //                .field("upload", new File("copy.edn"))
-                .field("upload", file, "res.txt")
+                .field("file", fileUpload)
+                .asString().body
 
-                .asString()
+
+        // == Apache
+//        HttpClient httpClient = HttpClientBuilder.create().build();
+//        HttpPost postRequest = new HttpPost(url);
+//        postRequest.setHeader("Authorization", "Basic " + TOKEN);
+//        postRequest.setHeader("X-Atlassian-Token","nocheck");
+//        MultipartEntityBuilder entity = MultipartEntityBuilder.create();
+//        entity.addPart("file", new FileBody(fileUpload));
+//        postRequest.setEntity( entity.build());
+////        HttpResponse response = httpClient.execute(postRequest);
+//        return httpClient.execute(postRequest).asType(String.class)
+
 
     }
 
     static def copyPageComments(CONF_URL, TOKEN, sourcePageId, targetPageId) {
-
 
 
     }
