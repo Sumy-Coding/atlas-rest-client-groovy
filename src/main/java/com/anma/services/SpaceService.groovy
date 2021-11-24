@@ -5,6 +5,7 @@ import com.anma.models.Metadata
 import com.anma.models.Plain
 import com.anma.models.Space
 import com.anma.models.SpaceDescription
+import com.anma.models.space.CreateSpace
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mashape.unirest.http.Unirest
@@ -40,7 +41,7 @@ class SpaceService {
             }
          */
 
-        def space = new Space()
+        def space = new CreateSpace()
         space.key = spaceKey
         space.name = name
         SpaceDescription description = new SpaceDescription()
@@ -50,6 +51,8 @@ class SpaceService {
         description.plain = plain
         space.description = description
         space.metadata = new Metadata()
+
+//        println(gson.toJson(space))
 
         def response = Unirest.post("${CONF_URL}/rest/api/space")
                 .header("Authorization", "Basic ${TOKEN}")

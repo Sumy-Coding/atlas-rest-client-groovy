@@ -23,20 +23,19 @@ class Main {
 //        def username = "Andrii.Maliuta";
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-//        def username = "beastiehut@gmail.com";
-//        String password = 'RtuJhOJZADwGBrJzofpBFCB8'
+        def username = "beastiehut@gmail.com";
+
 //        def username = "andymaliuta@gmail.com";
-//        String password = 'VxHRL3rp319SgvhQYpcp0CBA'
 // DC AWS
-        def username = 'admin'
-        def password = 'admin'
+//        def username = System.getenv("USERNAME")
+        def password = System.getenv("PASSWORD")
 
 //===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
 //        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
-        final def CONF_URL = "http://localhost:7141"                    // localhost
+//        final def CONF_URL = "http://localhost:7141"                    // localhost
 //        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
 
         // ************* Start ************
@@ -128,24 +127,29 @@ class Main {
 
         // == Create comments for children
 
-        PageService.getChildren(CONF_URL, TOKEN, 1310845).results.each {
-            for (i in 1..30) {
-                String randomString = RandomGen.getRandomString(22)
-                println(PageService.createComment(CONF_URL, TOKEN, "dev62", [], it.id, 'page', randomString).body)
-            }
-        }
+//        PageService.getChildren(CONF_URL, TOKEN, 1310845).results.each {
+//            for (i in 1..30) {
+//                String randomString = RandomGen.getRandomString(22)
+//                println(PageService.createComment(CONF_URL, TOKEN, "dev62", [], it.id, 'page', randomString).body)
+//            }
+//        }
+
+        //== Create spaces
+//        for (i in 1..<30) {
+//            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev" + i, "dev" + i))
+//        }
 
         // ======== create pages for Spaces
 
-//        for (i in 1..<80) {
-//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
-//            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
-//            for (a in 1..200) {
-//                def pageBody = getRandomString(100)
-//                def title = "${space.key} Page New " + a
-//                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
-//            }
-//        }
+        for (i in 1..<30) {
+            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
+            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+            for (a in 1..50) {
+                def pageBody = RandomGen.getRandomString(100)
+                def title = "${space.key} Page New " + a
+                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
+            }
+        }
 
 // ======= Create PAGES
 
