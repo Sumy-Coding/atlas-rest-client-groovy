@@ -2,15 +2,16 @@ package com.anma
 
 import com.anma.models.Space
 import com.anma.services.PageService
+import com.anma.services.RandomGen
 import com.anma.services.SpaceService
 
 import java.time.Duration
+import java.time.LocalDate
+import org.apache.commons.lang3.RandomUtils;
 import java.time.LocalTime
 import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.temporal.Temporal
-import java.time.temporal.TemporalAdjusters
-import java.time.temporal.TemporalUnit
 
 class Main {
 
@@ -61,6 +62,14 @@ class Main {
 
         // GET blogs
 //        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
+
+        //=== POST blogpost
+        for (i in 0..<50) {
+            def postDate =
+                    LocalDate.of(2021, RandomUtils.nextInt(1,12), RandomUtils.nextInt(1,30))
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-DD"))
+            println(PageService.createBlog(CONF_URL, TOKEN, "dev1", postDate, "blog ${i}", RandomGen.getRandomString(30)))
+        }
 
         // GET space pages by label
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
@@ -172,7 +181,7 @@ class Main {
 //        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
         // === Copy children
-        PageService.copyPagesBranch(CONF_URL, TOKEN, 65603, 1966081, "", true,true, false)
+//        PageService.copyPagesBranch(CONF_URL, TOKEN, 65603, 1966081, "", true,true, false)
 
 
 

@@ -2,7 +2,7 @@ package com.anma.services
 
 class RandomGen {
 
-    private static String getRandomString(length) {
+    public static String getRandomString(length) {
         Random random = new Random()
         def lorem = 'Lorem ipsum dolor sit amet consectetur adipiscing elit maecenas interdum pellentesque, ' +
                 'sollicitudin hendrerit cubilia primis nisl feugiat placerat tellus mauris'

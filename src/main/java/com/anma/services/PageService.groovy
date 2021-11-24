@@ -201,6 +201,35 @@ class PageService {
                 .asString()
     }
 
+    static def createBlog(CONF_URL, TOKEN, space, postingDay, title, body) {
+        // postingDay	string
+        //the posting day of the blog post. Required for blogpost type. Format: yyyy-mm-dd. Example: 2013-02-13
+        println(PageService.class.name + " :: >> Performing CREATE Blogpost request")
+
+        Unirest.setTimeouts(0, 0);
+//        def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
+        def content = new Content()
+        content.title = title
+        content.type = 'blogpost'
+        content.status = 'current'
+        Space space1 = new Space()
+        content.space = space1
+        space1.key = space
+        Body body1 = new Body()
+        Storage storage = new Storage()
+        body1.storage = storage
+        storage.representation = 'storage'
+        storage.value = body
+        content.body = body1
+//        println(gson.toJson(content))
+
+        return Unirest.post("${CONF_URL}/rest/api/content")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .body(gson.toJson(content))
+                .asString()
+    }
+
     static def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
 
         def pageVersion = getPage(confURL, TOKEN, id).version.number
@@ -490,24 +519,28 @@ class PageService {
 
 //        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", copyLabels, copyAttach, copyComments)
 //        println(">> Root page copied ${rootCopy}")
-
+        def copies = null
+        def nextParent = targetPage.id
         if (length > 0) {
             while (length > 0) {
-                def copies = copyChildren(CONF_URL, TOKEN, parentId, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                copies = copyChildren(CONF_URL, TOKEN, parentId, nextParent, newTitle, copyLabels, copyAttach, copyComments)
                 println(PageService.class.name + " :: " + ">> Descendant page copied ${copies}")
-                children.each { child ->
-                    def descCopies = copyChildren(CONF_URL, TOKEN, child.id, copies.keySet()[0].id, newTitle, copyLabels, copyAttach, copyComments)
-                    children = getChildren(CONF_URL, TOKEN, child.id).results
-                    length = children.length
+                nextParent = copies.keySet()[0].id
+                children.each {child ->
+                    copies = copyChildren(CONF_URL, TOKEN, child.id, nextParent, newTitle, copyLabels,copyAttach, copyComments)
+//                    children = getChildren(CONF_URL, TOKEN, child.id).results
 //                    descChilds.each { desc ->
 //                        def descCopiesX2 = copyChildren(CONF_URL, TOKEN, desc.id, childCopy.id, "", copyLabels, copyAttach, copyComments)
 //                        def descX3 = getChildren(CONF_URL, TOKEN, desc.id).results
 //                        length = descX3.length
 //                    }
                 }
+                nextParent - copies.keySet()[0].id
+//                children = getChildren(CONF_URL, TOKEN, child.id).results
+                length = children.length
+
             }
         }
-
     }
 
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
@@ -517,7 +550,7 @@ class PageService {
         Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
 
         def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
-        println(getClass().name + " :: " + " Root page copied ${rootCopy}")
+        println(PageService.class.name + " :: " + " Root page copied ${rootCopy}")
 
         def copies = []
         children.each { child ->
