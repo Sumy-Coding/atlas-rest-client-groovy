@@ -64,12 +64,12 @@ class Main {
 //        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
 
         //=== POST blogpost
-        for (i in 0..<50) {
-            def postDate =
-                    LocalDate.of(2021, RandomUtils.nextInt(1,12), RandomUtils.nextInt(1,30))
-                            .format(DateTimeFormatter.ofPattern("yyyy-MM-DD"))
-            println(PageService.createBlog(CONF_URL, TOKEN, "dev1", postDate, "blog ${i}", RandomGen.getRandomString(30)))
-        }
+//        for (i in 0..<50) {
+//            def postDate =
+//                    LocalDate.of(2021, RandomUtils.nextInt(1,12), RandomUtils.nextInt(1,30))
+//                            .format(DateTimeFormatter.ofPattern("yyyy-MM-DD"))
+//            println(PageService.createBlog(CONF_URL, TOKEN, "dev1", postDate, "blog ${i}", RandomGen.getRandomString(30)))
+//        }
 
         // GET space pages by label
 //        println(PageService.getSpacePagesByLabel(CONF_URL, "admin", "admin", "TEST", "test").each {println(it.title)})
@@ -128,12 +128,12 @@ class Main {
 
         // == Create comments for children
 
-//        PageService.getChildren(CONF_URL, TOKEN, space.homepage.id).results.each {
-//            for (i in 1..14) {
-//                String randomString = getRandomString(18)
-//                println(PageService.createComment(CONF_URL, TOKEN, space.key, [], it.id, 'page', randomString).body)
-//            }
-//        }
+        PageService.getChildren(CONF_URL, TOKEN, 1310845).results.each {
+            for (i in 1..30) {
+                String randomString = RandomGen.getRandomString(22)
+                println(PageService.createComment(CONF_URL, TOKEN, "dev62", [], it.id, 'page', randomString).body)
+            }
+        }
 
         // ======== create pages for Spaces
 
