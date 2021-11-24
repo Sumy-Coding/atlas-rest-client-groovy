@@ -24,7 +24,6 @@ class Main {
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
         def username = "beastiehut@gmail.com";
-
 //        def username = "andymaliuta@gmail.com";
 // DC AWS
 //        def username = System.getenv("USERNAME")
@@ -40,7 +39,6 @@ class Main {
 
         // ************* Start ************
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))
         def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
