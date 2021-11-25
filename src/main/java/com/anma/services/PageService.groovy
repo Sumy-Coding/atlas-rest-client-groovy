@@ -384,6 +384,7 @@ class PageService {
     static def addLabelsToAncestors(CONF_URL, TOKEN, id, List<String> labels) {
 
         def page = getPage(CONF_URL, TOKEN, id)
+        addLabelsToPage(CONF_URL, TOKEN, page.id, labels)
         Content nextParent
         def firstParent = getPage(CONF_URL, TOKEN, page.ancestors[page.ancestors.length - 1].id)
         if (null != firstParent) {
@@ -392,7 +393,7 @@ class PageService {
             while (null != nextParent) {
                 addLabelsToPage(CONF_URL, TOKEN, nextParent.id, labels)
                 def length = nextParent.ancestors.length
-                if (length >= 0) {
+                if (length > 0) {
                     nextParent = getPage(CONF_URL, TOKEN, nextParent.ancestors[length - 1].id)
                 }
             }
