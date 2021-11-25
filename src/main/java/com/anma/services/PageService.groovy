@@ -20,7 +20,7 @@ class PageService {
 
     static Content getPage(CONF_URL, TOKEN, id) {
 
-        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space")
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
 
@@ -378,6 +378,26 @@ class PageService {
                 .header("Content-Type", "application/json")
                 .body(labelsArrayJSON)
                 .asString().body
+
+    }
+
+    static def addLabelsToAncestors(CONF_URL, TOKEN, id, List<String> labels) {
+
+        def page = getPage(CONF_URL, TOKEN, id)
+        Content nextParent
+        def firstParent = getPage(CONF_URL, TOKEN, page.ancestors[page.ancestors.length - 1].id)
+        if (null != firstParent) {
+            addLabelsToPage(CONF_URL, TOKEN, firstParent.id, labels)
+            nextParent = getPage(CONF_URL, TOKEN, firstParent.ancestors[firstParent.ancestors.length - 1].id)
+            while (null != nextParent) {
+                addLabelsToPage(CONF_URL, TOKEN, nextParent.id, labels)
+                def length = nextParent.ancestors.length
+                if (length >= 0) {
+                    nextParent = getPage(CONF_URL, TOKEN, nextParent.ancestors[length - 1].id)
+                }
+            }
+        }
+
 
     }
 
