@@ -8,6 +8,7 @@ import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.Unirest
 import com.mashape.unirest.request.HttpRequest
 import com.mashape.unirest.request.body.MultipartBody
+
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
@@ -398,8 +399,6 @@ class PageService {
                 }
             }
         }
-
-
     }
 
     static def addPageTitlePart(CONF_URL, TOKEN, id, toAdd, position) {
@@ -531,63 +530,62 @@ class PageService {
 
     static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
                                copyLabels, copyAttach, boolean copyComments) {
-        println(">>>>>>> Performing COPY page BRANCH  request")
+        println(">>>>> Performing COPY page BRANCH  request")
 
         Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
-        Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+        Content[] children
+        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+        children = getChildren(CONF_URL, TOKEN, rootPage.id).results
         int length = children.length
-
-//        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, "", copyLabels, copyAttach, copyComments)
-//        println(">> Root page copied ${rootCopy}")
-        def copies = null
-        def nextParent = targetPage.id
-        if (length > 0) {
-            while (length > 0) {
-                copies = copyChildren(CONF_URL, TOKEN, parentId, nextParent, newTitle, copyLabels, copyAttach, copyComments)
-                println(PageService.class.name + " :: " + ">> Descendant page copied ${copies}")
-                nextParent = copies.keySet()[0].id
-                children.each {child ->
-                    copies = copyChildren(CONF_URL, TOKEN, child.id, nextParent, newTitle, copyLabels,copyAttach, copyComments)
-//                    children = getChildren(CONF_URL, TOKEN, child.id).results
-//                    descChilds.each { desc ->
-//                        def descCopiesX2 = copyChildren(CONF_URL, TOKEN, desc.id, childCopy.id, "", copyLabels, copyAttach, copyComments)
-//                        def descX3 = getChildren(CONF_URL, TOKEN, desc.id).results
-//                        length = descX3.length
-//                    }
+        while (length > 0) {
+            children.each {child ->
+                def childCopies = copyChildren(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                while (getChildren(CONF_URL, TOKEN, child.id).results > 0) {
+                    def descCopies = copyChildren(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
                 }
-                nextParent - copies.keySet()[0].id
-//                children = getChildren(CONF_URL, TOKEN, child.id).results
-                length = children.length
-
+//                children =
+//                        length = children.length
             }
         }
     }
 
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
                             boolean copyLabels, boolean copyAttach, boolean copyComments) {
+
         Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
-        Content[] children = getChildren(CONF_URL, TOKEN, rootPage.id).results
-
-        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
-        println(PageService.class.name + " :: " + " Root page copied ${rootCopy}")
-
-        def copies = []
-        children.each { child ->
-            def childCopy = copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
-            println(getClass().name + " :: " + " Root page copied ${childCopy}")
-            copies.add(childCopy)
-//            def descendants = getChildren(CONF_URL, TOKEN, child.id).results   // descendants
-//            int length = descendants.length
-//
-//            descendants.each { desc ->
-//                copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,copyLabels,copyAttach,copyComments)
-//                descendants = getChildren(CONF_URL, TOKEN, desc.id).results
-//                length = descendants.length
-//            }
+        Content[] children
+        children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+        if (children != null) {
+            for (i in 0..<children.length) {
+                def child = children[i]
+                copyChildren(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                copyPage(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+            }
         }
-        return Map.of(rootCopy, copies)
+
+//        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+//        println(PageService.class.name + CodeLines.lineNumber + " :: " + " Root page copied ${rootCopy}")
+
+
+//        def copies = []
+//        while (children != null) {
+//            children.each { child ->
+//            def childCopy = copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+//            def descs = getChildren(CONF_URL, TOKEN, child.id)
+//            def childLength = descs.results
+//            while (childLength > 0) {
+//                descs.each {desc ->
+//                    def copy = copyPage(CONF_URL, TOKEN, desc.id, childCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+//                    childLength = child
+//                }
+//            }
+//            println(PageService.class.name + " :: " + " Child ${child} copied")
+            //println(getClass().name + " :: " + " Root page copied ${childCopy}")
+//            copies.add(childCopy)
+
+        return Optional<Map>.empty()
     }
 
     static def getPageRestrictions() {

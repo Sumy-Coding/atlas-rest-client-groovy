@@ -185,10 +185,10 @@ class Main {
 //        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
         // === Copy children
-//        PageService.copyPagesBranch(CONF_URL, TOKEN, 65603, 1966081, "", true,true, false)
+        PageService.copyChildren(CONF_URL, TOKEN, 65603, 1966081, "", true,true, false)
 
         // === add Labels to Ancestors
-        PageService.addLabelsToAncestors(CONF_URL, TOKEN, 5242886, ["aaa", "bbb"])
+//        PageService.addLabelsToAncestors(CONF_URL, TOKEN, 5242886, ["aaa", "bbb"])
 
 
 
