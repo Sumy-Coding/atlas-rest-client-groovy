@@ -540,7 +540,7 @@ class PageService {
         int length = children.length
         while (length > 0) {
             children.each {child ->
-                def childCopies = copyChildren(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                def childCopies = copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
                 while (getChildren(CONF_URL, TOKEN, child.id).results > 0) {
                     def descCopies = copyChildren(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
                 }
@@ -557,11 +557,12 @@ class PageService {
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
         Content[] children
         children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
         if (children != null) {
             for (i in 0..<children.length) {
                 def child = children[i]
-                copyChildren(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
-                copyPage(CONF_URL, TOKEN, child.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+                copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
             }
         }
 
