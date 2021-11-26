@@ -528,6 +528,7 @@ class PageService {
         }
     }
 
+    /*
     static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
                                copyLabels, copyAttach, boolean copyComments) {
         println(">>>>> Performing COPY page BRANCH  request")
@@ -549,6 +550,7 @@ class PageService {
             }
         }
     }
+     */
 
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
                             boolean copyLabels, boolean copyAttach, boolean copyComments) {
