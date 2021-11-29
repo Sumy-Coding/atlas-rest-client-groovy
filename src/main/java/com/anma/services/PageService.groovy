@@ -630,17 +630,6 @@ class PageService {
 
 //        InputStream file = new FileInputStream(new File("res.txt"));
 
-//        HttpClient client = HttpClient.newBuilder().build();
-////        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(updatedPageBody)
-//        HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.ofString(pageJSON)
-//        HttpRequest postReq = HttpRequest.newBuilder()
-//                .uri(URI.create())
-//                .PUT(publisher)
-//                .headers("Authorization", "Basic ${TOKEN}")
-//                .headers("Content-Type", "application/json")
-//                .build();
-//        HttpResponse<String> postResponse = client.send(postReq, HttpResponse.BodyHandlers.ofString());
-
         File fileUpload = new File(savedAttach)
 
         def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment"
@@ -669,9 +658,20 @@ class PageService {
 
     }
 
-    static def copyPageComments(CONF_URL, TOKEN, sourcePageId, targetPageId) {
-
+    static def copyPageComments(CONF_URL, TOKEN, sourceId, targetId) {
         //todo
+//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
+//        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+//        Content[] children
+//        children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+//        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
+//        if (children != null) {
+//            for (i in 0..<children.length) {
+//                def child = children[i]
+//                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+//                copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+//            }
+//        }
 
     }
 
