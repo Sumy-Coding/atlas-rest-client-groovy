@@ -113,6 +113,16 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
+    static def deletePage(CONF_URL, TOKEN, id) {
+        println(">>>>>>> Performing DELETE PAGE request")
+        HttpResponse<String> response =
+                Unirest.delete("${CONF_URL}/rest/api/content/${id}")
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .asString()
+
+        return response.body
+    }
+
     static def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
         println(">>>>>>> Performing GET Scroll templates request")
         HttpResponse<String> response =
@@ -496,25 +506,30 @@ class PageService {
         Content targetPage
         def extTOKEN = TokenService.getToken(targetUser, targetPass)
         Content createdPage
+
         if (!targetServer.isEmpty()) {
-            rootPage = getPage(CONF_URL, extTOKEN, sourceId)
-            targetPage = getPage(CONF_URL, extTOKEN, targetId)
-            def body = createPage(CONF_URL, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            rootPage = getPage(CONF_URL, TOKEN, sourceId)
+            targetPage = getPage(targetServer, extTOKEN, targetId)
+            if (null == newTitle || newTitle.isEmpty()) {
+                newTitle = "Copy of " + rootPage.title
+            }
+            def body = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
             createdPage = gson.fromJson(body, Content.class)
             if (copyLabels) {           // better change just TOKEN based on conditions as all the rest is same
-                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+                copyPageLabels(targetServer, TOKEN, rootPage.id, createdPage.id)
             }
-
             if (copyAttach) {
-                copyPageAttaches(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+                copyPageAttaches(targetServer, TOKEN, rootPage.id, createdPage.id)
             }
-
             if (copyComments) {
-                copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+                copyPageComments(targetServer, TOKEN, rootPage.id, createdPage.id)
             }
         } else {
             rootPage = getPage(CONF_URL, TOKEN, sourceId)
             targetPage = getPage(CONF_URL, TOKEN, targetId)
+            if (null == newTitle || newTitle.isEmpty()) {
+                newTitle = "Copy of " + rootPage.title
+            }
             def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
             createdPage = gson.fromJson(body, Content.class)
             if (copyLabels) {
@@ -529,9 +544,7 @@ class PageService {
                 copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
             }
         }
-        if (null == newTitle || newTitle.isEmpty()) {
-            newTitle = "Copy of " + rootPage.title
-        }
+
         // copy root
 //        def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
 //        def createdPage = gson.fromJson(body, Content.class)
@@ -584,26 +597,42 @@ class PageService {
         def extTOKEN
         Content rootPage
         Content targetPage
+        Content[] children
         if (!targetServer.isEmpty()) {
             extTOKEN = TokenService.getToken(targetUser, targetPass)
             rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
             targetPage = getPage(targetServer, extTOKEN, targetId)
+            children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+            def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
+                    copyAttach, copyComments,targetServer,targetUser,targetPass)
+            if (children != null) {
+                for (i in 0..<children.length) {
+                    def child = children[i]
+                    copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
+                            targetServer, targetUser, targetPass)
+                    copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
+                            targetServer, targetUser, targetPass)
+                }
+            }
         } else {
             rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
             targetPage = getPage(CONF_URL, TOKEN, targetId)
-        }
-
-        Content[] children
-        children = getChildren(CONF_URL, TOKEN, rootPage.id).results
-        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
-        if (children != null) {
-            for (i in 0..<children.length) {
-                def child = children[i]
-                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
+            children = getChildren(CONF_URL, TOKEN, rootPage.id).results
+            def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
+                    copyAttach, copyComments,targetServer,targetUser,targetPass)
+            if (children != null) {
+                for (i in 0..<children.length) {
+                    def child = children[i]
+                    copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
                             targetServer, targetUser, targetPass)
-                copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+                    copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
+                            targetServer, targetUser, targetPass)
+                }
             }
         }
+
+
+
 
 //        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
 //        println(PageService.class.name + CodeLines.lineNumber + " :: " + " Root page copied ${rootCopy}")
