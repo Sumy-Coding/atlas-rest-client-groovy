@@ -2,7 +2,7 @@ package com.anma.models
 
 class Content {
 
-    long id
+    def id
     String title
     def type
     def status
