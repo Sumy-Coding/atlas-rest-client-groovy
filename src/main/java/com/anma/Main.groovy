@@ -26,10 +26,9 @@ class Main {
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
 //        def username = "beastiehut@gmail.com";
+//        def password = System.getenv("BH_TOKEN")
 //        def username = "andymaliuta@gmail.com";
 // DC AWS
-//        def username = System.getenv("USERNAME")
-//        def password = System.getenv("PASSWORD")
 //        def username = "admin"
 //        def password = "admin"
 
@@ -49,7 +48,7 @@ class Main {
         // ******** Operations **********
 
         // GET page
-//        println(PageService.getPage(CONF_URL, TOKEN, 5242886))
+//        println(PageService.getPage(CONF_URL, TOKEN, 35913877))
 
         // GET children
 //        println(PageService.getChildren(CONF_URL, username, password, id).results)
@@ -186,12 +185,20 @@ class Main {
 //        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
         // === Copy children
-        PageService.copyChildren(CONF_URL, TOKEN, 2031619, 2031638, "",
-                true,true, false,"","","")
+
+        PageService.copyChildren(CONF_URL, TOKEN, 2031619, 465600539, "", true, true, false,
+                "https://beastiehut.atlassian.net/wiki",
+                "beastiehut@gmail.com",
+                System.getenv("BH_TOKEN"))
+
+        //bht
+//            PageService.copyChildren(CONF_URL, TOKEN, "465862662", "465600539", "", true, true, false,
+//                "",
+//                "",
+//                "")
 
         // === add Labels to Ancestors
 //        PageService.addLabelsToAncestors(CONF_URL, TOKEN, 5242886, ["aaa", "bbb"])
-
 
 
         // END

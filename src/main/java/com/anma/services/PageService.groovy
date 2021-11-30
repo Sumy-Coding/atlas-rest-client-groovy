@@ -92,7 +92,7 @@ class PageService {
 
     }
 
-    static def getPageLabels(CONF_URL, TOKEN, long id) {
+    static def getPageLabels(CONF_URL, TOKEN, id) {
         println(PageService.class.name + " :: " + ">>> Performing GET LABELS request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content/" + id + "/label")
@@ -490,33 +490,58 @@ class PageService {
                 .body
     }
 
-    static def copyPage(CONF_URL, TOKEN, sourceId, long targetId, String newTitle,
-                        boolean copyLabels, boolean copyAttach, boolean copyComments) {
-        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+    static def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle,boolean copyLabels, boolean copyAttach,
+                        boolean copyComments, targetServer, targetUser, targetPass) {
+        Content rootPage
+        Content targetPage
+        def extTOKEN = TokenService.getToken(targetUser, targetPass)
+        Content createdPage
+        if (!targetServer.isEmpty()) {
+            rootPage = getPage(CONF_URL, extTOKEN, sourceId)
+            targetPage = getPage(CONF_URL, extTOKEN, targetId)
+            def body = createPage(CONF_URL, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            createdPage = gson.fromJson(body, Content.class)
+            if (copyLabels) {           // better change just TOKEN based on conditions as all the rest is same
+                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+
+            if (copyAttach) {
+                copyPageAttaches(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+
+            if (copyComments) {
+                copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+        } else {
+            rootPage = getPage(CONF_URL, TOKEN, sourceId)
+            targetPage = getPage(CONF_URL, TOKEN, targetId)
+            def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            createdPage = gson.fromJson(body, Content.class)
+            if (copyLabels) {
+                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+
+            if (copyAttach) {
+                copyPageAttaches(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+
+            if (copyComments) {
+                copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+            }
+        }
         if (null == newTitle || newTitle.isEmpty()) {
             newTitle = "Copy of " + rootPage.title
         }
         // copy root
-        def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
-        def createdPage = gson.fromJson(body, Content.class)
+//        def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+//        def createdPage = gson.fromJson(body, Content.class)
         // copy lables
-        if (copyLabels) {
-            copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
-        }
 
-        if (copyAttach) {
-            copyPageAttaches(CONF_URL, TOKEN, rootPage.id, createdPage.id)
-        }
-
-        if (copyComments) {
-            copyPageComments(CONF_URL, TOKEN, rootPage.id, createdPage.id)
-        }
 
         return createdPage
     }
 
-    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, long targetPageId) {
+    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId) {
         def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
         if (labels != null) {
             if (labels != null || labels.length > 0) {
@@ -559,12 +584,12 @@ class PageService {
         def extTOKEN
         Content rootPage
         Content targetPage
-        if (!targetServer.isEmpty() || null != targetServer) {
+        if (!targetServer.isEmpty()) {
             extTOKEN = TokenService.getToken(targetUser, targetPass)
             rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
             targetPage = getPage(targetServer, extTOKEN, targetId)
         } else {
-            rootPage = getPage(CONF_URL, TOKEN, sourceId)
+            rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
             targetPage = getPage(CONF_URL, TOKEN, targetId)
         }
 
@@ -689,7 +714,7 @@ class PageService {
 
     static def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId) {
         //https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/child/attachment-createAttachments
-
+        println(" === copying page ${sourcePageId} attaches to ${targetPageId}")
         def page = getPage(CONF_URL, TOKEN, sourcePageId)
         def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
 
