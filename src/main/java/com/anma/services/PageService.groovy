@@ -553,17 +553,29 @@ class PageService {
      */
 
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
-                            boolean copyLabels, boolean copyAttach, boolean copyComments) {
+                            boolean copyLabels, boolean copyAttach, boolean copyComments,
+                            String targetServer, targetUser, targetPass) {
 
-        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+        def extTOKEN
+        Content rootPage
+        Content targetPage
+        if (!targetServer.isEmpty() || null != targetServer) {
+            extTOKEN = TokenService.getToken(targetUser, targetPass)
+            rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
+            targetPage = getPage(targetServer, extTOKEN, targetId)
+        } else {
+            rootPage = getPage(CONF_URL, TOKEN, sourceId)
+            targetPage = getPage(CONF_URL, TOKEN, targetId)
+        }
+
         Content[] children
         children = getChildren(CONF_URL, TOKEN, rootPage.id).results
         def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
         if (children != null) {
             for (i in 0..<children.length) {
                 def child = children[i]
-                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
+                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
+                            targetServer, targetUser, targetPass)
                 copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
             }
         }
