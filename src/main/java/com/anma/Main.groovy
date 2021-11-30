@@ -4,6 +4,7 @@ import com.anma.models.Space
 import com.anma.services.PageService
 import com.anma.services.RandomGen
 import com.anma.services.SpaceService
+import com.anma.services.TokenService
 
 import java.time.Duration
 import java.time.LocalDate
@@ -20,7 +21,8 @@ class Main {
 // ====== DATA
         //=========== DU
 
-//        def username = "Andrii.Maliuta";
+        def username = System.getenv("CONF_USER")
+        def password = System.getenv("CONF_PASS")
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
 //        def username = "beastiehut@gmail.com";
@@ -28,8 +30,8 @@ class Main {
 // DC AWS
 //        def username = System.getenv("USERNAME")
 //        def password = System.getenv("PASSWORD")
-        def username = "admin"
-        def password = "admin"
+//        def username = "admin"
+//        def password = "admin"
 
 //===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
@@ -41,7 +43,7 @@ class Main {
 
         // ************* Start ************
 
-        def TOKEN = new String(Base64.encoder.encode("${username}:${password}".bytes))
+        def TOKEN = TokenService.getToken(username, password)
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
