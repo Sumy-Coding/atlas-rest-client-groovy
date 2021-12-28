@@ -20,21 +20,23 @@ class Main {
 
 // ====== DATA
         //=========== DU
-
+// LOCAL
+        def username = "admin"
+        def password = "admin"
 //        def username = System.getenv("CONF_USER")
 //        def password = System.getenv("CONF_PASS")
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-        def username = "beastiehut@gmail.com";
-        def password = System.getenv("BH_TOKEN")
+//        def username = "beastiehut@gmail.com";
+//        def password = System.getenv("BH_TOKEN")
 //        def username = "andymaliuta@gmail.com";
 
 //===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
 //        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
-//        final def CONF_URL = "http://localhost:7141"                    // localhost
+        final def CONF_URL = "http://localhost:7150"                    // localhost
 //        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
 
         // ************* Start ************
@@ -133,13 +135,13 @@ class Main {
 
         //== Create spaces
 //        for (i in 1..<30) {
-//            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev" + i, "dev" + i))
+//            println(SpaceService.createSpace(CONF_URL, TOKEN, "DDB" + i, "DDB" + i))
 //        }
 
         // ======== create pages for Spaces
 
 //        for (i in 1..<30) {
-//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
+//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "DDB" + i)
 //            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
 //            for (a in 1..50) {
 //                def pageBody = RandomGen.getRandomString(100)
@@ -147,6 +149,15 @@ class Main {
 //                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
 //            }
 //        }
+
+        // === create DRAFTS
+            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "DDB1")
+            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+            for (a in 1..30) {
+                def pageBody = RandomGen.getRandomString(100)
+                def title = "${space.key} Page New " + a
+                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
+            }
 
 // ======= Create PAGES
 
@@ -189,25 +200,19 @@ class Main {
 //                System.getenv("BH_TOKEN"))
 
         //bht
-//            PageService.copyChildren(CONF_URL, TOKEN, "465862662", "465600539", "", true, true, false,
-//                "",
-//                "",
-//                "")
+//            PageService.copyChildren(CONF_URL, TOKEN, "465862662", "2031638", "", true, true, false,
+//                "http://localhost:7141",
+//                "admin",
+//                "admin")
 
         // === add Labels to Ancestors
 //        PageService.addLabelsToAncestors(CONF_URL, TOKEN, 5242886, ["aaa", "bbb"])
 
         // DELETE
 //        println(PageService.deletePage(CONF_URL, TOKEN, 465829921))
-        PageService.getDescendants(CONF_URL, TOKEN, 465764447).results.each {page ->
-            println(PageService.deletePage(CONF_URL, TOKEN, page.id))
-        }
-
-
-
-
-
-
+//        PageService.getDescendants(CONF_URL, TOKEN, 465764447).results.each {page ->
+//            println(PageService.deletePage(CONF_URL, TOKEN, page.id))
+//        }
 
 
         // END
