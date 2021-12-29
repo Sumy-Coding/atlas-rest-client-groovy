@@ -28,6 +28,28 @@ class PageService {
         return gson.fromJson(response.body, Content.class)
     }
 
+    static Contents getDraftsForSpace(CONF_URL, TOKEN, spaceKey) {
+
+        def response = Unirest.get("${CONF_URL}/rest/api/content?spaceKey=${spaceKey}&status=draft" +
+                "&expand=body.storage,version,space,ancestors")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
+
+        return gson.fromJson(response.body, Contents.class)
+    }
+
+    static void deleteDraftsForSpace(CONF_URL, TOKEN, spaceKey) {
+
+        getDraftsForSpace(CONF_URL, TOKEN, spaceKey).results.each {
+            def response = Unirest.delete("${CONF_URL}/rest/api/content/${it.id}?status=draft")
+                    .header("Authorization", "Basic ${TOKEN}")
+                    .asString()
+            println("DRAFT with ID=${it.id} deleted")
+        }
+
+    }
+
+
     static def getChildren(CONF_URL, TOKEN, id) {
 
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}/child/page?limit=300")       // limit = 300 pages
@@ -143,7 +165,7 @@ class PageService {
                 .asString()
     }
 
-    static def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
+    static def createPage(CONF_URL, TOKEN, space, parentId, title, body, status) {
         println(">>>>>>> Performing CREATE PAGE request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
@@ -151,7 +173,7 @@ class PageService {
         def content = new Content()
         content.title = title
         content.type = 'page'
-        content.status = 'current'
+        content.status = status
         Space space1 = new Space()
         content.space = space1
         space1.key = space
@@ -212,7 +234,7 @@ class PageService {
                 .asString()
     }
 
-    static def createBlog(CONF_URL, TOKEN, space, postingDay, title, body) {
+    static def createBlog(CONF_URL, TOKEN, space, postingDay, title, body, status) {
         // postingDay	string
         //the posting day of the blog post. Required for blogpost type. Format: yyyy-mm-dd. Example: 2013-02-13
         println(PageService.class.name + " :: >> Performing CREATE Blogpost request")
@@ -222,7 +244,7 @@ class PageService {
         def content = new Content()
         content.title = title
         content.type = 'blogpost'
-        content.status = 'current'
+        content.status = status
         Space space1 = new Space()
         content.space = space1
         space1.key = space
@@ -513,7 +535,7 @@ class PageService {
             if (null == newTitle || newTitle.isEmpty()) {
                 newTitle = "Copy of " + rootPage.title
             }
-            def body = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            def body = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value, "current").body
             createdPage = gson.fromJson(body, Content.class)
             if (copyLabels) {           // better change just TOKEN based on conditions as all the rest is same
                 copyPageLabels(targetServer, TOKEN, rootPage.id, createdPage.id)
@@ -530,7 +552,7 @@ class PageService {
             if (null == newTitle || newTitle.isEmpty()) {
                 newTitle = "Copy of " + rootPage.title
             }
-            def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value, "current").body
             createdPage = gson.fromJson(body, Content.class)
             if (copyLabels) {
                 copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)

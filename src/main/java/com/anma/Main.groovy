@@ -149,15 +149,23 @@ class Main {
 //                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
 //            }
 //        }
+// ===================================== DRAFTS
+        // GET drafts
+//        PageService.getDraftsForSpace(CONF_URL, TOKEN, "DDB1").results.each {
+//            println(it)
+//        }
 
         // === create DRAFTS
-            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "DDB1")
-            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
-            for (a in 1..30) {
-                def pageBody = RandomGen.getRandomString(100)
-                def title = "${space.key} Page New " + a
-                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
-            }
+//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "DDB1")
+//            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+//            for (a in 1..12) {
+//                def pageBody = RandomGen.getRandomString(100)
+//                def title = "${space.key} Page New " + a
+//                println(PageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody, "draft").body)
+//            }
+
+        // DELETE drafts
+//        PageService.deleteDraftsForSpace(CONF_URL, TOKEN, "DDB1")
 
 // ======= Create PAGES
 
