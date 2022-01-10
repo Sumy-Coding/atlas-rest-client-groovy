@@ -9,8 +9,6 @@ import com.anma.services.TokenService
 import java.time.Duration
 import java.time.LocalDate
 import org.apache.commons.lang3.RandomUtils;
-import java.time.LocalTime
-import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -23,30 +21,23 @@ class Main {
 
 //        def username = System.getenv("CONF_USER")
 //        def password = System.getenv("CONF_PASS")
-//        final String CONF_URL = "https://confluence-datacenter.du.ae"
-        //========== bh
-        def username = "admin";
-        def password = "admin"
-
-//===== BASS
-//        final String CONF_URL = "https://bass.netcracker.com"
-//        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
-        final String anmaURL = "https://anma.atlassian.net/wiki"      // anma Cloud
+//        final String duCONF_URL = "https://confluence-datacenter.du.ae"
+//        final String bassURL = "https://bass.netcracker.com"
+//        final String bassdevqaURL = "https://bassdevqa.netcracker.com"        // DEVQA
+//        final String bhtURL = "https://beastiehut.atlassian.net/wiki"   // bh Cloud
+        final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
 //        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
-
-        // ************* Start ************
-        def TOKEN = TokenService.getToken(username, password)
+        def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
-        def bhtTOKEN = TokenService.getToken(System.getenv("beastiehut@gmail.com"), System.getenv("BH_TOKEN"))
+        def bhtTOKEN = TokenService.getToken("beastiehut@gmail.com", System.getenv("BH_TOKEN"))
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
         // ******** Operations **********
 
         // GET page
-//        println(PageService.getPage(CONF_URL, TOKEN, 465829921))
+//        println(PageService.getPage(anmaURL, anmaTOKEN, 511180801))
 
         // GET children
 //        println(PageService.getChildren(anmaURL, anmaTOKEN, 511180801).results)
@@ -170,7 +161,7 @@ class Main {
 //        println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
 
         // copy page between servers
-        println(PageService.copyPage(local714CONF_URL, TOKEN, 6160387, 511180801, "",
+        println(PageService.copyPage(local714CONF_URL, localTOKEN, 6160387, 511180801, "",
                 true, true, false, anmaURL, anmaTOKEN))
 
         // copy page labels
