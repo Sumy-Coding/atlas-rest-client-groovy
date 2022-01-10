@@ -1,13 +1,13 @@
 package com.anma.models
 
 class Links {
+
     String webui
     String download
     String collection
     String base
     String context
     String self
-
 
     @Override
     public String toString() {
