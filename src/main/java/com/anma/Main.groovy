@@ -25,16 +25,17 @@ class Main {
 //        def password = System.getenv("CONF_PASS")
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-        def username = "beastiehut@gmail.com";
-        def password = System.getenv("BH_TOKEN")
-//        def username = "andymaliuta@gmail.com";
+//        def username = "beastiehut@gmail.com";
+//        def password = System.getenv("BH_TOKEN")
+        def username = "admin";
+        def password = "admin"
 
 //===== BASS
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
-        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
+//        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
 //        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
-//        final def CONF_URL = "http://localhost:7141"                    // localhost
+        final def CONF_URL = "http://localhost:7141"                    // localhost
 //        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
 
         // ************* Start ************
@@ -48,10 +49,10 @@ class Main {
 //        println(PageService.getPage(CONF_URL, TOKEN, 465829921))
 
         // GET children
-//        println(PageService.getChildren(CONF_URL, username, password, id).results)
+//        println(PageService.getChildren(CONF_URL, TOKEN, id).results)
 
         // GET descendants
-//        println(PageService.getDescendants(CONF_URL, username, password, id).each {println(it.title)})
+//        PageService.getDescendants(CONF_URL, TOKEN, 5832764).results.each {println(it.title)}
 
         // GET space pages
 //        println(PageService.getSpacePages(CONF_URL, TOKEN, 'TEST').results)
@@ -182,11 +183,13 @@ class Main {
 //        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
         // === Copy children
-
-//        PageService.copyChildren(CONF_URL, TOKEN, 2031619, 465600539, "", true, true, false,
+        PageService.copyChildren(CONF_URL, TOKEN, 65603, 5832724, "", true, true, false,
 //                "https://beastiehut.atlassian.net/wiki",
-//                "beastiehut@gmail.com",
-//                System.getenv("BH_TOKEN"))
+                "",
+                "",
+                ""
+//                System.getenv("BH_TOKEN")
+        )
 
         //bht
 //            PageService.copyChildren(CONF_URL, TOKEN, "465862662", "465600539", "", true, true, false,
@@ -199,11 +202,9 @@ class Main {
 
         // DELETE
 //        println(PageService.deletePage(CONF_URL, TOKEN, 465829921))
-        PageService.getDescendants(CONF_URL, TOKEN, 465764447).results.each {page ->
-            println(PageService.deletePage(CONF_URL, TOKEN, page.id))
-        }
-
-
+//        PageService.getDescendants(CONF_URL, TOKEN, 465764447).results.each {page ->
+//            println(PageService.deletePage(CONF_URL, TOKEN, page.id))
+//        }
 
 
 

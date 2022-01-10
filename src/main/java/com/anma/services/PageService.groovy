@@ -500,7 +500,7 @@ class PageService {
                 .body
     }
 
-    static def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle,boolean copyLabels, boolean copyAttach,
+    static def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle, boolean copyLabels, boolean copyAttach,
                         boolean copyComments, targetServer, targetUser, targetPass) {
         Content rootPage
         Content targetPage
