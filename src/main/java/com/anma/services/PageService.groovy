@@ -516,7 +516,7 @@ class PageService {
             def respBody = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
             createdPage = gson.fromJson(respBody, Content.class)
             if (copyLabels) {           // better change just TOKEN based on conditions as all the rest is same
-                copyPageLabels(targetServer, extTOKEN, rootPage.id, createdPage.id)
+                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id, targetServer, extTOKEN)
             }
             if (copyAttach) {
                 copyPageAttaches(targetServer, extTOKEN, rootPage.id, createdPage.id)
@@ -533,7 +533,7 @@ class PageService {
             def body = createPage(CONF_URL, TOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
             createdPage = gson.fromJson(body, Content.class)
             if (copyLabels) {
-                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id)
+                copyPageLabels(CONF_URL, TOKEN, rootPage.id, createdPage.id, targetServer, extTOKEN)
             }
 
             if (copyAttach) {
@@ -554,16 +554,29 @@ class PageService {
         return createdPage
     }
 
-    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId) {
-        def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
-        if (labels != null) {
-            if (labels != null || labels.length > 0) {
-                labels.each {
-                    addLabelsToPage(CONF_URL, TOKEN, targetPageId, [it.name])    // todo - not good
-                    println(">> Labels added to page " + targetPageId)
+    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtToken) {
+        if (null != tgtURL && null != tgtToken) {
+            def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
+            if (labels != null) {
+                if (labels != null || labels.length > 0) {
+                    labels.each {
+                        addLabelsToPage(tgtURL, tgtToken, targetPageId, [it.name])    // todo - not good
+                        println(">> Labels added to page " + targetPageId)
+                    }
+                }
+            }
+        } else {
+            def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
+            if (labels != null) {
+                if (labels != null || labels.length > 0) {
+                    labels.each {
+                        addLabelsToPage(CONF_URL, TOKEN, targetPageId, [it.name])    // todo - not good
+                        println(">> Labels added to page " + targetPageId)
+                    }
                 }
             }
         }
+
     }
 
     /*
@@ -593,26 +606,26 @@ class PageService {
     // used for copying DESCENDANTS
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
                             boolean copyLabels, boolean copyAttach, boolean copyComments,
-                            String targetServer, targetUser, targetPass) {
+                            String targetServer, extTOKEN) {
 
-        def extTOKEN
+//        def extTOKEN
         Content rootPage
         Content targetPage
         Content[] children
         if (!targetServer.isEmpty()) {
-            extTOKEN = TokenService.getToken(targetUser, targetPass)
+//            extTOKEN = TokenService.getToken(targetUser, targetPass)
             rootPage = getPage(CONF_URL, TOKEN, sourceId)   // can be same for both
             targetPage = getPage(targetServer, extTOKEN, targetId)
             children = getChildren(CONF_URL, TOKEN, rootPage.id).results
             def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
-                    copyAttach, copyComments,targetServer,targetUser,targetPass)
+                    copyAttach, copyComments,targetServer, extTOKEN)
             if (children != null) {
                 for (i in 0..<children.length) {
                     def child = children[i]
                     copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
-                            targetServer, targetUser, targetPass)
+                            targetServer, extTOKEN)
                     copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
-                            targetServer, targetUser, targetPass)
+                            targetServer, extTOKEN)
                 }
             }
         } else {
@@ -620,14 +633,14 @@ class PageService {
             targetPage = getPage(CONF_URL, TOKEN, targetId)
             children = getChildren(CONF_URL, TOKEN, rootPage.id).results
             def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
-                    copyAttach, copyComments,targetServer,targetUser,targetPass)
+                    copyAttach, copyComments, targetServer, extTOKEN)
             if (children != null) {
                 for (i in 0..< children.length) {
                     def child = children[i]
                     copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
-                            targetServer, targetUser, targetPass)
+                            targetServer, extTOKEN)
                     copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
-                            targetServer, targetUser, targetPass)
+                            targetServer, extTOKEN)
                 }
             }
         }
@@ -679,6 +692,7 @@ class PageService {
         return gson.fromJson(response, Contents.class)
     }
 
+    //todo - pass Content as param and get attach as Content in getPageAttachments()
     static def addAttachToPage(CONF_URL, TOKEN, attachId, targetPageId) {
         //https://community.atlassian.com/t5/Jira-questions/Upload-Attach-API-Token-Java/qaq-p/970011
 
@@ -691,18 +705,18 @@ class PageService {
                 .asBinary().body
 
         ReadableByteChannel readableByteChannel = Channels.newChannel(stream);
-        FileOutputStream fileOutputStream = new FileOutputStream(savedAttach);
+        def fileOutputStream = new FileOutputStream(savedAttach);
         FileChannel fileChannel = fileOutputStream.getChannel();
         fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
 //        InputStream file = new FileInputStream(new File("res.txt"));
 
-        File fileUpload = new File(savedAttach)
+        File fileUpload = new File(savedAttach);
 
-        def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment"
-        HttpRequest request = new HttpRequest(HttpMethod.POST, url)
-        MultipartBody multipartBody = new MultipartBody(request)
-        multipartBody.field("upload", fileUpload)
+        def url = "${CONF_URL}/rest/api/content/" + targetPageId + "/child/attachment";
+        HttpRequest request = new HttpRequest(HttpMethod.POST, url);
+        MultipartBody multipartBody = new MultipartBody(request);
+        multipartBody.field("upload", fileUpload);
 
         return Unirest.post("${CONF_URL}/rest/api/content/${targetPageId}/child/attachment")
                 .header("Authorization", "Basic ${TOKEN}")
@@ -742,20 +756,36 @@ class PageService {
 
     }
 
-    static def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId) {
-        //https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/child/attachment-createAttachments
-        println(" === copying page ${sourcePageId} attaches to ${targetPageId}")
-        def page = getPage(CONF_URL, TOKEN, sourcePageId)
-        def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
+    static def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtTOKEN) {
+        if (null != tgtURL && null != tgtTOKEN) {
+            println(" === copying page ${sourcePageId} attaches to ${targetPageId}")
+//            def page = getPage(CONF_URL, TOKEN, sourcePageId)
+            def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
 
-        attachments.each {
-            addAttachToPage(CONF_URL, TOKEN, it.id, targetPageId)
-            try {
-                Files.delete(Path.of("src/main/resources/" + it.title))     // delete after copy
-            } catch (Exception e) {
-                e.printStackTrace()
+            attachments.each { attach ->
+                addAttachToPage(tgtURL, tgtTOKEN, attach.id, targetPageId)
+                try {
+                    Files.delete(Path.of("src/main/resources/" + attach.title))     // delete after copy
+                } catch (Exception e) {
+                    e.printStackTrace()
+                }
+            }
+        } else {
+            //https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/child/attachment-createAttachments
+            println(" === copying page ${sourcePageId} attaches to ${targetPageId}")
+//            def page = getPage(CONF_URL, TOKEN, sourcePageId)
+            def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
+
+            attachments.each {
+                addAttachToPage(CONF_URL, TOKEN, it.id, targetPageId)
+                try {
+                    Files.delete(Path.of("src/main/resources/" + it.title))     // delete after copy
+                } catch (Exception e) {
+                    e.printStackTrace()
+                }
             }
         }
+
 
     }
 }
