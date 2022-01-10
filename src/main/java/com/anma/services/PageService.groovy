@@ -8,6 +8,9 @@ import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.Unirest
 import com.mashape.unirest.request.HttpRequest
 import com.mashape.unirest.request.body.MultipartBody
+import org.apache.commons.logging.Log
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
@@ -17,10 +20,12 @@ import java.nio.file.Path
 
 class PageService {
 
-    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new GsonBuilder().setPrettyPrinting().create()
+    final Logger LOGGER = LoggerFactory.getLogger(PageService.class)
 
-    static Content getPage(CONF_URL, TOKEN, id) {
+    Content getPage(CONF_URL, TOKEN, id) {
 
+        LOGGER.info("Getting page ${id}")
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
@@ -28,7 +33,7 @@ class PageService {
         return gson.fromJson(response.body, Content.class)
     }
 
-    static def getChildren(CONF_URL, TOKEN, id) {
+    def getChildren(CONF_URL, TOKEN, id) {
 
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}/child/page?limit=300")       // limit = 300 pages
                 .header("Authorization", "Basic ${TOKEN}")
@@ -37,13 +42,13 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
-    static def pageContains(CONF_URL, TOKEN, id, toFind) {
+    def pageContains(CONF_URL, TOKEN, id, toFind) {
         def page = getPage(CONF_URL, TOKEN, id)
         return page.body.storage.value.contains(toFind)
 
     }
 
-    static def getDescendants(CONF_URL, TOKEN, id) {
+    def getDescendants(CONF_URL, TOKEN, id) {
         /* ?cql=ancestor shows WRONG data - some pages are from other parent !! */
         /* Using https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content-search */
 
@@ -60,8 +65,9 @@ class PageService {
         return contents
     }
 
-    static def getSpacePages(CONF_URL, TOKEN, space) {
-        println(">>>>>>> Performing GET Pages request")
+    def getSpacePages(CONF_URL, TOKEN, space) {
+//        println(">>>>>>> Performing GET Pages request")
+        LOGGER.info(">>>>>>> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
         HttpResponse<String> response =
@@ -74,13 +80,13 @@ class PageService {
         return contents
     }
 
-    static def getSpacePagesByLabel() {                                 // todo
+    def getSpacePagesByLabel() {                                 // todo
         println(PageService.class.name + " :: " + ">> Performing GET Pages request")
 
 
     }
 
-    static def getSpaceBlogs(CONF_URL, TOKEN, space) {
+    def getSpaceBlogs(CONF_URL, TOKEN, space) {
         println(PageService.class.name + " :: " + ">> Performing GET Pages request")
         //http://localhost:7130/rest/api/content?type=blogpost&spaceKey=TEST
         HttpResponse<String> response =
@@ -92,7 +98,7 @@ class PageService {
 
     }
 
-    static def getPageLabels(CONF_URL, TOKEN, id) {
+    def getPageLabels(CONF_URL, TOKEN, id) {
         println(PageService.class.name + " :: " + ">>> Performing GET LABELS request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content/" + id + "/label")
@@ -102,7 +108,7 @@ class PageService {
         return gson.fromJson(response.body, Labels.class)
     }
 
-    static def deletePageLabels(CONF_URL, TOKEN, id, label) {
+    def deletePageLabels(CONF_URL, TOKEN, id, label) {
         println(">>>>>>> Performing DELETE LABELS request")
         // todo DELETE /rest/api/content/{id}/label/...
         HttpResponse<String> response =
@@ -113,7 +119,7 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
-    static def deletePage(CONF_URL, TOKEN, id) {
+    def deletePage(CONF_URL, TOKEN, id) {
         println(">>>>>>> Performing DELETE PAGE request")
         HttpResponse<String> response =
                 Unirest.delete("${CONF_URL}/rest/api/content/${id}")
@@ -123,7 +129,7 @@ class PageService {
         return response.body
     }
 
-    static def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
+    def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
         println(">>>>>>> Performing GET Scroll templates request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/plugins/servlet/scroll-office/api/templates?spaceKey=${spaceKey}")
@@ -133,7 +139,7 @@ class PageService {
         return gson.fromJson(response.body, Contents.class)
     }
 
-    static def createSpace(CONF_URL, TOKEN, space) {
+    def createSpace(CONF_URL, TOKEN, space) {
         Space newSpace = new Space()            // todo
 
         Unirest.post("${CONF_URL}/rest/api/space")
@@ -143,7 +149,7 @@ class PageService {
                 .asString()
     }
 
-    static def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
+    def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
         println(">>>>>>> Performing CREATE PAGE request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
@@ -182,7 +188,7 @@ class PageService {
                 .asString()
     }
 
-    static def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
+    def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
         println(">>>>>>>>> Performing CREATE COMMENT request")
         Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
@@ -212,7 +218,7 @@ class PageService {
                 .asString()
     }
 
-    static def createBlog(CONF_URL, TOKEN, space, postingDay, title, body) {
+    def createBlog(CONF_URL, TOKEN, space, postingDay, title, body) {
         // postingDay	string
         //the posting day of the blog post. Required for blogpost type. Format: yyyy-mm-dd. Example: 2013-02-13
         println(PageService.class.name + " :: >> Performing CREATE Blogpost request")
@@ -241,7 +247,7 @@ class PageService {
                 .asString()
     }
 
-    static def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
+    def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
 
         def pageVersion = getPage(confURL, TOKEN, id).version.number
         def title = getPage(confURL, TOKEN, id).title
@@ -294,7 +300,7 @@ class PageService {
 
     }
 
-    static def replacePageInfoMacro(CONF_URL, TOKEN, id) {
+    def replacePageInfoMacro(CONF_URL, TOKEN, id) {
 
         def pageVersion = getPage(CONF_URL, TOKEN, id).version.number
         def title = getPage(CONF_URL, TOKEN, id).title
@@ -339,7 +345,7 @@ class PageService {
         return response.body
     }
 
-    static def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
+    def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
 
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
         def url = "${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"
@@ -350,7 +356,7 @@ class PageService {
 
     }
 
-    static def getDescendantsWithLabel(CONF_URL, TOKEN, id, label) {
+    def getDescendantsWithLabel(CONF_URL, TOKEN, id, label) {
 
 //        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
 
@@ -367,7 +373,7 @@ class PageService {
         https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/label-deleteLabel
      */
 
-    static def addLabelsToPage(CONF_URL, TOKEN, id, List<String> labels) {  // todo - add Label obj?
+    def addLabelsToPage(CONF_URL, TOKEN, id, List<String> labels) {  // todo - add Label obj?
 
         def labelsArray = []
 
@@ -392,7 +398,7 @@ class PageService {
 
     }
 
-    static def addLabelsToAncestors(CONF_URL, TOKEN, id, List<String> labels) {
+    def addLabelsToAncestors(CONF_URL, TOKEN, id, List<String> labels) {
 
         def page = getPage(CONF_URL, TOKEN, id)
         addLabelsToPage(CONF_URL, TOKEN, page.id, labels)
@@ -411,7 +417,7 @@ class PageService {
         }
     }
 
-    static def addPageTitlePart(CONF_URL, TOKEN, id, toAdd, position) {
+    def addPageTitlePart(CONF_URL, TOKEN, id, toAdd, position) {
 
         def page = getPage(CONF_URL, TOKEN, id)
         def pageVersion = page.version.number
@@ -446,7 +452,7 @@ class PageService {
 
     }
 
-    static def findReplacePageTitlePart(CONF_URL, TOKEN, id, find, replace) {
+    def findReplacePageTitlePart(CONF_URL, TOKEN, id, find, replace) {
 
         def page = getPage(CONF_URL, TOKEN, id)
 
@@ -482,7 +488,7 @@ class PageService {
 
     }
 
-    static def movePage(CONF_URL, TOKEN, pageId, targetParentId) {
+    def movePage(CONF_URL, TOKEN, pageId, targetParentId) {
 
         Content content = getPage(CONF_URL, TOKEN, pageId)
         Ancestor ancestor = new Ancestor()
@@ -500,8 +506,8 @@ class PageService {
                 .body
     }
 
-    static def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle, boolean copyLabels, boolean copyAttach,
-                        boolean copyComments, tgtServer, extTOKEN) {
+    def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle, boolean copyLabels, boolean copyAttach,
+                 boolean copyComments, tgtServer, extTOKEN) {
         Content rootPage
         Content targetPage
 //        def extTOKEN = TokenService.getToken(targetUser, targetPass)
@@ -554,7 +560,7 @@ class PageService {
         return createdPage
     }
 
-    public static void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtToken) {
+    public void copyPageLabels(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtToken) {
         if (null != tgtURL && null != tgtToken) {
             def labels = getPageLabels(CONF_URL, TOKEN, sourcePageId).results
             if (labels != null) {
@@ -580,7 +586,7 @@ class PageService {
     }
 
     /*
-    static def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
+     def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
                                copyLabels, copyAttach, boolean copyComments) {
         println(">>>>> Performing COPY page BRANCH  request")
 
@@ -604,11 +610,11 @@ class PageService {
      */
 
     // used for copying DESCENDANTS
-    static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
-                            boolean copyLabels, boolean copyAttach, boolean copyComments,
-                            String targetServer, extTOKEN) {
+    def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
+                     boolean copyLabels, boolean copyAttach, boolean copyComments,
+                     String targetServer, extTOKEN) {
 
-//        def extTOKEN
+        LOGGER.info("Copying descendants of ${sourceId} to ${targetId}")
         Content rootPage
         Content targetPage
         Content[] children
@@ -618,7 +624,7 @@ class PageService {
             targetPage = getPage(targetServer, extTOKEN, targetId)
             children = getChildren(CONF_URL, TOKEN, rootPage.id).results
             def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
-                    copyAttach, copyComments,targetServer, extTOKEN)
+                    copyAttach, copyComments, targetServer, extTOKEN)
             if (children != null) {
                 for (i in 0..<children.length) {
                     def child = children[i]
@@ -635,7 +641,7 @@ class PageService {
             def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
                     copyAttach, copyComments, targetServer, extTOKEN)
             if (children != null) {
-                for (i in 0..< children.length) {
+                for (i in 0..<children.length) {
                     def child = children[i]
                     copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
                             targetServer, extTOKEN)
@@ -644,8 +650,6 @@ class PageService {
                 }
             }
         }
-
-
 
 
 //        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
@@ -665,18 +669,18 @@ class PageService {
 //                }
 //            }
 //            println(PageService.class.name + " :: " + " Child ${child} copied")
-            //println(getClass().name + " :: " + " Root page copied ${childCopy}")
+        //println(getClass().name + " :: " + " Root page copied ${childCopy}")
 //            copies.add(childCopy)
 
         return Optional<Map>.empty()
     }
 
-    static def getPageRestrictions() {
+    def getPageRestrictions() {
         // todo - GET /rest/api/content/{id}/restriction/byOperation
 
     }
 
-    static def getPageAttachment(CONF_URL, TOKEN, attachId) {
+    def getPageAttachment(CONF_URL, TOKEN, attachId) {
         //  GET /rest/api/content/{id}/child/attachment
         def response = Unirest.get("${CONF_URL}/rest/api/content/" + attachId)
                 .header("Authorization", "Basic ${TOKEN}")
@@ -684,7 +688,7 @@ class PageService {
         return gson.fromJson(response, Content.class)
     }
 
-    static def getPageAttachments(CONF_URL, TOKEN, pageId) {
+    def getPageAttachments(CONF_URL, TOKEN, pageId) {
         //  GET /rest/api/content/{id}/child/attachment
         def response = Unirest.get("${CONF_URL}/rest/api/content/" + pageId + "/child/attachment")
                 .header("Authorization", "Basic ${TOKEN}")
@@ -693,7 +697,7 @@ class PageService {
     }
 
     //todo - pass Content as param and get attach as Content in getPageAttachments()
-    static def addAttachToPage(CONF_URL, TOKEN, attachId, targetPageId, tgtURL, tgtTOKEN) {
+    def addAttachToPage(CONF_URL, TOKEN, attachId, targetPageId, tgtURL, tgtTOKEN) {
         //https://community.atlassian.com/t5/Jira-questions/Upload-Attach-API-Token-Java/qaq-p/970011
 
         println("Getting ${attachId} attach")
@@ -740,7 +744,7 @@ class PageService {
 
     }
 
-    static def copyPageComments(CONF_URL, TOKEN, sourceId, targetId, tgtServer, extTOKEN) {
+    def copyPageComments(CONF_URL, TOKEN, sourceId, targetId, tgtServer, extTOKEN) {
         //todo
 //        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
 //        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
@@ -757,34 +761,28 @@ class PageService {
 
     }
 
-    static def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtTOKEN) {
+    def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtTOKEN) {
         if (null != tgtURL && null != tgtTOKEN) {
             println(" === copying ${sourcePageId} page attaches to ${targetPageId}")
 //            def page = getPage(CONF_URL, TOKEN, sourcePageId)
             def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
 
-            attachments.each { attach ->
-                addAttachToPage(CONF_URL, TOKEN, attach.id, targetPageId, tgtURL, tgtTOKEN)  // add
+            if (attachments.length > 0) {
                 try {
-                    println("Deleting files from /SRC")
-                    Files.delete(Path.of("src/main/resources/" + attach.title))     // delete after copy
+                    attachments.each { attach ->
+                        addAttachToPage(CONF_URL, TOKEN, attach.id, targetPageId, tgtURL, tgtTOKEN)  // add
+                        try {
+                            println("Deleting files from /SRC")
+                            Files.delete(Path.of("src/main/resources/" + attach.title))     // delete after copy
+                        } catch (Exception e) {
+                            e.printStackTrace()
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace()
                 }
-            }
-        } else {    // todo - remove duplicate ELSE
-            //https://docs.atlassian.com/ConfluenceServer/rest/7.5.0/#api/content/{id}/child/attachment-createAttachments
-            println(" === copying page ${sourcePageId} attaches to ${targetPageId}")
-//            def page = getPage(CONF_URL, TOKEN, sourcePageId)
-            def attachments = getPageAttachments(CONF_URL, TOKEN, sourcePageId).results
-
-            attachments.each {
-                addAttachToPage(CONF_URL, TOKEN, it.id, targetPageId, tgtURL, tgtTOKEN)
-                try {
-                    Files.delete(Path.of("src/main/resources/" + it.title))     // delete after copy
-                } catch (Exception e) {
-                    e.printStackTrace()
-                }
+            } else {
+                LOGGER.info("${sourcePageId} page has 0 attaches")
             }
         }
 
