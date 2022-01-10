@@ -681,7 +681,7 @@ class PageService {
     }
 
     def getPageAttachment(CONF_URL, TOKEN, attachId) {
-        //  GET /rest/api/content/{id}/child/attachment
+
         def response = Unirest.get("${CONF_URL}/rest/api/content/" + attachId)
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString().body
@@ -744,22 +744,59 @@ class PageService {
 
     }
 
-    def copyPageComments(CONF_URL, TOKEN, sourceId, targetId, tgtServer, extTOKEN) {
-        //todo
-//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-//        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
-//        Content[] children
-//        children = getChildren(CONF_URL, TOKEN, rootPage.id).results
-//        def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels, copyAttach, copyComments)
-//        if (children != null) {
-//            for (i in 0..<children.length) {
-//                def child = children[i]
-//                copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
-//                copyPage(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments)
-//            }
-//        }
+    @Deprecated
+    def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
+
+        Content comment = getPageComment(CONF_URL, TOKEN, commId)
+
+        return Unirest.post("${tgtURL}/rest/api/content/${tgtPageId}/child/comment")  // ext
+                .header("Authorization", "Basic ${tgtTOKEN}")
+                .body(gson.toJson(comment))
+                .asString().body
 
     }
+
+    @Deprecated
+    def getPageComment(CONF_URL, TOKEN, commId) {
+
+        def response = Unirest.get("${CONF_URL}/rest/api/content/${commId}")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString().body
+        return gson.fromJson(response, Content.class)
+    }
+
+    def getPageComments(CONF_URL, TOKEN, sourceId) {
+        //  GET /rest/api/content/{id}/child/comment
+//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
+        def response = Unirest.get("${CONF_URL}/rest/api/content/" + sourceId + "/child/comment")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString().body
+        return gson.fromJson(response, Contents.class)
+    }
+
+    @Deprecated
+    def copyPageComments(CONF_URL, TOKEN, sourceId, targetId, tgtURL, tgtTOKEN) {
+
+//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
+//        Content targetPage = getPage(CONF_URL, TOKEN, targetId)
+        Content[] comments = getPageComments(CONF_URL, TOKEN, sourceId).results
+
+        if (comments.length > 0) {
+            try {
+                comments.each { comm ->
+                    addCommentToPage(CONF_URL, TOKEN, comm.id, targetId, tgtURL, tgtTOKEN)  // add comments
+                    LOGGER.info("Added comment ${comm.id} to ${targetId} page")
+                }
+            } catch (Exception e) {
+                e.printStackTrace()
+            }
+        } else {
+            LOGGER.info("${sourceId} page has 0 comments")
+        }
+
+    }
+
+
 
     def copyPageAttaches(CONF_URL, TOKEN, sourcePageId, targetPageId, tgtURL, tgtTOKEN) {
         if (null != tgtURL && null != tgtTOKEN) {
