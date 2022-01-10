@@ -501,10 +501,10 @@ class PageService {
     }
 
     static def copyPage(CONF_URL, TOKEN, sourceId, targetId, newTitle, boolean copyLabels, boolean copyAttach,
-                        boolean copyComments, targetServer, targetUser, targetPass) {
+                        boolean copyComments, targetServer, extTOKEN) {
         Content rootPage
         Content targetPage
-        def extTOKEN = TokenService.getToken(targetUser, targetPass)
+//        def extTOKEN = TokenService.getToken(targetUser, targetPass)
         Content createdPage
 
         if (!targetServer.isEmpty()) {
@@ -513,16 +513,16 @@ class PageService {
             if (null == newTitle || newTitle.isEmpty()) {
                 newTitle = "Copy of " + rootPage.title
             }
-            def body = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
-            createdPage = gson.fromJson(body, Content.class)
+            def respBody = createPage(targetServer, extTOKEN, targetPage.space.key, targetId, newTitle, rootPage.body.storage.value).body
+            createdPage = gson.fromJson(respBody, Content.class)
             if (copyLabels) {           // better change just TOKEN based on conditions as all the rest is same
-                copyPageLabels(targetServer, TOKEN, rootPage.id, createdPage.id)
+                copyPageLabels(targetServer, extTOKEN, rootPage.id, createdPage.id)
             }
             if (copyAttach) {
-                copyPageAttaches(targetServer, TOKEN, rootPage.id, createdPage.id)
+                copyPageAttaches(targetServer, extTOKEN, rootPage.id, createdPage.id)
             }
             if (copyComments) {
-                copyPageComments(targetServer, TOKEN, rootPage.id, createdPage.id)
+                copyPageComments(targetServer, extTOKEN, rootPage.id, createdPage.id)
             }
         } else {
             rootPage = getPage(CONF_URL, TOKEN, sourceId)
@@ -590,6 +590,7 @@ class PageService {
     }
      */
 
+    // used for copying DESCENDANTS
     static def copyChildren(CONF_URL, TOKEN, sourceId, targetId, newTitle,
                             boolean copyLabels, boolean copyAttach, boolean copyComments,
                             String targetServer, targetUser, targetPass) {
@@ -621,7 +622,7 @@ class PageService {
             def rootCopy = copyPage(CONF_URL, TOKEN, rootPage.id, targetPage.id, newTitle, copyLabels,
                     copyAttach, copyComments,targetServer,targetUser,targetPass)
             if (children != null) {
-                for (i in 0..<children.length) {
+                for (i in 0..< children.length) {
                     def child = children[i]
                     copyChildren(CONF_URL, TOKEN, child.id, rootCopy.id, newTitle, copyLabels, copyAttach, copyComments,
                             targetServer, targetUser, targetPass)

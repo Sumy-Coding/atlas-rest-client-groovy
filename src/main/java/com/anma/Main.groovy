@@ -25,8 +25,6 @@ class Main {
 //        def password = System.getenv("CONF_PASS")
 //        final String CONF_URL = "https://confluence-datacenter.du.ae"
         //========== bh
-//        def username = "beastiehut@gmail.com";
-//        def password = System.getenv("BH_TOKEN")
         def username = "admin";
         def password = "admin"
 
@@ -34,12 +32,14 @@ class Main {
 //        final String CONF_URL = "https://bass.netcracker.com"
 //        final String CONF_URL = "https://bassdevqa.netcracker.com"      // DEVQA
 //        final String CONF_URL = "https://beastiehut.atlassian.net/wiki"      // bh Cloud
-//        final String CONF_URL = "https://anma.atlassian.net/wiki"      // anma Cloud
-        final def CONF_URL = "http://localhost:7141"                    // localhost
-//        final def CONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
+        final String anmaURL = "https://anma.atlassian.net/wiki"      // anma Cloud
+        final def local714CONF_URL = "http://localhost:7141"                    // localhost
+//        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
 
         // ************* Start ************
         def TOKEN = TokenService.getToken(username, password)
+        def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
+        def bhtTOKEN = TokenService.getToken(System.getenv("beastiehut@gmail.com"), System.getenv("BH_TOKEN"))
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
@@ -49,7 +49,7 @@ class Main {
 //        println(PageService.getPage(CONF_URL, TOKEN, 465829921))
 
         // GET children
-//        println(PageService.getChildren(CONF_URL, TOKEN, id).results)
+//        println(PageService.getChildren(anmaURL, anmaTOKEN, 511180801).results)
 
         // GET descendants
 //        PageService.getDescendants(CONF_URL, TOKEN, 5832764).results.each {println(it.title)}
@@ -166,8 +166,12 @@ class Main {
         // === MOVE page
 //        println(PageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
 
-        // COPY page
+        // ==  COPY page
 //        println(PageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
+
+        // copy page between servers
+        println(PageService.copyPage(local714CONF_URL, TOKEN, 6160387, 511180801, "",
+                true, true, false, anmaURL, anmaTOKEN))
 
         // copy page labels
 //        println(PageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
@@ -176,20 +180,19 @@ class Main {
 //        println(PageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
 
         // ATTACH file to page
-
 //        println(PageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
 
         //===  Copy Page attches
 //        println(PageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
 
         // === Copy children
-        PageService.copyChildren(CONF_URL, TOKEN, 65603, 5832724, "", true, true, false,
-//                "https://beastiehut.atlassian.net/wiki",
-                "",
-                "",
-                ""
-//                System.getenv("BH_TOKEN")
-        )
+//        PageService.copyChildren(CONF_URL, TOKEN, 65603, 5832724, "", true, true, false,
+////                "https://beastiehut.atlassian.net/wiki",
+//                "",
+//                "",
+//                ""
+////                System.getenv("BH_TOKEN")
+//        )
 
         //bht
 //            PageService.copyChildren(CONF_URL, TOKEN, "465862662", "465600539", "", true, true, false,
