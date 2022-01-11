@@ -6,7 +6,7 @@
 
     <groupId>com.anma.groovy</groupId>
     <artifactId>conf-groovy</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>groovy-conf</name>
     <packaging>jar</packaging>
 

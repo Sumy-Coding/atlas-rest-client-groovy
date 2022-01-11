@@ -27,6 +27,7 @@ class Main {
 //        final String bhtURL = "https://beastiehut.atlassian.net/wiki"   // bh Cloud
         final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
+        final def local715CONF_URL = "http://localhost:7150"                    // localhost
 //        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
@@ -170,7 +171,9 @@ class Main {
 //        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
 //                true, true, false, anmaURL, anmaTOKEN)
         // ==== COMMENTS
-        pageService.addCommentToPage(local714CONF_URL, localTOKEN, )
+//        println(pageService.getPageComment(local715CONF_URL, localTOKEN, 65611))
+
+        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
 
         // copy page labels
 //        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
