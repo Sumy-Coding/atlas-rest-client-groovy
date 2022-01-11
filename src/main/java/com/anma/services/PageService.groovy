@@ -744,14 +744,15 @@ class PageService {
 
     }
 
-    @Deprecated
+    // add existing comment to page
     def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
 
         Content comment = getPageComment(CONF_URL, TOKEN, commId)
+        def commJson = gson.toJson(comment)
 
         return Unirest.post("${tgtURL}/rest/api/content/${tgtPageId}/child/comment")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")
-                .body(gson.toJson(comment))
+                .body(commJson)
                 .asString().body
 
     }

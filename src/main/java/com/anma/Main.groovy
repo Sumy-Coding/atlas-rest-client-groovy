@@ -167,8 +167,10 @@ class Main {
 //        println(pageService.copyPage(local714CONF_URL, localTOKEN, 6160387, 511180801, "",
 //                true, true, false, anmaURL, anmaTOKEN))
         // children
-        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
-                true, true, false, anmaURL, anmaTOKEN)
+//        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
+//                true, true, false, anmaURL, anmaTOKEN)
+        // ==== COMMENTS
+        pageService.addCommentToPage(local714CONF_URL, localTOKEN, )
 
         // copy page labels
 //        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
