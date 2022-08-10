@@ -7,9 +7,7 @@ import com.anma.services.SpaceService
 import com.anma.services.TokenService
 
 import java.time.Duration
-import java.time.LocalDate
 import org.apache.commons.lang3.RandomUtils;
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class Main {
@@ -17,8 +15,6 @@ class Main {
     static void main(String[] args) {
 
 // ====== DATA
-        //=========== DU
-
 //        def username = System.getenv("CONF_USER")
 //        def password = System.getenv("CONF_PASS")
 //        final String duCONF_URL = "https://confluence-datacenter.du.ae"
@@ -28,6 +24,7 @@ class Main {
         final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
+        final def local7190CONF_URL = "http://localhost:7190"                    // localhost
 //        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
@@ -145,11 +142,12 @@ class Main {
 
 // ======= Create PAGES
 
-//        for (i in 1..200) {
-//            def pageBody = getRandomString(100)
-//            def title = "${space.key} Page New " + i
-//            println(pageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
-//        }
+        for (i in 1..49) {
+            def pageBody = RandomGen.getRandomString(2)
+            def title = "Groovy Page 2 ${i}"
+            println(pageService.createPage(local7190CONF_URL, localTOKEN, "GRROV", "1900863", title, "lorem lorem").body)
+        }
+
 
         // ========== Create Spaces
 
@@ -173,7 +171,7 @@ class Main {
         // ==== COMMENTS
 //        println(pageService.getPageComment(local715CONF_URL, localTOKEN, 65611))
 
-        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
+//        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
 
         // copy page labels
 //        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
@@ -213,13 +211,12 @@ class Main {
 
 
 
-
-
-
         // END
+//        println(Duration.ofMillis(27726).toSeconds())
         def takenMillis = System.currentTimeMillis() - start
-        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
-        println(">>>>> Script took ${seconds} seconds")
+        long millis = Duration.of(takenMillis, ChronoUnit.MILLIS).toMillis()
+        long seconds =  Duration.of(takenMillis, ChronoUnit.MILLIS).toSeconds()
+        println(">>>>> Script took ${millis} millis (${seconds} seconds)")
 
     }
 
