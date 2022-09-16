@@ -24,8 +24,8 @@ class Main {
         final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
-        final def local7190CONF_URL = "http://localhost:7190"                    // localhost
-//        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
+        final String local7190CONF_URL = "http://localhost:7190"                    // localhost
+        final String awsCONF_URL = "http://confl-loadb-jz2k7lrzwbee-1193436021.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
         def bhtTOKEN = TokenService.getToken("beastiehut@gmail.com", System.getenv("BH_TOKEN"))
@@ -35,6 +35,7 @@ class Main {
         // ******** Operations **********
 
         PageService pageService = new PageService()
+        SpaceService spaceService = new SpaceService()
 
         // GET page
 //        println(PageService.getPage(anmaURL, anmaTOKEN, 511180801))
@@ -123,36 +124,31 @@ class Main {
 //            }
 //        }
 
-        //== Create spaces
-//        for (i in 1..<30) {
-//            println(pageService.createSpace(CONF_URL, TOKEN, "dev" + i, "dev" + i))
-//        }
-
         // ======== create pages for Spaces
 
-//        for (i in 1..<30) {
-//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
-//            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
-//            for (a in 1..50) {
-//                def pageBody = RandomGen.getRandomString(100)
-//                def title = "${space.key} Page New " + a
-//                println(pageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
-//            }
-//        }
+        for (i in 2..<80) {
+            Space space = SpaceService.getSpace(awsCONF_URL, localTOKEN, "dev" + i)
+            def homePage = pageService.getPage(awsCONF_URL, localTOKEN, space.homepage.id)
+            for (a in 1..50) {
+                def pageBody = RandomGen.getRandomString(100)
+                def title = "${space.key} Page New " + a
+                println(pageService.createPage(awsCONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
+            }
+        }
 
 // ======= Create PAGES
 
-        for (i in 1..49) {
-            def pageBody = RandomGen.getRandomString(2)
-            def title = "Groovy Page 2 ${i}"
-            println(pageService.createPage(local7190CONF_URL, localTOKEN, "GRROV", "1900863", title, "lorem lorem").body)
-        }
+//        for (i in 1..49) {
+//            def pageBody = RandomGen.getRandomString(2)
+//            def title = "Groovy Page 2 ${i}"
+//            println(pageService.createPage(local7190CONF_URL, localTOKEN, "GRROV", "1900863", title, "lorem lorem").body)
+//        }
 
 
         // ========== Create Spaces
 
 //        for (i in 2..<100) {
-//            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
+//            println(SpaceService.createSpace(awsCONF_URL, localTOKEN, "dev${i}", "dev${i}"))
 //        }
 
         // === MOVE page
