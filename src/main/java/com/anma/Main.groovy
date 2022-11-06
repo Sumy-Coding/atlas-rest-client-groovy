@@ -25,7 +25,7 @@ class Main {
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
         final String local7190CONF_URL = "http://localhost:7190"                    // localhost
-        final String awsCONF_URL = "http://confl-loadb-jz2k7lrzwbee-1193436021.us-west-2.elb.amazonaws.com" // AWS DC
+        final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-1493255270.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
         def bhtTOKEN = TokenService.getToken("beastiehut@gmail.com", System.getenv("BH_TOKEN"))
@@ -44,7 +44,11 @@ class Main {
 //        println(PageService.getChildren(anmaURL, anmaTOKEN, 511180801).results)
 
         // GET descendants
-//        PageService.getDescendants(CONF_URL, TOKEN, 5832764).results.each {println(it.title)}
+//        PageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
+
+        // ALL
+        pageService.getContent(awsCONF_URL, localTOKEN, "page")
+                .results.each {println(it.id)}
 
         // GET space pages
 //        pageService.getSpacePages(local714CONF_URL, localTOKEN, 'DEV').results.each {println(it)}
@@ -126,15 +130,15 @@ class Main {
 
         // ======== create pages for Spaces
 
-        for (i in 2..<80) {
-            Space space = SpaceService.getSpace(awsCONF_URL, localTOKEN, "dev" + i)
-            def homePage = pageService.getPage(awsCONF_URL, localTOKEN, space.homepage.id)
-            for (a in 1..50) {
-                def pageBody = RandomGen.getRandomString(100)
-                def title = "${space.key} Page New " + a
-                println(pageService.createPage(awsCONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
-            }
-        }
+//        for (i in 2..<80) {
+//            Space space = SpaceService.getSpace(awsCONF_URL, localTOKEN, "dev" + i)
+//            def homePage = pageService.getPage(awsCONF_URL, localTOKEN, space.homepage.id)
+//            for (a in 1..50) {
+//                def pageBody = RandomGen.getRandomString(100)
+//                def title = "${space.key} Page New " + a
+//                println(pageService.createPage(awsCONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
+//            }
+//        }
 
 // ======= Create PAGES
 

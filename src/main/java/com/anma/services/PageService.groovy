@@ -33,6 +33,13 @@ class PageService {
         return gson.fromJson(response.body, Content.class)
     }
 
+    public Contents getContent(String CONF_URL, String TOKEN, String type) {
+        def response = Unirest.get("${CONF_URL}/rest/api/content?type=${type}")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
+        return gson.fromJson(response.body, Contents.class)
+    }
+
     def getChildren(CONF_URL, TOKEN, id) {
 
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}/child/page?limit=300")       // limit = 300 pages

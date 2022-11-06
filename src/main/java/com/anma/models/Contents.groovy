@@ -7,5 +7,4 @@ class Contents {
     def limit
     def size
     def _links
-
 }
