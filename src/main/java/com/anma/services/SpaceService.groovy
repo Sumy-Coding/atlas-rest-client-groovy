@@ -8,7 +8,7 @@ import com.anma.models.SpaceDescription
 import com.anma.models.space.CreateSpace
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mashape.unirest.http.Unirest
+import kong.unirest.Unirest
 
 class SpaceService {
 

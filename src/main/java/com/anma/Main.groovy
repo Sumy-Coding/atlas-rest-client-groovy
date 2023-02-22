@@ -24,6 +24,7 @@ class Main {
         final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
+        final def local810CONF_URL = "http://localhost:8100"                    // localhost
         final String local7190CONF_URL = "http://localhost:7190"                    // localhost
         final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-1493255270.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
@@ -47,7 +48,7 @@ class Main {
 //        PageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
 
         // ALL
-        pageService.getContent(awsCONF_URL, localTOKEN, "page")
+        pageService.getContent(local810CONF_URL, localTOKEN, "page")
                 .results.each {println(it.id)}
 
         // GET space pages

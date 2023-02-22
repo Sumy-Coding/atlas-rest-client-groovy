@@ -3,12 +3,11 @@ package com.anma.services
 import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mashape.unirest.http.HttpMethod
-import com.mashape.unirest.http.HttpResponse
-import com.mashape.unirest.http.Unirest
-import com.mashape.unirest.request.HttpRequest
-import com.mashape.unirest.request.body.MultipartBody
-import org.apache.commons.logging.Log
+import kong.unirest.HttpMethod
+import kong.unirest.HttpResponse
+import kong.unirest.MultipartBody
+import kong.unirest.Unirest
+import org.apache.http.HttpRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -726,10 +725,10 @@ class PageService {
         File fileUpload = new File(savedAttach);
 
         String url = "${tgtURL}/rest/api/content/" + targetPageId + "/child/attachment";   // ext
-        HttpRequest request = new HttpRequest(HttpMethod.POST, url);
-        MultipartBody multipartBody = new MultipartBody(request);
-        multipartBody.field("upload", fileUpload);
-        println("Created POST method for adding ${attachId} attachment to ${targetPageId} page")
+//        HttpRequest request = new HttpRequest(HttpMethod.POST, url); todo
+//        MultipartBody multipartBody = new MultipartBody(request);
+//        multipartBody.field("upload", fileUpload);
+//        println("Created POST method for adding ${attachId} attachment to ${targetPageId} page")
 
         return Unirest.post("${tgtURL}/rest/api/content/${targetPageId}/child/attachment")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")
@@ -789,7 +788,6 @@ class PageService {
                 .header("Authorization", "Basic ${tgtTOKEN}")
                 .body(commJson)
                 .asString()
-
     }
 
     def getPageComment(CONF_URL, TOKEN, commId) {
