@@ -157,7 +157,7 @@ class PageService {
 
     def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
         println(">>>>>>> Performing CREATE PAGE request")
-        Unirest.setTimeouts(0, 0);
+//        Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
 
         def content = new Content()

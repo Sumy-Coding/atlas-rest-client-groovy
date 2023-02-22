@@ -18,18 +18,13 @@ class Main {
 //        def username = System.getenv("CONF_USER")
 //        def password = System.getenv("CONF_PASS")
 //        final String duCONF_URL = "https://confluence-datacenter.du.ae"
-//        final String bassURL = "https://bass.netcracker.com"
-//        final String bassdevqaURL = "https://bassdevqa.netcracker.com"        // DEVQA
-//        final String bhtURL = "https://beastiehut.atlassian.net/wiki"   // bh Cloud
-        final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
         final def local810CONF_URL = "http://localhost:8100"                    // localhost
         final String local7190CONF_URL = "http://localhost:7190"                    // localhost
-        final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-1493255270.us-west-2.elb.amazonaws.com" // AWS DC
+        final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-14912312370.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
-        def bhtTOKEN = TokenService.getToken("beastiehut@gmail.com", System.getenv("BH_TOKEN"))
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
@@ -48,8 +43,8 @@ class Main {
 //        PageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
 
         // ALL
-        pageService.getContent(local810CONF_URL, localTOKEN, "page")
-                .results.each {println(it.id)}
+//        pageService.getContent(local810CONF_URL, localTOKEN, "page")
+//                .results.each {println(it.id)}
 
         // GET space pages
 //        pageService.getSpacePages(local714CONF_URL, localTOKEN, 'DEV').results.each {println(it)}
@@ -143,11 +138,14 @@ class Main {
 
 // ======= Create PAGES
 
-//        for (i in 1..49) {
-//            def pageBody = RandomGen.getRandomString(2)
-//            def title = "Groovy Page 2 ${i}"
-//            println(pageService.createPage(local7190CONF_URL, localTOKEN, "GRROV", "1900863", title, "lorem lorem").body)
-//        }
+        for (i in 1..49) {
+            def pageBody = RandomGen.getRandomString(20)
+            def title = "Groovy Page 2 ${i}"
+            println(pageService.createPage(
+                    local810CONF_URL, localTOKEN,
+                    "DEMO",
+                    "1638404", title, pageBody).body)
+        }
 
 
         // ========== Create Spaces
