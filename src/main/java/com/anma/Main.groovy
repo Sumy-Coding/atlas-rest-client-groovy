@@ -117,12 +117,12 @@ class Main {
 
         // == Create comments for children
 
-//        pageService.getChildren(CONF_URL, TOKEN, 1310845).results.each {
-//            for (i in 1..30) {
-//                String randomString = RandomGen.getRandomString(22)
-//                println(pageService.createComment(CONF_URL, TOKEN, "dev62", [], it.id, 'page', randomString).body)
-//            }
-//        }
+        pageService.getChildren(local810CONF_URL, localTOKEN, 1638404).results.each {
+            for (i in 1..30) {
+                String randomString = RandomGen.getRandomString(22)
+                println(pageService.createComment(local810CONF_URL, localTOKEN, "DEMO", [], it.id, 'page', randomString).body)
+            }
+        }
 
         // ======== create pages for Spaces
 
@@ -138,14 +138,14 @@ class Main {
 
 // ======= Create PAGES
 
-        for (i in 1..49) {
-            def pageBody = RandomGen.getRandomString(20)
-            def title = "Groovy Page 2 ${i}"
-            println(pageService.createPage(
-                    local810CONF_URL, localTOKEN,
-                    "DEMO",
-                    "1638404", title, pageBody).body)
-        }
+//        for (i in 1..49) {
+//            def pageBody = RandomGen.getRandomString(20)
+//            def title = "Groovy Page 2 ${i}"
+//            println(pageService.createPage(
+//                    local810CONF_URL, localTOKEN,
+//                    "DEMO",
+//                    "1638404", title, pageBody).body)
+//        }
 
 
         // ========== Create Spaces

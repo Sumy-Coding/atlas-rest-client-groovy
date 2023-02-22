@@ -196,7 +196,7 @@ class PageService {
 
     def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
         println(">>>>>>>>> Performing CREATE COMMENT request")
-        Unirest.setTimeouts(0, 0);
+//        Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
         content.title = 'comment'
