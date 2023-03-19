@@ -8,9 +8,14 @@ import kong.unirest.Unirest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * @author Andrii Maliuta (https://github.com/AndriiMaliuta)
+ */
+
 class CommentService {
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
     final Logger LOGGER = LoggerFactory.getLogger(CommentService.class)
+    PageService pageService = new PageService();
 
 
     def getPageComment(CONF_URL, TOKEN, commId) {
@@ -38,6 +43,7 @@ class CommentService {
 
     // todo
     def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
+        // add existing comment from one page to another (or to some other Confluence instance)
         println("Adding comment ${commId} to page ${tgtPageId}")
 
         Content comment = getPageComment(CONF_URL, TOKEN, commId)
@@ -72,6 +78,62 @@ class CommentService {
         return Unirest.post("${tgtURL}/rest/api/content")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")
                 .body(commJson)
+                .asString()
+    }
+
+    def addFooterCommentToPage(CONF_URL, TOKEN, tgtPageId, tgtURL, tgtTOKEN) {
+        println("Adding footer comment to page ${tgtPageId}")
+
+        Content newComment = new Content()
+        newComment.title = ""
+        newComment.type = 'comment'
+        newComment.status = 'current'
+        Body commBody = new Body()
+        Storage storage = new Storage()
+        commBody.storage = storage
+        storage.representation = 'storage'
+        storage.value = comment.body.storage.value
+        newComment.body = commBody
+        newComment.container = getPage(CONF_URL, TOKEN, tgtPageId)
+
+        def commJson = gson.toJson(newComment)
+
+        return Unirest.post("${tgtURL}/rest/api/content")  // ext
+                .header("Authorization", "Basic ${tgtTOKEN}")
+                .body(commJson)
+                .asString()
+    }
+
+    def addInlineCommentToPage(tgtPageId, tgtURL, tgtTOKEN, body, selection) {
+        println("Adding INLINE comment to page ${tgtPageId}")
+        Content page = pageService.getPage(tgtURL, tgtTOKEN, tgtPageId)
+        var req = """
+{
+   "originalSelection":"${selection}",
+   "body":"${body}",
+   "matchIndex":0,
+   "numMatches":3,
+   "serializedHighlights":"[[\\"${selection}\\",\\"1\\",52,5]]",
+   "authorDisplayName":"admin",
+   "authorUserName":"admin",
+   "authorAvatarUrl":"/images/icons/profilepics/default.svg",
+   "containerId":"${page.id}",
+   "containerVersion":"1",
+   "parentCommentId":"0",
+   "lastFetchTime":"1679237984338",
+   "hasDeletePermission":true,
+   "hasEditPermission":true,
+   "hasResolvePermission":true,
+   "resolveProperties":{
+      "resolved":false,
+      "resolvedTime":0
+   },
+   "deleted":false
+}
+"""
+        return Unirest.post("${tgtURL}/rest/inlinecomments/1.0/comments")  // ext
+                .header("Authorization", "Basic ${tgtTOKEN}")
+                .body(req)
                 .asString()
     }
 

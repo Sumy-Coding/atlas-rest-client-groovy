@@ -1,6 +1,7 @@
 package com.anma
 
 import com.anma.models.Space
+import com.anma.services.CommentService
 import com.anma.services.PageService
 import com.anma.services.RandomGen
 import com.anma.services.SpaceService
@@ -33,6 +34,7 @@ class Main {
 
         PageService pageService = new PageService()
         SpaceService spaceService = new SpaceService()
+        CommentService commentService = new CommentService()
 
         // GET page
 //        println(PageService.getPage(anmaURL, anmaTOKEN, 511180801))
@@ -118,12 +120,12 @@ class Main {
 
         // == Create comments for children
 
-        pageService.getChildren(local8110CONF_URL, localTOKEN, 1212420).results.each {
-            for (i in 1..30) {
-                String randomString = RandomGen.getRandomString(22)
-                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
-            }
-        }
+//        pageService.getChildren(local8110CONF_URL, localTOKEN, 1212420).results.each {
+//            for (i in 1..30) {
+//                String randomString = RandomGen.getRandomString(22)
+//                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
+//            }
+//        }
 
         // ======== create pages for Spaces
 
@@ -168,10 +170,16 @@ class Main {
         // children
 //        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
 //                true, true, false, anmaURL, anmaTOKEN)
-        // ==== COMMENTS
+
+// ===========================================================================================================
+// ============================================ COMMENTS =====================================================
 //        println(pageService.getPageComment(local715CONF_URL, localTOKEN, 65611))
 
 //        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
+
+        println(commentService.getPageComment(local8110CONF_URL, localTOKEN, 1216695))
+
+
 
         // copy page labels
 //        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))

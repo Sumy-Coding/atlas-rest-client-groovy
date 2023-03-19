@@ -22,7 +22,7 @@ class PageService {
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
     final Logger LOGGER = LoggerFactory.getLogger(PageService.class)
 
-    Content getPage(CONF_URL, TOKEN, id) {
+    public Content getPage(CONF_URL, TOKEN, id) {
 
         LOGGER.info("Getting page ${id}")
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
@@ -40,7 +40,6 @@ class PageService {
     }
 
     def getChildren(CONF_URL, TOKEN, id) {
-
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}/child/page?limit=300")       // limit = 300 pages
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
