@@ -133,10 +133,10 @@ class CommentService {
 """
         return Unirest.post("${tgtURL}/rest/inlinecomments/1.0/comments")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")
+                .header("Content-Type", "application/json")
                 .body(req)
                 .asString()
     }
-
 
     @Deprecated
     def deleteComment(CONF_URL, TOKEN, id) {
@@ -153,15 +153,13 @@ class CommentService {
         Content comment = getComment(CONF_URL, TOKEN, id)
         Ancestor ancestor = new Ancestor()
         ancestor.id = targetParentId
-        content.ancestors = [ancestor]
-        content.version.number += 1
-
-        println(gson.toJson(content))
+        comment.ancestors = [ancestor]
+        comment.version.number += 1
 
         return Unirest.put("${CONF_URL}/rest/api/content/" + pageId)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Basic ${TOKEN}")
-                .body(gson.toJson(content))
+                .body(gson.toJson(comment))
                 .asString()
                 .body
     }
@@ -170,9 +168,9 @@ class CommentService {
 
     }
 
+    // todo
     def deletePageComments(CONF_URL, TOKEN, id) {
         println(">>>>>>> Performing DELETE COMMENTs request")
-        // todo
     }
 
     @Deprecated
@@ -193,6 +191,5 @@ class CommentService {
         }
 
     }
-
 
 }

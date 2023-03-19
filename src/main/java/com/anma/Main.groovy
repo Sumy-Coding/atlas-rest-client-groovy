@@ -177,8 +177,14 @@ class Main {
 
 //        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
 
-        println(commentService.getPageComment(local8110CONF_URL, localTOKEN, 1216695))
+//        println(
+//          commentService.getPageComment(local8110CONF_URL, localTOKEN, 1216695)
+//        )
 
+        // add inline comment
+        println(
+                commentService.addInlineCommentToPage(1212677, local8110CONF_URL, localTOKEN, "lorem", "primis").status
+        )
 
 
         // copy page labels
