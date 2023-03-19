@@ -8,13 +8,13 @@ import com.anma.models.SpaceDescription
 import com.anma.models.space.CreateSpace
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mashape.unirest.http.Unirest
+import kong.unirest.Unirest
 
 class SpaceService {
 
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    static def getSpace(CONF_URL, TOKEN, spaceKey) {
+    static Space getSpace(CONF_URL, TOKEN, spaceKey) {
         //def URL = "http://example.com/confluence/rest/api/space?spaceKey=TST&spaceKey=ds\n"
         def expand = "homepage"
         def response = Unirest.get("${CONF_URL}/rest/api/space/${spaceKey}?expand=${expand}")

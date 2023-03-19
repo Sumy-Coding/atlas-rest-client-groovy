@@ -4,10 +4,10 @@ class Content {
 
     def id
     String title
-    def type
+    String type
     def status
     Ancestor[] ancestors
-    Content container
+    Container container
     Version version
     Body body
     Space space

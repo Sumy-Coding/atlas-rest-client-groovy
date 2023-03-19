@@ -7,9 +7,7 @@ import com.anma.services.SpaceService
 import com.anma.services.TokenService
 
 import java.time.Duration
-import java.time.LocalDate
 import org.apache.commons.lang3.RandomUtils;
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class Main {
@@ -17,27 +15,24 @@ class Main {
     static void main(String[] args) {
 
 // ====== DATA
-        //=========== DU
-
 //        def username = System.getenv("CONF_USER")
 //        def password = System.getenv("CONF_PASS")
 //        final String duCONF_URL = "https://confluence-datacenter.du.ae"
-//        final String bassURL = "https://bass.netcracker.com"
-//        final String bassdevqaURL = "https://bassdevqa.netcracker.com"        // DEVQA
-//        final String bhtURL = "https://beastiehut.atlassian.net/wiki"   // bh Cloud
-        final String anmaURL = "https://anma.atlassian.net/wiki"            // anma Cloud
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
-//        final def awsCONF_URL = "http://confl-loadb-1mob5tjjndhrr-969460925.us-west-2.elb.amazonaws.com"       // AWS DC
+        final def local810CONF_URL = "http://localhost:8100"                    // localhost
+        final def local8110CONF_URL = "http://localhost:8110"                    // localhost
+        final String local7190CONF_URL = "http://localhost:7190"                    // localhost
+        final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-14912312370.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
         def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
-        def bhtTOKEN = TokenService.getToken("beastiehut@gmail.com", System.getenv("BH_TOKEN"))
         def start = System.currentTimeMillis()
 //        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
         // ******** Operations **********
 
         PageService pageService = new PageService()
+        SpaceService spaceService = new SpaceService()
 
         // GET page
 //        println(PageService.getPage(anmaURL, anmaTOKEN, 511180801))
@@ -46,7 +41,11 @@ class Main {
 //        println(PageService.getChildren(anmaURL, anmaTOKEN, 511180801).results)
 
         // GET descendants
-//        PageService.getDescendants(CONF_URL, TOKEN, 5832764).results.each {println(it.title)}
+//        PageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
+
+        // ALL
+//        pageService.getContent(local810CONF_URL, localTOKEN, "page")
+//                .results.each {println(it.id)}
 
         // GET space pages
 //        pageService.getSpacePages(local714CONF_URL, localTOKEN, 'DEV').results.each {println(it)}
@@ -110,7 +109,7 @@ class Main {
 //            pageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
 //        }
 
-// ========  Create comment
+        // ========  Create comment
 
 //        for (i in 1..20) {
 //            String randomString = getRandomString(20)
@@ -119,42 +118,41 @@ class Main {
 
         // == Create comments for children
 
-//        pageService.getChildren(CONF_URL, TOKEN, 1310845).results.each {
-//            for (i in 1..30) {
-//                String randomString = RandomGen.getRandomString(22)
-//                println(pageService.createComment(CONF_URL, TOKEN, "dev62", [], it.id, 'page', randomString).body)
-//            }
-//        }
-
-        //== Create spaces
-//        for (i in 1..<30) {
-//            println(pageService.createSpace(CONF_URL, TOKEN, "dev" + i, "dev" + i))
-//        }
+        pageService.getChildren(local8110CONF_URL, localTOKEN, 1212420).results.each {
+            for (i in 1..30) {
+                String randomString = RandomGen.getRandomString(22)
+                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
+            }
+        }
 
         // ======== create pages for Spaces
 
-//        for (i in 1..<30) {
-//            Space space = SpaceService.getSpace(CONF_URL, TOKEN, "dev" + i)
-//            def homePage = PageService.getPage(CONF_URL, TOKEN, space.homepage.id)
+//        for (i in 2..<80) {
+//            Space space = SpaceService.getSpace(local8110CONF_URL, localTOKEN, "dev" + i)
+//            def homePage = pageService.getPage(local8110CONF_URL, localTOKEN, space.homepage.id)
 //            for (a in 1..50) {
 //                def pageBody = RandomGen.getRandomString(100)
 //                def title = "${space.key} Page New " + a
-//                println(pageService.createPage(CONF_URL, TOKEN, space.key, homePage.id, title, pageBody).body)
+//                println(pageService.createPage(local8110CONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
 //            }
 //        }
 
 // ======= Create PAGES
 
-//        for (i in 1..200) {
-//            def pageBody = getRandomString(100)
-//            def title = "${space.key} Page New " + i
-//            println(pageService.createPage(CONF_URL, TOKEN, key, space.homepage.id, title, pageBody).body)
+//        for (i in 1..49) {
+//            def pageBody = RandomGen.getRandomString(20)
+//            def title = "Groovy Page 2 ${i}"
+//            println(pageService.createPage(
+//                    local810CONF_URL, localTOKEN,
+//                    "DEMO",
+//                    "1638404", title, pageBody).body)
 //        }
+
 
         // ========== Create Spaces
 
 //        for (i in 2..<100) {
-//            println(SpaceService.createSpace(CONF_URL, TOKEN, "dev${i}", "dev${i}"))
+//            println(SpaceService.createSpace(local8110CONF_URL, localTOKEN, "dev${i}", "dev${i}"))
 //        }
 
         // === MOVE page
@@ -173,7 +171,7 @@ class Main {
         // ==== COMMENTS
 //        println(pageService.getPageComment(local715CONF_URL, localTOKEN, 65611))
 
-        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
+//        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
 
         // copy page labels
 //        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
@@ -212,14 +210,12 @@ class Main {
 //        }
 
 
-
-
-
-
         // END
+//        println(Duration.ofMillis(27726).toSeconds())
         def takenMillis = System.currentTimeMillis() - start
-        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).seconds
-        println(">>>>> Script took ${seconds} seconds")
+        long millis = Duration.of(takenMillis, ChronoUnit.MILLIS).toMillis()
+        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).toSeconds()
+        println(">>>>> Script took ${millis} millis (${seconds} seconds)")
 
     }
 

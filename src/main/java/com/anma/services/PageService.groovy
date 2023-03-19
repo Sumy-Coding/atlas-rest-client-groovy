@@ -3,12 +3,11 @@ package com.anma.services
 import com.anma.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mashape.unirest.http.HttpMethod
-import com.mashape.unirest.http.HttpResponse
-import com.mashape.unirest.http.Unirest
-import com.mashape.unirest.request.HttpRequest
-import com.mashape.unirest.request.body.MultipartBody
-import org.apache.commons.logging.Log
+import kong.unirest.HttpMethod
+import kong.unirest.HttpResponse
+import kong.unirest.MultipartBody
+import kong.unirest.Unirest
+import org.apache.http.HttpRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -31,6 +30,13 @@ class PageService {
                 .asString()
 
         return gson.fromJson(response.body, Content.class)
+    }
+
+    public Contents getContent(String CONF_URL, String TOKEN, String type) {
+        def response = Unirest.get("${CONF_URL}/rest/api/content?type=${type}")
+                .header("Authorization", "Basic ${TOKEN}")
+                .asString()
+        return gson.fromJson(response.body, Contents.class)
     }
 
     def getChildren(CONF_URL, TOKEN, id) {
@@ -151,7 +157,7 @@ class PageService {
 
     def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
         println(">>>>>>> Performing CREATE PAGE request")
-        Unirest.setTimeouts(0, 0);
+//        Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
 
         def content = new Content()
@@ -190,7 +196,7 @@ class PageService {
 
     def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
         println(">>>>>>>>> Performing CREATE COMMENT request")
-        Unirest.setTimeouts(0, 0);
+//        Unirest.setTimeouts(0, 0);
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
         content.title = 'comment'
@@ -719,10 +725,10 @@ class PageService {
         File fileUpload = new File(savedAttach);
 
         String url = "${tgtURL}/rest/api/content/" + targetPageId + "/child/attachment";   // ext
-        HttpRequest request = new HttpRequest(HttpMethod.POST, url);
-        MultipartBody multipartBody = new MultipartBody(request);
-        multipartBody.field("upload", fileUpload);
-        println("Created POST method for adding ${attachId} attachment to ${targetPageId} page")
+//        HttpRequest request = new HttpRequest(HttpMethod.POST, url); todo
+//        MultipartBody multipartBody = new MultipartBody(request);
+//        multipartBody.field("upload", fileUpload);
+//        println("Created POST method for adding ${attachId} attachment to ${targetPageId} page")
 
         return Unirest.post("${tgtURL}/rest/api/content/${targetPageId}/child/attachment")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")
@@ -742,65 +748,6 @@ class PageService {
 ////        HttpResponse response = httpClient.execute(postRequest);
 //        return httpClient.execute(postRequest).asType(String.class)
 
-    }
-
-    // add existing comment to page
-    def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
-
-        println("Adding comment ${commId} to page ${tgtPageId}")
-
-        Content comment = getPageComment(CONF_URL, TOKEN, commId)
-
-        Content newComment = new Content()
-        newComment.title = comment.title
-        newComment.type = 'comment'
-        newComment.status = 'current'
-//        Container container = new Container()   // Can be skipped
-//        container.type = 'page'
-//        container.id = pare
-//        content.container = container
-//        Ancestor ancestor = new Ancestor()
-        Body commBody = new Body()
-        Storage storage = new Storage()
-        commBody.storage = storage
-        storage.representation = 'storage'
-        storage.value = comment.body.storage.value
-        newComment.body = commBody
-//        Container container = new Container()
-        newComment.container = getPage(CONF_URL, TOKEN, tgtPageId)
-//        Version version = new Version()
-//        version.message = 'test'
-//        version.number = 1
-//        content.version = version
-//        ancestor.id = parentId.toString()
-//        Ancestor[] ancestors = [ancestor]
-//        content.ancestors = ancestors
-
-        def commJson = gson.toJson(newComment)
-
-        return Unirest.post("${tgtURL}/rest/api/content")  // ext
-                .header("Authorization", "Basic ${tgtTOKEN}")
-                .body(commJson)
-                .asString()
-
-    }
-
-    def getPageComment(CONF_URL, TOKEN, commId) {
-
-        def expand = "body.storage,version"
-        def response = Unirest.get("${CONF_URL}/rest/api/content/${commId}?expand=${expand}")
-                .header("Authorization", "Basic ${TOKEN}")
-                .asString().body
-        return gson.fromJson(response, Content.class)
-    }
-
-    def getPageComments(CONF_URL, TOKEN, sourceId) {
-        //  GET /rest/api/content/{id}/child/comment
-//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-        def response = Unirest.get("${CONF_URL}/rest/api/content/" + sourceId + "/child/comment")
-                .header("Authorization", "Basic ${TOKEN}")
-                .asString().body
-        return gson.fromJson(response, Contents.class)
     }
 
     @Deprecated
