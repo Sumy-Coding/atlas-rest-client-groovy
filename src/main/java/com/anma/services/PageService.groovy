@@ -750,64 +750,6 @@ class PageService {
 
     }
 
-    // add existing comment to page
-    def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
-
-        println("Adding comment ${commId} to page ${tgtPageId}")
-
-        Content comment = getPageComment(CONF_URL, TOKEN, commId)
-
-        Content newComment = new Content()
-        newComment.title = comment.title
-        newComment.type = 'comment'
-        newComment.status = 'current'
-//        Container container = new Container()   // Can be skipped
-//        container.type = 'page'
-//        container.id = pare
-//        content.container = container
-//        Ancestor ancestor = new Ancestor()
-        Body commBody = new Body()
-        Storage storage = new Storage()
-        commBody.storage = storage
-        storage.representation = 'storage'
-        storage.value = comment.body.storage.value
-        newComment.body = commBody
-//        Container container = new Container()
-        newComment.container = getPage(CONF_URL, TOKEN, tgtPageId)
-//        Version version = new Version()
-//        version.message = 'test'
-//        version.number = 1
-//        content.version = version
-//        ancestor.id = parentId.toString()
-//        Ancestor[] ancestors = [ancestor]
-//        content.ancestors = ancestors
-
-        def commJson = gson.toJson(newComment)
-
-        return Unirest.post("${tgtURL}/rest/api/content")  // ext
-                .header("Authorization", "Basic ${tgtTOKEN}")
-                .body(commJson)
-                .asString()
-    }
-
-    def getPageComment(CONF_URL, TOKEN, commId) {
-
-        def expand = "body.storage,version"
-        def response = Unirest.get("${CONF_URL}/rest/api/content/${commId}?expand=${expand}")
-                .header("Authorization", "Basic ${TOKEN}")
-                .asString().body
-        return gson.fromJson(response, Content.class)
-    }
-
-    def getPageComments(CONF_URL, TOKEN, sourceId) {
-        //  GET /rest/api/content/{id}/child/comment
-//        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-        def response = Unirest.get("${CONF_URL}/rest/api/content/" + sourceId + "/child/comment")
-                .header("Authorization", "Basic ${TOKEN}")
-                .asString().body
-        return gson.fromJson(response, Contents.class)
-    }
-
     @Deprecated
     def copyPageComments(CONF_URL, TOKEN, sourceId, targetId, tgtURL, tgtTOKEN) {
 

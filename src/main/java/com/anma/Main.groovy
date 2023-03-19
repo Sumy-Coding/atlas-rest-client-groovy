@@ -21,6 +21,7 @@ class Main {
         final def local714CONF_URL = "http://localhost:7141"                    // localhost
         final def local715CONF_URL = "http://localhost:7150"                    // localhost
         final def local810CONF_URL = "http://localhost:8100"                    // localhost
+        final def local8110CONF_URL = "http://localhost:8110"                    // localhost
         final String local7190CONF_URL = "http://localhost:7190"                    // localhost
         final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-14912312370.us-west-2.elb.amazonaws.com" // AWS DC
         def localTOKEN = TokenService.getToken("admin", "admin")
@@ -108,7 +109,7 @@ class Main {
 //            pageService.replacePageInfoMacro(CONF_URL, username, password, it.id)
 //        }
 
-// ========  Create comment
+        // ========  Create comment
 
 //        for (i in 1..20) {
 //            String randomString = getRandomString(20)
@@ -117,22 +118,22 @@ class Main {
 
         // == Create comments for children
 
-        pageService.getChildren(local810CONF_URL, localTOKEN, 1638404).results.each {
+        pageService.getChildren(local8110CONF_URL, localTOKEN, 1212420).results.each {
             for (i in 1..30) {
                 String randomString = RandomGen.getRandomString(22)
-                println(pageService.createComment(local810CONF_URL, localTOKEN, "DEMO", [], it.id, 'page', randomString).body)
+                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
             }
         }
 
         // ======== create pages for Spaces
 
 //        for (i in 2..<80) {
-//            Space space = SpaceService.getSpace(awsCONF_URL, localTOKEN, "dev" + i)
-//            def homePage = pageService.getPage(awsCONF_URL, localTOKEN, space.homepage.id)
+//            Space space = SpaceService.getSpace(local8110CONF_URL, localTOKEN, "dev" + i)
+//            def homePage = pageService.getPage(local8110CONF_URL, localTOKEN, space.homepage.id)
 //            for (a in 1..50) {
 //                def pageBody = RandomGen.getRandomString(100)
 //                def title = "${space.key} Page New " + a
-//                println(pageService.createPage(awsCONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
+//                println(pageService.createPage(local8110CONF_URL, localTOKEN, space.key, homePage.id, title, pageBody).body)
 //            }
 //        }
 
@@ -151,7 +152,7 @@ class Main {
         // ========== Create Spaces
 
 //        for (i in 2..<100) {
-//            println(SpaceService.createSpace(awsCONF_URL, localTOKEN, "dev${i}", "dev${i}"))
+//            println(SpaceService.createSpace(local8110CONF_URL, localTOKEN, "dev${i}", "dev${i}"))
 //        }
 
         // === MOVE page
@@ -209,12 +210,11 @@ class Main {
 //        }
 
 
-
         // END
 //        println(Duration.ofMillis(27726).toSeconds())
         def takenMillis = System.currentTimeMillis() - start
         long millis = Duration.of(takenMillis, ChronoUnit.MILLIS).toMillis()
-        long seconds =  Duration.of(takenMillis, ChronoUnit.MILLIS).toSeconds()
+        long seconds = Duration.of(takenMillis, ChronoUnit.MILLIS).toSeconds()
         println(">>>>> Script took ${millis} millis (${seconds} seconds)")
 
     }
