@@ -4,6 +4,17 @@ The REST service to operate in bulk on remote Confluence Server / Data Center co
 
 ### Examples:
 
+```groovy
+String confluenceUrl = http://localhost:8110"
+def token = TokenService.getToken("admin", "admin")
+```
+
+using ENV vars:
+```groovy
+def token = TokenService.getToken(System.getenv("CONF_USER"), System.getenv("CONF_PASS"))
+```
+
+
 Create Page
 
 ```groovy
