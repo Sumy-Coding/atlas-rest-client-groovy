@@ -1,10 +1,33 @@
 package com.anma.jira.models
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-import com.fasterxml.jackson.databind.ObjectMapper; // version 2.11.1
+// version 2.11.1
 import com.fasterxml.jackson.annotation.JsonProperty; // version 2.11.1
 /* ObjectMapper om = new ObjectMapper();
 Root root = om.readValue(myJsonString, Root.class); */
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Issue {
+    public String expand;
+    public String id;
+    public String self;
+    public String key;
+    public com.anma.jira.models.update.Fields fields;
+
+    @Override
+    public String toString() {
+        return "Issue{" +
+                "expand='" + expand + '\'' +
+                ", id='" + id + '\'' +
+                ", self='" + self + '\'' +
+                ", key='" + key + '\'' +
+                ", fields=" + fields +
+                '}';
+    }
+}
+
 public class Aggregateprogress{
     public int progress;
     public int total;
@@ -21,6 +44,7 @@ public class AvatarUrls{
     public String _32x32;
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Comment{
     public ArrayList<Object> comments;
     public int maxResults;
@@ -39,6 +63,7 @@ public class Creator{
     public String timeZone;
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Fields{
     public Issuetype issuetype;
     public Object timespent;
@@ -71,7 +96,7 @@ public class Fields{
     public ArrayList<Object> components;
     public Object timeoriginalestimate;
     public String description;
-    public Timetracking timetracking;
+    public com.anma.jira.models.update.Timetracking timetracking;
     public Object archiveddate;
     public ArrayList<Object> attachment;
     public Object aggregatetimeestimate;
@@ -112,6 +137,7 @@ public class Progress{
     public int total;
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Project{
     public String self;
     public String id;
@@ -121,6 +147,7 @@ public class Project{
     public AvatarUrls avatarUrls;
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Reporter{
     public String self;
     public String name;
@@ -132,25 +159,6 @@ public class Reporter{
     public String timeZone;
 }
 
-public class Issue {
-    public String expand;
-    public String id;
-    public String self;
-    public String key;
-    public Fields fields;
-
-    @Override
-    public String toString() {
-        return "Issue{" +
-                "expand='" + expand + '\'' +
-                ", id='" + id + '\'' +
-                ", self='" + self + '\'' +
-                ", key='" + key + '\'' +
-                ", fields=" + fields +
-                '}';
-    }
-}
-
 public class Status{
     public String self;
     public String description;
@@ -158,6 +166,18 @@ public class Status{
     public String name;
     public String id;
     public StatusCategory statusCategory;
+
+    @Override
+    public String toString() {
+        return "Status{" +
+                "self='" + self + '\'' +
+                ", description='" + description + '\'' +
+                ", iconUrl='" + iconUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", statusCategory=" + statusCategory +
+                '}';
+    }
 }
 
 public class StatusCategory{
@@ -190,3 +210,6 @@ public class Worklog{
     public ArrayList<Object> worklogs;
 }
 
+public class Watcher {
+
+}
