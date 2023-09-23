@@ -1,44 +1,48 @@
 package com.anma.confl
 
-
+import com.anma.confl.models.Space
 import com.anma.confl.services.CommentService
 import com.anma.confl.services.PageService
 import com.anma.confl.services.SpaceService
-import com.anma.TokenService
+import com.anma.srv.RandomGen
+import com.anma.srv.TokenService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 class Main {
-
     static void main(String[] args) {
+        final Logger LOG = LoggerFactory.getLogger(Main.class)
 
 // ====== DATA
-//        def username = System.getenv("CONF_USER")
-//        def password = System.getenv("CONF_PASS")
-        def jira95 = "http://localhost:9500"
-        final def local8110CONF_URL = "http://localhost:8110"                    // localhost
-        final String local7190CONF_URL = "http://localhost:7190"                    // localhost
-        final String awsCONF_URL = "http://confl-loadb-pxymvhygf6ct-14912312370.us-west-2.elb.amazonaws.com" // AWS DC
-        def localTOKEN = TokenService.getToken("admin", "admin")
-        def anmaTOKEN = TokenService.getToken(System.getenv("ANMA_CONF_USER"), System.getenv("ANMA_CONF_TOKEN"))
+        def username = System.getenv("CONF_USER")
+        def password = System.getenv("CONF_PASS")
+
+        String CONF_URL = System.getenv("CONF_URL")
+
+        String localTOKEN = TokenService.getToken("admin", "admin")
+        String TOKEN = TokenService.getToken(username, password)
+
         def start = System.currentTimeMillis()
-//        Space space = SpaceService.getSpace(CONF_URL, TOKEN, key)
 
         // ******** Operations **********
-
         PageService pageService = new PageService()
         SpaceService spaceService = new SpaceService()
         CommentService commentService = new CommentService()
 
+        // Space data
+        Space space = SpaceService.getSpace(CONF_URL, TOKEN, "TEST")
+
         // GET page
-//        println(PageService.getPage(anmaURL, anmaTOKEN, 511180801))
+//        println(pageService.getPage(CONF_URL, TOKEN, "878936087"))
 
         // GET children
-//        println(PageService.getChildren(anmaURL, anmaTOKEN, 511180801).results)
+//        println(pageService.getChildren(anmaURL, TOKEN, 511180801).results)
 
         // GET descendants
-//        PageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
+//        pageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
 
         // ALL
 //        pageService.getContent(local810CONF_URL, localTOKEN, "page")
@@ -48,9 +52,9 @@ class Main {
 //        pageService.getSpacePages(local714CONF_URL, localTOKEN, 'DEV').results.each {println(it)}
 
         // GET blogs
-//        println(PageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
+//        println(pageService.getSpaceBlogs(CONF_URL, TOKEN, 'TEST').results)
 
-        //=== POST blogpost
+        //=== CREATE blogpost
 //        for (i in 0..<50) {
 //            def postDate =
 //                    LocalDate.of(2021, RandomUtils.nextInt(1,12), RandomUtils.nextInt(1,30))
@@ -68,7 +72,7 @@ class Main {
 //        println(pageService.updatePage(CONF_URL, "admin", "admin",6324225, toFind, toReplace))
 
         // PUT -> update pages with specific label
-//        PageService.getDescendantsWithLabel(CONF_URL, username, password, id, "test").each {
+//        pageService.getDescendantsWithLabel(CONF_URL, username, password, id, "test").each {
 //            println(PageService.updatePage(CONF_URL, username, password, it.id, toFind, toReplace))
 //        }
 
@@ -78,7 +82,7 @@ class Main {
 
         // ==== Add labels to page
 
-//        println(PageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"]))
+//        println(pageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"]))
 
         // GET labels
 //        pageService.getPageLabels(CONF_URL, TOKEN, 2490384).results.each {println(it)}
@@ -108,10 +112,13 @@ class Main {
 
         // ========  Create comment
 
-//        for (i in 1..20) {
-//            String randomString = getRandomString(20)
-//            println(pageService.createComment(CONF_URL, TOKEN, space.key, [], space.homepage.id, 'page', randomString).body)
-//        }
+        for (i in 1..20) {
+            String randomString = RandomGen.getRandomString(20)
+            println(
+                    pageService.createComment(
+                            CONF_URL, TOKEN, space.key, [],
+                            "822018049", 'page', randomString).body)
+        }
 
         // == Create comments for children
 
@@ -121,6 +128,11 @@ class Main {
 //                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
 //            }
 //        }
+
+        // CREATE page
+//        String pageBody = new String(Files.readAllBytes(Path.of("/home/andrii/Documents/confl_html_ex1.html")))
+//        println(pageService.createPage(CONF_CLOUD, TOKEN, "TEST", "513966112", "Groovy from PDF", pageBody).body)
+
 
         // ======== create pages for Spaces
 
@@ -161,10 +173,10 @@ class Main {
         // ==== copy page between servers
         // 1 page
 //        println(pageService.copyPage(local714CONF_URL, localTOKEN, 6160387, 511180801, "",
-//                true, true, false, anmaURL, anmaTOKEN))
+//                true, true, false, anmaURL, TOKEN))
         // children
 //        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
-//                true, true, false, anmaURL, anmaTOKEN)
+//                true, true, false, anmaURL, TOKEN)
 
 // ===========================================================================================================
 // ============================================ COMMENTS =====================================================
@@ -177,9 +189,9 @@ class Main {
 //        )
 
         // add inline comment
-        println(
-                commentService.addInlineCommentToPage(1212677, local8110CONF_URL, localTOKEN, "lorem", "primis").status
-        )
+//        println(
+//                commentService.addInlineCommentToPage(1212677, local8110CONF_URL, localTOKEN, "lorem", "primis").status
+//        )
 
 
         // copy page labels

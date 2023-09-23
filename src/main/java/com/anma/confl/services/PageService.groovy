@@ -15,13 +15,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class PageService {
-
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
-    final Logger LOGGER = LoggerFactory.getLogger(PageService.class)
+    final Logger LOG = LoggerFactory.getLogger(PageService.class)
 
-    public Content getPage(CONF_URL, TOKEN, id) {
-
-        LOGGER.info("Getting page ${id}")
+    public Content getPage(String CONF_URL, String TOKEN, String id) {
+        LOG.info("Getting page ${id}")
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
@@ -69,7 +67,7 @@ class PageService {
 
     def getSpacePages(CONF_URL, TOKEN, space) {
 //        println(">>>>>>> Performing GET Pages request")
-        LOGGER.info(">>>>>>> Performing GET Pages request")
+        LOG.info(">>>>>>> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
         HttpResponse<String> response =
@@ -616,7 +614,7 @@ class PageService {
                      boolean copyLabels, boolean copyAttach, boolean copyComments,
                      String targetServer, extTOKEN) {
 
-        LOGGER.info("Copying descendants of ${sourceId} to ${targetId}")
+        LOG.info("Copying descendants of ${sourceId} to ${targetId}")
         Content rootPage
         Content targetPage
         Content[] children
@@ -757,13 +755,13 @@ class PageService {
             try {
                 comments.each { comm ->
                     addCommentToPage(CONF_URL, TOKEN, comm.id, targetId, tgtURL, tgtTOKEN)  // add comments
-                    LOGGER.info("Added comment ${comm.id} to ${targetId} page")
+                    LOG.info("Added comment ${comm.id} to ${targetId} page")
                 }
             } catch (Exception e) {
                 e.printStackTrace()
             }
         } else {
-            LOGGER.info("${sourceId} page has 0 comments")
+            LOG.info("${sourceId} page has 0 comments")
         }
 
     }
@@ -790,7 +788,7 @@ class PageService {
                     e.printStackTrace()
                 }
             } else {
-                LOGGER.info("${sourcePageId} page has 0 attaches")
+                LOG.info("${sourcePageId} page has 0 attaches")
             }
         }
 

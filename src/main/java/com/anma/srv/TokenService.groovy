@@ -1,4 +1,4 @@
-package com.anma;
+package com.anma.srv;
 
 public class TokenService {
 
