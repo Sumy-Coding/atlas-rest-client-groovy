@@ -8,6 +8,8 @@ import kong.unirest.Unirest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
@@ -17,6 +19,8 @@ import java.nio.file.Path
 class PageService {
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
     final Logger LOG = LoggerFactory.getLogger(PageService.class)
+
+    HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()
 
     public Content getPage(String CONF_URL, String TOKEN, String id) {
         LOG.info("Getting page ${id}")
@@ -151,8 +155,6 @@ class PageService {
 
     def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
         println(">>>>>>> Performing CREATE PAGE request")
-//        Unirest.setTimeouts(0, 0);
-        def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
 
         def content = new Content()
         content.title = title
@@ -161,10 +163,6 @@ class PageService {
         Space space1 = new Space()
         content.space = space1
         space1.key = space
-//        Container container = new Container()   // Can be skipped
-//        container.type = 'page'
-//        container.id = pare
-//        content.container = container
         Ancestor ancestor = new Ancestor()
         Body body1 = new Body()
         Storage storage = new Storage()
@@ -172,25 +170,30 @@ class PageService {
         storage.representation = 'storage'
         storage.value = body
         content.body = body1
-//        Version version = new Version()
-//        version.message = 'test'
-//        version.number = 1
-//        content.version = version
         ancestor.id = parentId.toString()
         Ancestor[] ancestors = [ancestor]
         content.ancestors = ancestors
-//        println(gson.toJson(content))
 
-        return Unirest.post("${CONF_URL}/rest/api/content")
+        HttpRequest request = HttpRequest.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .uri(URI.create("${CONF_URL}/rest/api/content"))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(content)))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Basic ${TOKEN}")
-                .body(gson.toJson(content))
-                .asString()
+                .build()
+
+        def sendAsync
+                = client.sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+
+        sendAsync.thenAccept (res -> {
+            println(">>> res is ${res.body()}")
+        })
+
     }
 
     def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
         println(">>>>>>>>> Performing CREATE COMMENT request")
-//        Unirest.setTimeouts(0, 0);
+
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
         content.title = 'comment'
