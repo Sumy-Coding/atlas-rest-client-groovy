@@ -15,7 +15,6 @@ class Space {
     int limit
     Content homepage
 
-
     @Override
     public String toString() {
         return "Space{" +

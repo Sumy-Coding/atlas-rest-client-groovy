@@ -1,7 +1,6 @@
 package com.anma.confl.models
 
 class Content {
-
     def id
     String title
     String type

@@ -32,11 +32,8 @@ class Main {
         SpaceService spaceService = new SpaceService()
         CommentService commentService = new CommentService()
 
-        // Space data
-        Space space = SpaceService.getSpace(CONF_URL, TOKEN, "TEST")
-
         // GET page
-//        println(pageService.getPage(CONF_URL, TOKEN, "878936087"))
+//        println(pageService.getPage(CONF_URL, TOKEN, "78282867"))
 
         // GET children
 //        println(pageService.getChildren(anmaURL, TOKEN, 511180801).results)
@@ -112,13 +109,15 @@ class Main {
 
         // ========  Create comment
 
-        for (i in 1..20) {
-            String randomString = RandomGen.getRandomString(20)
-            println(
-                    pageService.createComment(
-                            CONF_URL, TOKEN, space.key, [],
-                            "822018049", 'page', randomString).body)
-        }
+//        Space space = SpaceService.getSpace(CONF_URL, TOKEN, "TEST")
+//        def pageId = "822018049"
+//        for (i in 1..20) {
+//            String randomString = RandomGen.getRandomString(20)
+//            println(
+//                    pageService.createComment(
+//                            CONF_URL, TOKEN, space.key, [],
+//                            pageId, 'page', randomString).body)
+//        }
 
         // == Create comments for children
 
@@ -130,7 +129,7 @@ class Main {
 //        }
 
         // CREATE page
-//        String pageBody = new String(Files.readAllBytes(Path.of("/home/andrii/Documents/confl_html_ex1.html")))
+//        String pageBody = new String(Files.readAllBytes(Path.of("/home/user/confl_html_ex1.html")))
 //        println(pageService.createPage(CONF_CLOUD, TOKEN, "TEST", "513966112", "Groovy from PDF", pageBody).body)
 
 
@@ -208,21 +207,13 @@ class Main {
 
         // === Copy children
 //        pageService.copyChildren(CONF_URL, TOKEN, 65603, 5832724, "", true, true, false,
-////                "https://beastiehut.atlassian.net/wiki",
+////                "https://xxx.atlassian.net/wiki",
 //                "",
 //                "",
 //                ""
 ////                System.getenv("BH_TOKEN")
 //        )
 
-        //bht
-//            pageService.copyChildren(CONF_URL, TOKEN, "465862662", "465600539", "", true, true, false,
-//                "",
-//                "",
-//                "")
-
-        // === add Labels to Ancestors
-//        pageService.addLabelsToAncestors(CONF_URL, TOKEN, 5242886, ["aaa", "bbb"])
 
         // DELETE
 //        println(PageService.deletePage(CONF_URL, TOKEN, 465829921))
