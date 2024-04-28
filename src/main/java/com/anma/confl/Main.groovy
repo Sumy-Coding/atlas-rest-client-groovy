@@ -117,7 +117,8 @@ class Main {
                         }
                         break
                     case "addLabels":
-                        pageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"])
+                        def labels = Arrays.asList(args[Arrays.asList(args).indexOf("--labels") + 1].split(","))
+                        pageService.addLabelsToPage(CONF_URL, TOKEN, pageId, labels)
                         break
                     case "createBlogs":
                         int amount = Integer.parseInt(args[Arrays.asList(args).indexOf("--amount") + 1])
@@ -133,13 +134,13 @@ class Main {
                             LOG.info(blog.toString())
                         }
                         break
+                    case "renameChildren":
+                        pageService.getChildren(CONF_URL, TOKEN, pageId).results.each { page ->
+                            pageService.findReplacePageTitlePart(CONF_URL, TOKEN, page.id, toFind, toSet)
+                        }
+                        break
                 }
             }
-
-            // ==== PUT children
-//        pageService.getChildren(id).results.each { page ->
-//              pageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)
-//        }
 
             // GET labels
 //        pageService.getPageLabels(CONF_URL, TOKEN, 2490384).results.each {println(it)}
@@ -149,12 +150,7 @@ class Main {
 //        pageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
 //        pageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
 
-            // ==== Rename pages
-//        pageService.getChildren(CONF_URL, username, password, id).results.each {
-//            pageService.findReplacePageTitlePart(CONF_URL, username, password, it.id, "JBTB8", "JBTB1")
-//        }
-
-            // ==== replace PAGE INFO
+// ==== replace PAGE INFO
 //        pageService.replacePageInfoMacro(CONF_URL, username, password, id)
 
             // ==== multiple page info
@@ -183,7 +179,7 @@ class Main {
 //            }
 
 
-// ======== create pages for Spaces
+// ======== create N pages for N Spaces
 
 //        for (i in 2..<80) {
 //            Space space = SpaceService.getSpace(local8110CONF_URL, localTOKEN, "dev" + i)
@@ -195,7 +191,7 @@ class Main {
 //            }
 //        }
 
-// ======= Create PAGES
+// ======= Create N PAGES
 
 //        for (i in 1..<21) {
 //            def pageBody = RandomGen.getRandomString(40)
@@ -206,51 +202,48 @@ class Main {
 //                    "2752538", title, pageBody)
 //        }
 
-// ========== Create Spaces
+// ========== Create N Spaces
 //        for (i in 2..<30) {
 //            println(SpaceService.createSpace(CONF_URL, localTOKEN, "dev${i}", "dev${i}"))
 //        }
 
             // === MOVE page
-//        println(pageService.movePage(CONF_URL, TOKEN, 1966087, 1966081))
+//        pageService.movePage(CONF_URL, TOKEN, 1966087, 1966081)
 
             // ==  COPY page
-//        println(pageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false))
+//        pageService.copyPage(CONF_URL, TOKEN, 65603, 1966081, "ababa", true, false, false)
 
             // ==== copy page between servers
             // 1 page
-//        println(pageService.copyPage(local714CONF_URL, localTOKEN, 6160387, 511180801, "",
-//                true, true, false, anmaURL, TOKEN))
+//        pageService.copyPage(local714CONF_URL, localTOKEN, 6160387, 511180801, "",
+//                true, true, false, anmaURL, TOKEN)
             // children
 //        pageService.copyChildren(local714CONF_URL, localTOKEN, 65603, 509542401, "",
 //                true, true, false, anmaURL, TOKEN)
 
 // ===========================================================================================================
 // ============================================ COMMENTS =====================================================
-//        println(pageService.getPageComment(local715CONF_URL, localTOKEN, 65611))
+//        pageService.getPageComment(local715CONF_URL, localTOKEN, 65611)
 
 //        pageService.addCommentToPage(local715CONF_URL, localTOKEN, 65611,65603,local715CONF_URL, localTOKEN)
 
-//        println(
-//          commentService.getPageComment(local8110CONF_URL, localTOKEN, 1216695)
-//        )
+//        commentService.getPageComment(local8110CONF_URL, localTOKEN, 1216695)
 
-            // add inline comment
-//        println(
-//                commentService.addInlineCommentToPage(1212677, local8110CONF_URL, localTOKEN, "lorem", "primis").status
-//        )
+        // add inline comment
+//        commentService.addInlineCommentToPage(1212677, local8110CONF_URL, localTOKEN, "lorem", "primis").status
+
 
             // copy page labels
-//        println(pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108))
+//        pageService.copyPageLabels(CONF_URL, TOKEN, 65603, 1966108)
 
             // GET Attaches
-//        println(pageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results)
+//        pageService.getPageAttachments(CONF_URL, TOKEN, 1966096).results
 
             // ATTACH file to page
-//        println(pageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081))
+//        pageService.addAttachToPage(CONF_URL, TOKEN, 1966083, 1966081)
 
             //===  Copy Page attches
-//        println(pageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081))
+//        pageService.copyPageAttaches(CONF_URL, TOKEN, 65603, 1966081)
 
             // === Copy children
 //        pageService.copyChildren(CONF_URL, TOKEN, 65603, 5832724, "", true, true, false,
@@ -262,7 +255,7 @@ class Main {
 //        )
 
             // DELETE
-//        println(PageService.deletePage(CONF_URL, TOKEN, 465829921))
+//        PageService.deletePage(CONF_URL, TOKEN, 465829921)
 //        pageService.getDescendants(CONF_URL, TOKEN, 465764447).results.each {page ->
 //            println(PageService.deletePage(CONF_URL, TOKEN, page.id))
 //        }
