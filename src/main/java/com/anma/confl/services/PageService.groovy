@@ -49,7 +49,6 @@ class PageService {
     def pageContains(CONF_URL, TOKEN, id, toFind) {
         def page = getPage(CONF_URL, TOKEN, id)
         return page.body.storage.value.contains(toFind)
-
     }
 
     def getDescendants(CONF_URL, TOKEN, id) {
@@ -70,7 +69,6 @@ class PageService {
     }
 
     def getSpacePages(CONF_URL, TOKEN, space) {
-//        println(">>>>>>> Performing GET Pages request")
         LOG.info(">>>>>>> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
@@ -84,10 +82,10 @@ class PageService {
         return contents
     }
 
+    @Deprecated
     def getSpacePagesByLabel() {                                 // todo
         println(PageService.class.name + " :: " + ">> Performing GET Pages request")
-
-
+        // todo
     }
 
     def getSpaceBlogs(CONF_URL, TOKEN, space) {
@@ -185,15 +183,13 @@ class PageService {
         def sendAsync
                 = client.sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString())
 
-        sendAsync.thenAccept (res -> {
+        sendAsync.thenAccept(res -> {
             println(">>> response: ${res.body()}")
         })
 
     }
 
     def createComment(CONF_URL, TOKEN, space, ancestorsIds, containerId, containerType, body) {
-        println(">>>>>>>>> Performing CREATE COMMENT request")
-
         def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
         content.title = 'comment'
@@ -252,7 +248,6 @@ class PageService {
     }
 
     def updateContentOnPage(confURL, TOKEN, id, toFind, toReplace) {
-
         def pageVersion = getPage(confURL, TOKEN, id).version.number
         def title = getPage(confURL, TOKEN, id).title
         String body = getPage(confURL, TOKEN, id).body.storage.value
@@ -353,26 +348,22 @@ class PageService {
     }
 
     def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
-
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=space+%3D+%22TEST%22+and+label+%3D+%22test%22"
         def url = "${CONF_URL}/rest/api/content/search?cql=space+%3D+${spaceKey}+and+label+%3D+${label}&limit=100"
         return Unirest.get(url)
                 .header("Authorization", "Basic ${TOKEN}")
                 .header("Content-Type", "application/json")
                 .asString().body
-
     }
 
     def getDescendantsWithLabel(CONF_URL, TOKEN, id, label) {
-
 //        def urlRequst = cql=ancestor+%3D+"6324225"+and+label+%3D+"test"
 
         def url = "${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}+and+label+%3D+${label}&limit=100"
-        return Unirest.get(url)
+        return gson.fromJson(Unirest.get(url)
                 .header("Authorization", "Basic ${TOKEN}")
                 .header("Content-Type", "application/json")
-                .asString().body
-
+                .asString().body, Content[].class)
     }
 
     /*
@@ -406,7 +397,6 @@ class PageService {
     }
 
     def addLabelsToAncestors(CONF_URL, TOKEN, id, List<String> labels) {
-
         def page = getPage(CONF_URL, TOKEN, id)
         addLabelsToPage(CONF_URL, TOKEN, page.id, labels)
         Content nextParent

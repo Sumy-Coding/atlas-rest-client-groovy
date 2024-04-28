@@ -10,11 +10,14 @@ import org.apache.commons.lang3.RandomUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.CompletableFuture
 
 class Main {
     static void main(String[] args) {
@@ -41,9 +44,11 @@ class Main {
             String label = args[Arrays.asList(args).indexOf("--label") + 1]
             String toFind = args[Arrays.asList(args).indexOf("--toFind") + 1]
             String toSet = args[Arrays.asList(args).indexOf("--toSet") + 1]
+            String pageBody = args[Arrays.asList(args).indexOf("--pageBody") + 1]
+            String title = args[Arrays.asList(args).indexOf("--title") + 1]
 
             if (action != null) {
-                LOG.info(">>> $action for Page $pageId")
+                LOG.info(">>> $action for content $pageId")
 
                 switch (action) {
                     case "getPage":
@@ -74,7 +79,7 @@ class Main {
                         break
                     case "pagesByLabel":
                         if (label != null) {
-                            def contents = pageService.getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label).results
+                            def contents = pageService.getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label)
                             contents.each {
                                 println(it)
                             }
@@ -95,9 +100,14 @@ class Main {
                         }
                         break
                     case "createPage":
-                        def contents = pageService.getDescendants(CONF_URL, TOKEN, pageId).results
-                        contents.each {
-                            LOG.info(it)
+                        def page = pageService.createPage(CONF_URL, TOKEN, spaceKey, parent, title, pageBody)
+                        page.thenAccept { p -> LOG.info(">>> Created page $p") }
+                        break
+                    case "createPages":
+                        int amount = Integer.parseInt(args[Arrays.asList(args).indexOf("--amount") + 1])
+                        for (i in 0..<amount) {
+                            def page = pageService.createPage(CONF_URL, TOKEN, spaceKey, parent, title, pageBody)
+                            page.thenAccept { p -> LOG.info(">>> Created page $p") }
                         }
                         break
                     case "updatePage":
@@ -105,6 +115,9 @@ class Main {
                         contents.each {
                             LOG.info(it)
                         }
+                        break
+                    case "addLabels":
+                        pageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"])
                         break
                     case "createBlogs":
                         int amount = Integer.parseInt(args[Arrays.asList(args).indexOf("--amount") + 1])
@@ -124,16 +137,14 @@ class Main {
             }
 
             // ==== PUT children
-//        pageService.getChildren(id).results.each {page -> pageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)}
-
-            // ==== Add labels to page
-//        pageService.addLabelsToPage(CONF_URL, TOKEN, 1966081, ["added_1", "added_2"])
+//        pageService.getChildren(id).results.each { page ->
+//              pageService.updatePage(CONF_URL, "admin", "admin", page.id, toFind, toReplace)
+//        }
 
             // GET labels
 //        pageService.getPageLabels(CONF_URL, TOKEN, 2490384).results.each {println(it)}
 
             // ==== Rename Page
-            // rest test - 1065015088
 //        pageService.findReplacePageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", "")
 //        pageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX.name())
 //        pageService.addPageTitlePart(CONF_URL, username, password, id, "[PREFIX] ", TitlePosition.PREFIX)
@@ -171,9 +182,6 @@ class Main {
 //                }
 //            }
 
-            // CREATE page
-//        String pageBody = new String(Files.readAllBytes(Path.of("/home/user/confl_html_ex1.html")))
-//        println(pageService.createPage(CONF_CLOUD, TOKEN, "TEST", "513966112", "Groovy from PDF", pageBody).body)
 
 // ======== create pages for Spaces
 
