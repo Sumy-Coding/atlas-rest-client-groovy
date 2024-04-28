@@ -34,4 +34,14 @@ class PageServiceTests {
         }
 
     }
+
+    @Test
+    void descendants() {
+        def contents = pageService.getDescendants(CONF_URL, TOKEN, "2752538").results
+
+        contents.each {
+            println(it)
+        }
+
+    }
 }
