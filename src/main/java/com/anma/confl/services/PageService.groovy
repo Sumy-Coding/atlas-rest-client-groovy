@@ -186,7 +186,7 @@ class PageService {
                 = client.sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString())
 
         sendAsync.thenAccept (res -> {
-            println(">>> res is ${res.body()}")
+            println(">>> response: ${res.body()}")
         })
 
     }
@@ -222,11 +222,12 @@ class PageService {
     }
 
     def createBlog(CONF_URL, TOKEN, space, postingDay, title, body) {
-        // postingDay	string
-        //the posting day of the blog post. Required for blogpost type. Format: yyyy-mm-dd. Example: 2013-02-13
+        /*
+        postingDay:	string
+        the posting day of the blog post. Required for blogpost type. Format: yyyy-mm-dd. Example: 2013-02-13
+         */
         println(PageService.class.name + " :: >> Performing CREATE Blogpost request")
 
-        Unirest.setTimeouts(0, 0);
 //        def headers = Map.of("Content-Type", "application/json", "Authorization", "Basic ${TOKEN}")
         def content = new Content()
         content.title = title
@@ -296,6 +297,7 @@ class PageService {
         def response = Unirest.put(url)
                 .header("Authorization", "Basic ${TOKEN}")
                 .header("Content-Type", "application/json")
+                .body(pageJSON)
                 .asString()
 
 
@@ -304,14 +306,16 @@ class PageService {
     }
 
     def replacePageInfoMacro(CONF_URL, TOKEN, id) {
-
+        println(">> Replacing PAGE_INFO macros on page ${id}")
         def pageVersion = getPage(CONF_URL, TOKEN, id).version.number
         def title = getPage(CONF_URL, TOKEN, id).title
         String body = getPage(CONF_URL, TOKEN, id).body.storage.value
         String macroString = "";
         if (body.contains("<ac:structured-macro ac:name=\"page-info\"")) {
             try {
-                macroString = body.substring(body.indexOf("<ac:structured-macro ac:name=\"page-info\""), body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
+                macroString = body.substring(
+                        body.indexOf("<ac:structured-macro ac:name=\"page-info\""),
+                        body.indexOf("tinyurl</ac:parameter></ac:structured-macro>") + 44)
             } catch (Exception e) {
                 e.printStackTrace()
             }

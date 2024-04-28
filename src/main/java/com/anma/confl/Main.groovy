@@ -37,11 +37,7 @@ class Main {
         SpaceService spaceService = new SpaceService()
         CommentService commentService = new CommentService()
 
-        // GET page
-//        println(pageService.getPage(CONF_URL, TOKEN, "78282867"))
 
-        // GET children
-//        println(pageService.getChildren(anmaURL, TOKEN, 511180801).results)
 
         // GET descendants
 //        pageService.getDescendants(awsCONF_URL, localTOKEN, 5832764).results.each {println(it.title)}
@@ -126,12 +122,12 @@ class Main {
 
         // == Create comments for children
 
-//        pageService.getChildren(local8110CONF_URL, localTOKEN, 1212420).results.each {
-//            for (i in 1..30) {
-//                String randomString = RandomGen.getRandomString(22)
-//                println(pageService.createComment(local8110CONF_URL, localTOKEN, "dev", [], it.id, 'page', randomString).body)
-//            }
-//        }
+        pageService.getChildren(CONF_URL, TOKEN, 2752538).results.each {
+            for (i in 1..10) {
+                String randomString = RandomGen.getRandomString(22)
+                println(pageService.createComment(CONF_URL, TOKEN, "DDB26", [], it.id, 'page', randomString).body)
+            }
+        }
 
         // CREATE page
 //        String pageBody = new String(Files.readAllBytes(Path.of("/home/user/confl_html_ex1.html")))
@@ -152,45 +148,22 @@ class Main {
 
 // ======= Create PAGES
 
-//        for (i in 1..200) {
+//        for (i in 1..<21) {
 //            def pageBody = RandomGen.getRandomString(40)
-//            def title = "Test Page ${LocalDate.now()} - ${i}"
-//            println(pageService.createPage(
+//            def title = "Test Groovy Page ${System.nanoTime()}"
+//            pageService.createPage(
 //                    CONF_URL, TOKEN,
-//                    "TEST",
-//                    "519307432", title, pageBody).body)
+//                    "dev14",
+//                    "2752538", title, pageBody)
 //        }
 
-
-//            for (i in 1..20) {
-//                def actions = CompletableFuture.runAsync {
-//                    def pageBody = RandomGen.getRandomString(40)
-//                    def title = "Test Page ${System.nanoTime()} - ${i}"
-//                    println(pageService.createPage(
-//                            CONF_URL, TOKEN,
-//                            "TEST",
-//                            "519308214", title, pageBody).body)
-//                }.thenApply {
-//                    println(">> ended")
-//                }
-//
-//            }
-
-
-        for (i in 0..<10) {
-            def pageBody = RandomGen.getRandomString(40)
-            def title = "Test Page ${System.nanoTime()} - ${i}"
-            pageService.createPage(
-                    CONF_URL, TOKEN,
-                    "TEST",
-                    "519309618", title, pageBody)
-        }
+        Thread.sleep(2000)
 
 
         // ========== Create Spaces
 
-//        for (i in 2..<100) {
-//            println(SpaceService.createSpace(local8110CONF_URL, localTOKEN, "dev${i}", "dev${i}"))
+//        for (i in 2..<30) {
+//            println(SpaceService.createSpace(CONF_URL, localTOKEN, "dev${i}", "dev${i}"))
 //        }
 
         // === MOVE page
