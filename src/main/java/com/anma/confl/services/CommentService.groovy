@@ -29,8 +29,9 @@ class CommentService {
     def getPageComments(CONF_URL, TOKEN, sourceId) {
         //  GET /rest/api/content/{id}/child/comment
 //        Content rootPage = getPage(CONF_URL, TOKEN, sourceId)
-        def response = Unirest.get("${CONF_URL}/rest/api/content/" + sourceId + "/child/comment")
+        def response = Unirest.get("${CONF_URL}/rest/api/content/$sourceId/child/comment")
                 .header("Authorization", "Basic ${TOKEN}")
+                .header("Accept", "application/json")
                 .asString().body
         return gson.fromJson(response, Contents.class)
     }
@@ -41,9 +42,12 @@ class CommentService {
         return comment.body.storage.value.contains(toFind)
     }
 
-    // todo
-    def addCommentToPage(CONF_URL, TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
-        // add existing comment from one page to another (or to some other Confluence instance)
+    /*
+    add existing comment from one page to another (or to some other Confluence instance)
+     */
+
+    def copyCommentToPage(String CONF_URL, String TOKEN, commId, tgtPageId, tgtURL, tgtTOKEN) {
+
         println("Adding comment ${commId} to page ${tgtPageId}")
 
         Content comment = getPageComment(CONF_URL, TOKEN, commId)
@@ -52,19 +56,22 @@ class CommentService {
         newComment.title = comment.title
         newComment.type = 'comment'
         newComment.status = 'current'
-//        Container container = new Container()   // Can be skipped
-//        container.type = 'page'
-//        container.id = pare
-//        content.container = container
-//        Ancestor ancestor = new Ancestor()
+/*
+        Container container = new Container()   // Can be skipped
+        container.type = 'page'
+        container.id = pare
+        content.container = container
+        Ancestor ancestor = new Ancestor()
+*/
         Body commBody = new Body()
         Storage storage = new Storage()
         commBody.storage = storage
         storage.representation = 'storage'
         storage.value = comment.body.storage.value
         newComment.body = commBody
-//        Container container = new Container()
-        newComment.container = getPage(CONF_URL, TOKEN, tgtPageId)
+
+        newComment.container = new Container(pageService.getPage(CONF_URL, TOKEN, tgtPageId))
+
 //        Version version = new Version()
 //        version.message = 'test'
 //        version.number = 1
@@ -92,11 +99,12 @@ class CommentService {
         Storage storage = new Storage()
         commBody.storage = storage
         storage.representation = 'storage'
-        storage.value = comment.body.storage.value
+        storage.value = newComment.body.storage.value
         newComment.body = commBody
-        newComment.container = getPage(CONF_URL, TOKEN, tgtPageId)
 
-        def commJson = gson.toJson(newComment)
+        newComment.container = new Container(pageService.getPage(CONF_URL, TOKEN, tgtPageId))
+
+        String commJson = gson.toJson(newComment)
 
         return Unirest.post("${tgtURL}/rest/api/content")  // ext
                 .header("Authorization", "Basic ${tgtTOKEN}")

@@ -22,7 +22,6 @@ class SpaceService {
                 .asString()
 
         return gson.fromJson(response.body, Space.class)
-
     }
 
     static def createSpace(CONF_URL, TOKEN, spaceKey, name) {
@@ -60,7 +59,11 @@ class SpaceService {
                 .body(gson.toJson(space))
                 .asString()
 
-        return gson.fromJson(response.body, Space.class)
+        if (response.status == 200 || response.status == 201) {
+            return gson.fromJson(response.body, Space.class)
+        } else {
+            return null
+        }
 
     }
 }

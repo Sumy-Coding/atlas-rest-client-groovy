@@ -15,6 +15,7 @@ import java.nio.channels.FileChannel
 import java.nio.channels.ReadableByteChannel
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.CompletableFuture
 
 class PageService {
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
@@ -180,12 +181,45 @@ class PageService {
                 .header("Authorization", "Basic ${TOKEN}")
                 .build()
 
+        def response= client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+
+        return response.body()
+
+    }
+
+    CompletableFuture<java.net.http.HttpResponse> createPageAsync(CONF_URL, TOKEN, space, parentId, title, body) {
+        println(">>>>>>> Performing CREATE PAGE asynchronous request")
+
+        def content = new Content()
+        content.title = title
+        content.type = 'page'
+        content.status = 'current'
+        Space space1 = new Space()
+        content.space = space1
+        space1.key = space
+        Ancestor ancestor = new Ancestor()
+        Body body1 = new Body()
+        Storage storage = new Storage()
+        body1.storage = storage
+        storage.representation = 'storage'
+        storage.value = body
+        content.body = body1
+        ancestor.id = parentId.toString()
+        Ancestor[] ancestors = [ancestor]
+        content.ancestors = ancestors
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .uri(URI.create("${CONF_URL}/rest/api/content"))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(content)))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Basic ${TOKEN}")
+                .build()
+
         def sendAsync
                 = client.sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString())
 
-        sendAsync.thenAccept(res -> {
-            println(">>> response: ${res.body()}")
-        })
+        return sendAsync
 
     }
 

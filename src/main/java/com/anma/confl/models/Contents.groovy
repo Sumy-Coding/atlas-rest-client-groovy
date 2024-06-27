@@ -1,10 +1,9 @@
 package com.anma.confl.models
 
 class Contents {
-
     Content[] results
-    def start
-    def limit
-    def size
+    int start
+    int limit
+    int size
     def _links
 }

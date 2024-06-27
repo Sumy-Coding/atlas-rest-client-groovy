@@ -11,6 +11,7 @@ class Content {
     Body body
     Space space
     Links _links
+    Extensions extensions
 
     @Override
     String toString() {

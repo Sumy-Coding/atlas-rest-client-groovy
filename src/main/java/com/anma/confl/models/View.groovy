@@ -1,8 +1,8 @@
 package com.anma.confl.models
 
 class View {
-    def value
-    def representation
+    String value
+    String representation
 
     @Override
     public String toString() {
