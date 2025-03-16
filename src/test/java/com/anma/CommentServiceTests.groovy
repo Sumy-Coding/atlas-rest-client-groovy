@@ -13,7 +13,7 @@ class CommentServiceTests {
     def username = System.getenv("CONF_USER")
     def password = System.getenv("CONF_PASS")
 
-    String CONF_URL = "http://localhost:8930"
+    String CONF_URL = "http://localhost:9002"
     String localTOKEN = TokenService.getToken("admin", "admin")
     String TOKEN = TokenService.getToken(username, password)
 
@@ -32,7 +32,7 @@ class CommentServiceTests {
 
     @Test
     void addCommentToPageTest() {
-        commentService.addCommentToPage(CONF_URL, localTOKEN, 1572866)
+        commentService.addFooterCommentToPage(CONF_URL, localTOKEN, "1278010", "aaaa")
     }
 
     @Test
@@ -40,7 +40,7 @@ class CommentServiceTests {
         String parentPageId = "1572866"
 //        def rootPage = pageService.getPage(CONF_URL, localTOKEN, parentPageId)
         pageService.getChildren(CONF_URL, localTOKEN, parentPageId).each {page ->
-            commentService.addFooterCommentToPage()
+            commentService.addFooterCommentToPage(CONF_URL, localTOKEN, "1278010", "aaaa")
         }
     }
 }

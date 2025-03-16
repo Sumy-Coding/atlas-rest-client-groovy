@@ -12,9 +12,12 @@ class PageServiceTests {
     def username = System.getenv("CONF_USER")
     def password = System.getenv("CONF_PASS")
 
-    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:8930"
+    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:9002"
     String localTOKEN = TokenService.getToken("admin", "admin")
     String TOKEN = TokenService.getToken(username, password)
+
+    String SPACE_KEY = "DEV"
+    String PAGE_ID = "163926"
 
     PageService pageService = new PageService()
 
@@ -22,14 +25,14 @@ class PageServiceTests {
     void getPage() {
         PageService pageService = new PageService()
 
-        def page = pageService.getPage(CONF_URL, localTOKEN, "983046")
+        def page = pageService.getPage(CONF_URL, localTOKEN, "163926")
 
         println(page)
     }
 
     @Test
     void getChildren() {
-        def contents = pageService.getChildren(CONF_URL, TOKEN, "983046").results
+        def contents = pageService.getChildren(CONF_URL, TOKEN, "163926").results
 
         contents.each {
             println(it)
@@ -51,8 +54,8 @@ class PageServiceTests {
     void createPage() {
         def createdPage = pageService.createPage(
                 CONF_URL, localTOKEN,
-                "dev3",
-                1572866,
+                "DEV",
+                163926,
                 "Groovy dev ${System.currentTimeMillis()}", "Groovy lorem ...")
 
         println(createdPage)
@@ -60,14 +63,14 @@ class PageServiceTests {
 
     @Test
     void createPageAsyncTest() {
-        String spaceKey = "dev3"
-        def parentPageId = 1572866
+        String spaceKey = "DEV"
+        def parentPageId = 163926
 
         def createdPage = pageService.createPageAsync(
                 CONF_URL,
                 localTOKEN,
-                spaceKey,
-                parentPageId,
+                SPACE_KEY,
+                PAGE_ID,
                 "Groovy dev ${System.currentTimeMillis()}",
                 "Groovy lorem ...")
 
@@ -84,8 +87,8 @@ class PageServiceTests {
         for (i in 0..<20) {
             def createdPage = pageService.createPage(
                     CONF_URL, localTOKEN,
-                    spaceKey,
-                    parentPageId,
+                    SPACE_KEY,
+                    PAGE_ID,
                     "Groovy dev ${System.currentTimeMillis()}",
                     "Groovy lorem ...")
 
@@ -95,8 +98,8 @@ class PageServiceTests {
 
     @Test
     void createPagesAsyncTest() {
-        String spaceKey = "dev3"
-        def parentPageId = 1572866
+        String spaceKey = "KB1"
+        def parentPageId = 1277999
 
         for (i in 0..<20) {
             def createdPage = pageService.createPageAsync(
@@ -112,8 +115,5 @@ class PageServiceTests {
             }).get()
         }
     }
-
-
-
 
 }
