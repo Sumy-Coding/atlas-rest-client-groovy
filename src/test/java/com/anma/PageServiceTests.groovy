@@ -12,12 +12,12 @@ class PageServiceTests {
     def username = System.getenv("CONF_USER")
     def password = System.getenv("CONF_PASS")
 
-    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:9002"
+    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:9003"
     String localTOKEN = TokenService.getToken("admin", "admin")
     String TOKEN = TokenService.getToken(username, password)
 
     String SPACE_KEY = "DEV"
-    String PAGE_ID = "163926"
+    String PAGE_ID = "163934"
 
     PageService pageService = new PageService()
 
@@ -25,14 +25,14 @@ class PageServiceTests {
     void getPage() {
         PageService pageService = new PageService()
 
-        def page = pageService.getPage(CONF_URL, localTOKEN, "163926")
+        def page = pageService.getPage(CONF_URL, localTOKEN, PAGE_ID)
 
         println(page)
     }
 
     @Test
     void getChildren() {
-        def contents = pageService.getChildren(CONF_URL, TOKEN, "163926").results
+        def contents = pageService.getChildren(CONF_URL, localTOKEN, PAGE_ID).results
 
         contents.each {
             println(it)
@@ -42,7 +42,7 @@ class PageServiceTests {
 
     @Test
     void descendants() {
-        def contents = pageService.getDescendants(CONF_URL, TOKEN, "2752538").results
+        def contents = pageService.getDescendants(CONF_URL, TOKEN, PAGE_ID).results
 
         contents.each {
             println(it)
@@ -55,7 +55,7 @@ class PageServiceTests {
         def createdPage = pageService.createPage(
                 CONF_URL, localTOKEN,
                 "DEV",
-                163926,
+                PAGE_ID,
                 "Groovy dev ${System.currentTimeMillis()}", "Groovy lorem ...")
 
         println(createdPage)
@@ -86,7 +86,8 @@ class PageServiceTests {
 
         for (i in 0..<20) {
             def createdPage = pageService.createPage(
-                    CONF_URL, localTOKEN,
+                    CONF_URL,
+                    localTOKEN,
                     SPACE_KEY,
                     PAGE_ID,
                     "Groovy dev ${System.currentTimeMillis()}",

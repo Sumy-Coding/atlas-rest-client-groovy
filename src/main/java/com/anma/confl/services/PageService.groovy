@@ -59,7 +59,6 @@ class PageService {
         def Url = "${CONF_URL}/rest/api/content/search?cql=ancestor+%3D+${id}&limit=300"
 //        def urlRequst = "http://localhost:8712/dosearchsite.action?cql=ancestor+%3D+%226324225%22"
 
-
         def response = Unirest.get(Url)
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
