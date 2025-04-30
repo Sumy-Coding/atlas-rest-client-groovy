@@ -1,11 +1,9 @@
 package com.anma
 
-import com.anma.confl.models.Content
+
 import com.anma.confl.services.PageService
 import com.anma.srv.TokenService
 import org.junit.jupiter.api.Test
-
-import java.util.concurrent.CompletableFuture
 
 class PageServiceTests {
 
@@ -22,9 +20,18 @@ class PageServiceTests {
     void getPage() {
         PageService pageService = new PageService()
 
-        def page = pageService.getPage(CONF_URL, localTOKEN, "983046")
+        def page = pageService.getPage(CONF_URL, TOKEN, "213156238")
 
         println(page)
+    }
+
+    @Test
+    void updatePage() {
+        PageService pageService = new PageService()
+
+        pageService.replaceCalendarMacro(CONF_URL, TOKEN, "331353976")
+//        pageService.replaceCalendarMacroStatic(CONF_URL, TOKEN, "213156238")
+
     }
 
     @Test

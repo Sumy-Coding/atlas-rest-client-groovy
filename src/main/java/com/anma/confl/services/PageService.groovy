@@ -1,6 +1,7 @@
 package com.anma.confl.services
 
 import com.anma.confl.models.*
+import com.anma.confl.cloud.v2.ConfluencePage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kong.unirest.HttpResponse
@@ -16,6 +17,8 @@ import java.nio.channels.ReadableByteChannel
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class PageService {
     Gson gson = new GsonBuilder().setPrettyPrinting().create()
@@ -24,12 +27,18 @@ class PageService {
     HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()
 
     public Content getPage(String CONF_URL, String TOKEN, String id) {
-        LOG.info("Getting page ${id}")
+        println("[ ATLAS CLIENT ] Getting page ${id}")
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()
 
+        println(response.body)
+
         return gson.fromJson(response.body, Content.class)
+    }
+
+    public ConfluencePage getPageById(String CONF_URL, String TOKEN, String id) {
+        // xxx.net/wiki/api/v2/pages/39026694?body-format=storage
     }
 
     public Contents getContent(String CONF_URL, String TOKEN, String type) {
@@ -70,7 +79,7 @@ class PageService {
     }
 
     def getSpacePages(CONF_URL, TOKEN, space) {
-        LOG.info(">>>>>>> Performing GET Pages request")
+        LOG.info("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing GET Pages request")
         // todo GET /rest/api/space/{spaceKey}/content
         //http://localhost:7130/rest/api/content?type=page&spaceKey=TEST
         HttpResponse<String> response =
@@ -102,7 +111,7 @@ class PageService {
     }
 
     def getPageLabels(CONF_URL, TOKEN, id) {
-        println(PageService.class.name + " :: " + ">>> Performing GET LABELS request")
+        println(PageService.class.name + " :: " + "[ ATLAS CLIENT ] Performing GET LABELS request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/rest/api/content/" + id + "/label")
                         .header("Authorization", "Basic ${TOKEN}")
@@ -112,7 +121,7 @@ class PageService {
     }
 
     def deletePageLabels(CONF_URL, TOKEN, id, label) {
-        println(">>>>>>> Performing DELETE LABELS request")
+        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing DELETE LABELS request")
         // todo DELETE /rest/api/content/{id}/label/...
         HttpResponse<String> response =
                 Unirest.delete("${CONF_URL}/rest/api/content/${id}/label/${label}")
@@ -123,7 +132,7 @@ class PageService {
     }
 
     def deletePage(CONF_URL, TOKEN, id) {
-        println(">>>>>>> Performing DELETE PAGE request")
+        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing DELETE PAGE request")
         HttpResponse<String> response =
                 Unirest.delete("${CONF_URL}/rest/api/content/${id}")
                         .header("Authorization", "Basic ${TOKEN}")
@@ -133,7 +142,7 @@ class PageService {
     }
 
     def getScrollTemplates(CONF_URL, TOKEN, spaceKey) {
-        println(">>>>>>> Performing GET Scroll templates request")
+        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing GET Scroll templates request")
         HttpResponse<String> response =
                 Unirest.get("${CONF_URL}/plugins/servlet/scroll-office/api/templates?spaceKey=${spaceKey}")
                         .header("Authorization", "Basic ${TOKEN}")
@@ -153,7 +162,7 @@ class PageService {
     }
 
     def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
-        println(">>>>>>> Performing CREATE PAGE request")
+        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing CREATE PAGE request")
 
         def content = new Content()
         content.title = title
@@ -181,14 +190,14 @@ class PageService {
                 .header("Authorization", "Basic ${TOKEN}")
                 .build()
 
-        def response= client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+        def response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())
 
         return response.body()
 
     }
 
     CompletableFuture<java.net.http.HttpResponse> createPageAsync(CONF_URL, TOKEN, space, parentId, title, body) {
-        println(">>>>>>> Performing CREATE PAGE asynchronous request")
+        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing CREATE PAGE asynchronous request")
 
         def content = new Content()
         content.title = title
@@ -379,6 +388,145 @@ class PageService {
                 .asString()
 
         return response.body
+    }
+
+    def replaceCalendarMacroStatic(CONF_URL, TOKEN, id) {
+        println(">> Replacing macros on page ${id}")
+
+        def pageVersion = getPage(CONF_URL, TOKEN, id).version.number
+        def title = getPage(CONF_URL, TOKEN, id).title
+        String body = getPage(CONF_URL, TOKEN, id).body.storage.value
+
+        if (body.contains("ac:name=\"google-calendar\"")) {
+            try {
+                body = body.replace("ac:name=\"google-calendar\"", "ac:name=\"widget\"")
+            } catch (Exception e) {
+                e.printStackTrace()
+            }
+        }
+
+        // create entity for converting to JSON
+        Content updatedPage = new Content()
+        Version version = new Version()
+        version.number = pageVersion + 1
+        version.message = "changed page info macro"
+        updatedPage.version = version
+        updatedPage.title = title
+        updatedPage.type = "page"
+        Body updBody = new Body()
+        Storage storage = new Storage()
+        storage.value = body
+        storage.representation = "storage"
+        updBody.storage = storage
+        updatedPage.body = updBody
+
+        String pageJSON = gson.toJson(updatedPage)  // convert to JSON
+        println(pageJSON)
+
+        /* Performing the PUT request to replace body */
+
+        def url = "${CONF_URL}/rest/api/content/${id}"
+        def response = Unirest.put(url)
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .asString()
+
+        println(response.body)
+
+        return response.body
+    }
+
+    def replaceCalendarMacro(CONF_URL, TOKEN, id) {
+        println("[ ATLAS CLIENT ] Replacing 'Google Calendar' macros on page ${id}")
+
+        def page = getPage(CONF_URL, TOKEN, id)
+        def pageVersion = page.version.number
+        def title = page.title
+        String body = page.body.storage.value
+
+        String pattern = "(<ac:structured-macro ac:name=\"google-calendar\".+?</ac:structured-macro>)"
+        Pattern regex = Pattern.compile(pattern)
+        Matcher matcher = regex.matcher(body)
+
+        if (matcher.find()) {
+            String macro = matcher.group(0)
+            println(macro)
+
+            String linkPattern = "(https://.+?<)"
+            Pattern linkRegex = Pattern.compile(linkPattern)
+            Matcher matcher2 = linkRegex.matcher(macro)
+
+            if (matcher2.find()) {
+                String link = matcher2.group(0)
+
+//                link = link.substring(link.indexOf("https"), link.indexOf("\" style"))
+                link = link.substring(0, link.length() - 1).trim();
+
+                println("[ ATLAS CLIENT ] Found link: " + link)
+
+                String widgetMacro = """
+                        <ac:structured-macro ac:name="widget" ac:schema-version="1"><ac:parameter ac:name="url"><ri:url ri:value="%s" /></ac:parameter></ac:structured-macro>
+                        """.formatted(link);
+
+//                macro = macro.replace(macro, widgetMacro);
+
+                println("[ ATLAS CLIENT ] widgetMacro : " + widgetMacro);
+
+                // ---------------- update page
+
+                println("[ ATLAS CLIENT ] UPDATEing page")
+                println("[ ATLAS CLIENT ] page is : " + page)
+
+
+                String newBody = body.replace(macro, widgetMacro)
+
+//                String reqBody = """
+//                        {
+//                            "version": {
+//                                "number": %d
+//                            },
+//                            "title": "%s",
+//                            "type": "page",
+//                            "body": {
+//                                "storage": {
+//                                    "value": "%s",
+//                                    "representation": "storage"
+//                                }
+//                            }
+//                        }
+//                        """.formatted(pageVersion + 1, pageTitle, newBody);
+
+                // ----- create entity for converting to JSON
+                Content updatedPage = new Content()
+                Version version = new Version()
+                version.number = pageVersion + 1
+                version.message = ""
+                updatedPage.version = version
+                updatedPage.title = title
+                updatedPage.type = "page"
+                Body updBody = new Body()
+                Storage storage = new Storage()
+                storage.value = newBody
+                storage.representation = "storage"
+                updBody.storage = storage
+                updatedPage.body = updBody
+
+                String pageJSON = gson.toJson(updatedPage)  // convert to JSON
+                println("[ ATLAS CLIENT ] Page JSON:")
+                println(pageJSON)
+
+                def url = "${CONF_URL}/rest/api/content/${id}"
+                def response = Unirest.put(url)
+                        .header("Authorization", "Basic ${TOKEN}")
+                        .header("Content-Type", "application/json")
+                        .asString()
+
+                println(response.body)
+
+                return response.body
+
+            }
+        }
     }
 
     def getSpacePagesByLabel(CONF_URL, TOKEN, spaceKey, label) {
@@ -619,7 +767,7 @@ class PageService {
     /*
      def copyPagesBranch(CONF_URL, TOKEN, parentId, targetId, newTitle,
                                copyLabels, copyAttach, boolean copyComments) {
-        println(">>>>> Performing COPY page BRANCH  request")
+        println("[ ATLAS CLIENT ]>> Performing COPY page BRANCH  request")
 
         Content rootPage = getPage(CONF_URL, TOKEN, parentId)
         Content targetPage = getPage(CONF_URL, TOKEN, targetId)
