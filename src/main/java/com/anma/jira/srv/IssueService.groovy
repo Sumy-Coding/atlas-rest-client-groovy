@@ -1,4 +1,4 @@
-package com.anma.jira.serv
+package com.anma.jira.srv
 
 import com.anma.jira.models.Issue
 import com.anma.jira.models.Watcher
@@ -13,21 +13,23 @@ import java.time.Duration
 
 class IssueService {
     Gson GSON = new GsonBuilder().setPrettyPrinting().create()
-    String TOKEN = Base64.encoder.encodeToString("${System.getenv("LOCAL_JIRA_USER")}:${System.getenv("LOCAL_JIRA_PASS")}".bytes)
+    String TOKEN = Base64.encoder.encodeToString("${System.getenv("JIRA_USER")}:${System.getenv("JIRA_PASS")}".bytes)
     String JIRA_HOST = System.getenv("JIRA_HOST")
+
     HttpClient client = HttpClient.newBuilder()
-        .version(HttpClient.Version.HTTP_1_1)
-        .connectTimeout(Duration.ofSeconds(20)).build()
+            .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofSeconds(20)).build()
 
     public Issue getIssue(String key) {
-        def url = "${JIRA_HOST}/rest/api/2/issue/${key}"
+        def url = "${JIRA_HOST}/rest/api/3/issue/${key}"
         HttpRequest getIssue = HttpRequest.newBuilder()
-            .GET()
-        .header("Authorization", "Basic ${TOKEN}")
-        .uri(URI.create(url))
-        .build()
+                .GET()
+                .header("Authorization", "Basic ${TOKEN}")
+                .uri(URI.create(url))
+                .build()
 
         def resp = client.send(getIssue, HttpResponse.BodyHandlers.ofString())
+
         if (resp.statusCode() == 200) {
             return GSON.fromJson(resp.body(), Issue.class)
         }
@@ -35,7 +37,7 @@ class IssueService {
     }
 
     public Issue[] getSubTasks(String key) {
-        def url = "${JIRA_HOST}/rest/api/2/issue/${key}/subtask"
+        def url = "${JIRA_HOST}/rest/api/3/issue/${key}/subtask"
         HttpRequest getIssue = HttpRequest.newBuilder()
                 .GET()
                 .header("Authorization", "Basic ${TOKEN}")
@@ -50,7 +52,7 @@ class IssueService {
     }
 
     public Watcher[] getWatchers(String key) {
-        def url = "${JIRA_HOST}/rest/api/2/issue/${key}/watchers"
+        def url = "${JIRA_HOST}/rest/api/3/issue/${key}/watchers"
         HttpRequest getIssue = HttpRequest.newBuilder()
                 .GET()
                 .header("Authorization", "Basic ${TOKEN}")
@@ -85,7 +87,6 @@ class IssueService {
      */
 
 
-
     /*
                         PROJECT
         Get all projects
@@ -103,7 +104,7 @@ class IssueService {
         Create avatar from temporary
         POST /rest/api/2/project/{projectIdOrKey}/avatar
         Update project avatar
-        PUT /rest/api/2/project/{projectIdOrKey}/avatar
+        PUT /rest/api/3/project/{projectIdOrKey}/avatar
         Delete avatar
         DELETE /rest/api/2/project/{projectIdOrKey}/avatar/{id}
         Store temporary avatar

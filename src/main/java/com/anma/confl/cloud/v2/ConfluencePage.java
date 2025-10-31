@@ -35,6 +35,25 @@ public class ConfluencePage {
         public String value;
     }
 
+    @Override
+    public String toString() {
+        return "ConfluencePage{" +
+                "parentId='" + parentId + '\'' +
+                ", spaceId='" + spaceId + '\'' +
+                ", ownerId='" + ownerId + '\'' +
+                ", lastOwnerId=" + lastOwnerId +
+                ", createdAt=" + createdAt +
+                ", authorId='" + authorId + '\'' +
+                ", parentType='" + parentType + '\'' +
+                ", version=" + version +
+                ", position=" + position +
+                ", body=" + body +
+                ", status='" + status + '\'' +
+                ", title='" + title + '\'' +
+                ", id='" + id + '\'' +
+                ", _links=" + _links +
+                '}';
+    }
 }
 
 

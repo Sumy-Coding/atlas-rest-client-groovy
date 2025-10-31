@@ -28,6 +28,7 @@ class PageService {
 
     public Content getPage(String CONF_URL, String TOKEN, String id) {
         println("[ ATLAS CLIENT ] Getting page ${id}")
+
         def response = Unirest.get("${CONF_URL}/rest/api/content/${id}?expand=body.storage,version,space,ancestors")
                 .header("Authorization", "Basic ${TOKEN}")
                 .asString()

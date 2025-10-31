@@ -49,31 +49,22 @@ public class CloudPageService {
     }
 
 
-    def createPage(CONF_URL, TOKEN, space, parentId, title, body) {
-        println("[ ATLAS CLIENT ][ ATLAS CLIENT ]> Performing CREATE PAGE request")
-
-        def content = new Content()
-        content.title = title
-        content.type = 'page'
-        content.status = 'current'
-        Space space1 = new Space()
-        content.space = space1
-        space1.key = space
-        Ancestor ancestor = new Ancestor()
-        Body body1 = new Body()
-        Storage storage = new Storage()
-        body1.storage = storage
-        storage.representation = 'storage'
-        storage.value = body
-        content.body = body1
-        ancestor.id = parentId.toString()
-        Ancestor[] ancestors = [ancestor]
-        content.ancestors = ancestors
+    def createPage(CONF_URL, TOKEN, spaceId, parentId, title, body) {
+        String reqBody = "{\n" +
+                "  \"spaceId\": \"${spaceId}\",\n" +
+                "  \"status\": \"current\",\n" +
+                "  \"title\": \"${title}\",\n" +
+                "  \"parentId\": \"${parentId}\",\n" +
+                "  \"body\": {\n" +
+                "    \"representation\": \"storage\",\n" +
+                "    \"value\": \"${body}\"\n" +
+                "  }\n" +
+                "}";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
-                .uri(URI.create("${CONF_URL}/rest/api/content"))
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(content)))
+                .uri(URI.create("${CONF_URL}/api/v2/pages"))
+                .POST(HttpRequest.BodyPublishers.ofString(reqBody))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Basic ${TOKEN}")
                 .build()
