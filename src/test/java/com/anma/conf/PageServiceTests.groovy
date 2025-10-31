@@ -1,38 +1,50 @@
-package com.anma
+package com.anma.conf
 
-import com.anma.confl.models.Content
+import com.anma.confl.cloud.v2.CloudPageService
 import com.anma.confl.services.PageService
 import com.anma.srv.TokenService
 import org.junit.jupiter.api.Test
-
-import java.util.concurrent.CompletableFuture
 
 class PageServiceTests {
 
     def username = System.getenv("CONF_USER")
     def password = System.getenv("CONF_PASS")
+    def TOKEN = System.getenv("AST_CLOUD_TOKEN")
 
-    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:9003"
+    String CONF_URL = System.getenv("CONF_URL") != null ? System.getenv("CONF_URL") : "http://localhost:8930"
+//    String TOKEN = TokenService.getToken(username, password)
     String localTOKEN = TokenService.getToken("admin", "admin")
-    String TOKEN = TokenService.getToken(username, password)
-
-    String SPACE_KEY = "DEV"
-    String PAGE_ID = "163934"
 
     PageService pageService = new PageService()
+    CloudPageService cloudPageService = new CloudPageService()
 
     @Test
     void getPage() {
-        PageService pageService = new PageService()
 
-        def page = pageService.getPage(CONF_URL, localTOKEN, PAGE_ID)
+        def page = pageService.getPage(CONF_URL, TOKEN, "39026694")
 
         println(page)
     }
 
     @Test
+    void getPageCloud() {
+
+        def page = cloudPageService.getPageById(CONF_URL, TOKEN, "39026694")
+
+        println(page)
+    }
+
+    @Test
+    void updatePage() {
+
+        pageService.replaceCalendarMacro(CONF_URL, TOKEN, "331353976")
+//        pageService.replaceCalendarMacroStatic(CONF_URL, TOKEN, "213156238")
+
+    }
+
+    @Test
     void getChildren() {
-        def contents = pageService.getChildren(CONF_URL, localTOKEN, PAGE_ID).results
+        def contents = pageService.getChildren(CONF_URL, TOKEN, "340093257").results
 
         contents.each {
             println(it)
@@ -42,7 +54,7 @@ class PageServiceTests {
 
     @Test
     void descendants() {
-        def contents = pageService.getDescendants(CONF_URL, TOKEN, PAGE_ID).results
+        def contents = pageService.getDescendants(CONF_URL, TOKEN, "2752538").results
 
         contents.each {
             println(it)
@@ -54,23 +66,36 @@ class PageServiceTests {
     void createPage() {
         def createdPage = pageService.createPage(
                 CONF_URL, localTOKEN,
-                "DEV",
-                PAGE_ID,
+                "dev3",
+                1572866,
                 "Groovy dev ${System.currentTimeMillis()}", "Groovy lorem ...")
 
         println(createdPage)
     }
 
     @Test
+    void createPageCloud() {
+        def createdPage = cloudPageService.createPage(
+                CONF_URL,
+                TOKEN,
+                "15892733",
+                15892829,
+                "Groovy dev ${System.currentTimeMillis()}",
+                "Groovy lorem ...")
+
+        println(createdPage)
+    }
+
+    @Test
     void createPageAsyncTest() {
-        String spaceKey = "DEV"
-        def parentPageId = 163926
+        String spaceKey = "dev3"
+        def parentPageId = 1572866
 
         def createdPage = pageService.createPageAsync(
                 CONF_URL,
                 localTOKEN,
-                SPACE_KEY,
-                PAGE_ID,
+                spaceKey,
+                parentPageId,
                 "Groovy dev ${System.currentTimeMillis()}",
                 "Groovy lorem ...")
 
@@ -86,10 +111,24 @@ class PageServiceTests {
 
         for (i in 0..<20) {
             def createdPage = pageService.createPage(
+                    CONF_URL, localTOKEN,
+                    spaceKey,
+                    parentPageId,
+                    "Groovy dev ${System.currentTimeMillis()}",
+                    "Groovy lorem ...")
+
+            println(createdPage)
+        }
+    }
+
+    @Test
+    void createPagesCloud() {
+        for (i in 0..<10) {
+            def createdPage = cloudPageService.createPage(
                     CONF_URL,
-                    localTOKEN,
-                    SPACE_KEY,
-                    PAGE_ID,
+                    TOKEN,
+                    "15892733",
+                    15892829,
                     "Groovy dev ${System.currentTimeMillis()}",
                     "Groovy lorem ...")
 
@@ -99,8 +138,8 @@ class PageServiceTests {
 
     @Test
     void createPagesAsyncTest() {
-        String spaceKey = "KB1"
-        def parentPageId = 1277999
+        String spaceKey = "dev3"
+        def parentPageId = 1572866
 
         for (i in 0..<20) {
             def createdPage = pageService.createPageAsync(
@@ -116,5 +155,6 @@ class PageServiceTests {
             }).get()
         }
     }
+
 
 }

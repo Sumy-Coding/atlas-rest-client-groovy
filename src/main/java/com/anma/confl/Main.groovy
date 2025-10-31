@@ -1,23 +1,18 @@
 package com.anma.confl
 
-
 import com.anma.confl.services.CommentService
 import com.anma.confl.services.PageService
 import com.anma.confl.services.SpaceService
 import com.anma.srv.RandomGen
 import com.anma.srv.TokenService
-import org.apache.commons.lang3.RandomUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.nio.file.Files
-import java.nio.file.Path
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.CompletableFuture
 
 class Main {
     static void main(String[] args) {
@@ -125,8 +120,8 @@ class Main {
                         for (i in 0..<amount) {
                             def postDate = LocalDate.of(
                                     Year.now().getValue(),
-                                    RandomUtils.nextInt(1, 12),
-                                    RandomUtils.nextInt(1, 30)
+                                    new Random().nextInt(12),
+                                    new Random().nextInt(30)
                             ).format(DateTimeFormatter.ofPattern("yyyy-MM-DD"))
                             def blog = pageService.createBlog(CONF_URL, TOKEN, spaceKey, postDate,
                                     "blog ${i}",
