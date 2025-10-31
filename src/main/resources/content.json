@@ -1,0 +1,269 @@
+{
+  "id": "123456",
+  "type": "page",
+  "status": "current",
+  "title": "My Page",
+  "links": {},
+  "space": {
+    "id": 123456,
+    "key": "TEST",
+    "name": "Test Space",
+    "status": "current",
+    "icon": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "description": {},
+    "homepage": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "links": {},
+    "type": "global",
+    "creator": {
+      "profilePicture": {},
+      "displayName": "Joe Smith",
+      "type": "<string>"
+    },
+    "creationDate": "2024-01-01T00:00:00Z",
+    "lastModifier": {
+      "profilePicture": {},
+      "displayName": "Joe Smith",
+      "type": "<string>"
+    },
+    "lastModificationDate": "2024-01-01T00:00:00Z",
+    "metadata": {
+      "labels": [
+        "label1",
+        "label2"
+      ]
+    },
+    "retentionPolicy": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "permissions": {
+      "expanded": true,
+      "idProperties": {}
+    }
+  },
+  "history": {
+    "previousVersion": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "nextVersion": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "lastUpdated": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "latest": true,
+    "createdBy": {
+      "profilePicture": {},
+      "displayName": "Joe Smith",
+      "type": "<string>"
+    },
+    "createdDate": "2020-01-01T00:00:00Z",
+    "contributors": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "lastUpdatedRef": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "nextVersionRef": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "previousVersionRef": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "contentParentRef": {
+      "expanded": true,
+      "idProperties": {}
+    }
+  },
+  "version": {
+    "by": {
+      "profilePicture": {},
+      "displayName": "Joe Smith",
+      "type": "<string>"
+    },
+    "when": "2020-01-01T00:00:00Z",
+    "message": "A message",
+    "number": 1,
+    "minorEdit": true,
+    "hidden": true,
+    "syncRev": "123456",
+    "content": {
+      "expanded": true,
+      "idProperties": {}
+    },
+    "contentRef": {
+      "expanded": true,
+      "idProperties": {}
+    }
+  },
+  "ancestors": [
+    {
+      "id": "123456",
+      "type": "page",
+      "status": "current",
+      "title": "My Page",
+      "links": {},
+      "space": {
+        "id": 123456,
+        "key": "TEST",
+        "name": "Test Space",
+        "status": "current",
+        "icon": {},
+        "description": {},
+        "homepage": {},
+        "links": {},
+        "type": "global",
+        "creator": {},
+        "creationDate": "2024-01-01T00:00:00Z",
+        "lastModifier": {},
+        "lastModificationDate": "2024-01-01T00:00:00Z",
+        "metadata": {
+          "labels": [
+            "label1",
+            "label2"
+          ]
+        },
+        "retentionPolicy": {},
+        "permissions": {}
+      },
+      "history": {
+        "previousVersion": {},
+        "nextVersion": {},
+        "lastUpdated": {},
+        "latest": true,
+        "createdBy": {},
+        "createdDate": "2020-01-01T00:00:00Z",
+        "contributors": {},
+        "lastUpdatedRef": {},
+        "nextVersionRef": {},
+        "previousVersionRef": {},
+        "contentParentRef": {}
+      },
+      "version": {
+        "by": {},
+        "when": "2020-01-01T00:00:00Z",
+        "message": "A message",
+        "number": 1,
+        "minorEdit": true,
+        "hidden": true,
+        "syncRev": "123456",
+        "content": {},
+        "contentRef": {}
+      },
+      "ancestors": [],
+      "position": 1,
+      "operations": [
+        {
+          "operation": "read",
+          "targetType": "page"
+        }
+      ],
+      "children": {},
+      "descendants": {},
+      "body": {},
+      "metadata": {
+        "key": "value"
+      },
+      "extensions": {
+        "key": "value"
+      },
+      "restrictions": {
+        "use": {
+          "operation": "use",
+          "restrictions": []
+        }
+      },
+      "relevantViewRestrictions": {
+        "expanded": true,
+        "idProperties": {}
+      },
+      "containerRef": {
+        "expanded": true,
+        "idProperties": {}
+      },
+      "versionRef": {
+        "expanded": true,
+        "idProperties": {}
+      },
+      "historyRef": {
+        "expanded": true,
+        "idProperties": {}
+      },
+      "spaceRef": {
+        "expanded": true,
+        "idProperties": {}
+      },
+      "_links": {
+        "base": "<string>",
+        "context": "<string>",
+        "self": "<string>"
+      },
+      "_expandable": {
+        "attribute": "<string>"
+      }
+    }
+  ],
+  "position": 1,
+  "operations": [
+    {
+      "operation": "read",
+      "targetType": "page"
+    }
+  ],
+  "children": {},
+  "descendants": {},
+  "body": {},
+  "metadata": {
+    "key": "value"
+  },
+  "extensions": {
+    "key": "value"
+  },
+  "restrictions": {
+    "use": {
+      "operation": "use",
+      "restrictions": []
+    }
+  },
+  "relevantViewRestrictions": {
+    "expanded": true,
+    "idProperties": {}
+  },
+  "containerRef": {
+    "expanded": true,
+    "idProperties": {}
+  },
+  "versionRef": {
+    "expanded": true,
+    "idProperties": {}
+  },
+  "historyRef": {
+    "expanded": true,
+    "idProperties": {}
+  },
+  "spaceRef": {
+    "expanded": true,
+    "idProperties": {}
+  },
+  "_links": {
+    "base": "<string>",
+    "context": "<string>",
+    "self": "<string>"
+  },
+  "_expandable": {
+    "attribute": "<string>"
+  }
+}

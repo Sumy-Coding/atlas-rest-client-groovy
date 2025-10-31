@@ -88,28 +88,41 @@ class CommentService {
                 .asString()
     }
 
-    def addFooterCommentToPage(CONF_URL, TOKEN, tgtPageId, tgtURL, tgtTOKEN) {
+    def addFooterCommentToPage(CONF_URL, TOKEN, tgtPageId, commentBody) {
         println("Adding footer comment to page ${tgtPageId}")
 
-        Content newComment = new Content()
-        newComment.title = ""
-        newComment.type = 'comment'
-        newComment.status = 'current'
-        Body commBody = new Body()
-        Storage storage = new Storage()
-        commBody.storage = storage
-        storage.representation = 'storage'
-        storage.value = newComment.body.storage.value
-        newComment.body = commBody
+        def page = pageService.getPage(CONF_URL, TOKEN, tgtPageId)
 
-        newComment.container = new Container(pageService.getPage(CONF_URL, TOKEN, tgtPageId))
+        String commJson = """
+{
+  "title": "some comment",
+  "type": "comment",
+  "space": {
+    "key": "${page.space.key}"
+  },
+  "status": "current",
+  "container": {
+    "id": ${tgtPageId},
+    "type": "page"
+  },
+  "body": {
+    "storage": {
+      "value": "${commentBody}",
+      "representation": "storage"
+    }
+  }
+}
+"""
 
-        String commJson = gson.toJson(newComment)
-
-        return Unirest.post("${tgtURL}/rest/api/content")  // ext
-                .header("Authorization", "Basic ${tgtTOKEN}")
+        def resp = Unirest.post("${CONF_URL}/rest/api/content")  // ext
+                .header("Authorization", "Basic ${TOKEN}")
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .body(commJson)
                 .asString()
+
+        println(resp.status)
+
     }
 
     def addInlineCommentToPage(tgtPageId, tgtURL, tgtTOKEN, body, selection) {
